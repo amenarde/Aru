@@ -1,15 +1,16 @@
 {
-   "name": "Facebook Final Project (G22)",
+   "name": "FacebookFinalProjectG22",
    "description": "Facebook",
    "version": "0.0.1",
    "scripts": {
-     "start": "node app.js"
+      "start": "node app.js"
    },
    "dependencies": {
       "express": "3.3.8",
       "aws-sdk": "*",
       "ejs": "*",
       "async": "*",
-      "lru-cache" : "*"
+      "lru-cache": "*",
+      "vogels": "*"
    }
 }

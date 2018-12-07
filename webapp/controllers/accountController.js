@@ -1,4 +1,4 @@
-var db = require('../models/database.js');
+var db = require('../models/userDB.js');
 
 var getlogin = function(req, res) {
   res.render('main.ejs', {error: ""});
