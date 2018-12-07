@@ -28,7 +28,7 @@
   
     this.LRU = require("lru-cache");
   
-    this.cache = this.LRU({ max: 500 });
+    this.cache = new this.LRU({ max: 500 });
     
     this.tableName = table;
   };
