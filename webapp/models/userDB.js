@@ -1,3 +1,30 @@
+function addUser(firstName, lastName, birthday, affiliation, permissions) {
+
+}
+
+function delete(sID) {
+
+}
+
+function addComment(sID, comment) {
+
+}
+
+function fetch(sID) {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 var keyvaluestore = require('../models/keyvaluestore.js');
 
 var userKVS = new keyvaluestore('users');

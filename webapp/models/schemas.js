@@ -13,6 +13,7 @@ var Friendships = vogels.define('Friendships', {
     status  : Joi.string(), // Outgoing, Incoming, Friend
   }
 });
+exports.Friendships = Friendships;
 
 var RecommendedFriends = vogels.define('RecommendedFriends', {
   hashKey : 'user1',
@@ -26,6 +27,7 @@ var RecommendedFriends = vogels.define('RecommendedFriends', {
     strength  : Joi.number(), // Outgoing, Incoming, Friend
   }
 });
+exports.RecommendedFriends = RecommendedFriends;
 
 var User = vogels.define('User', {
   hashKey : 'username',
@@ -47,6 +49,7 @@ var User = vogels.define('User', {
     // }
   }
 });
+exports.User = User;
 
 var Statuses = vogels.define('Statuses', {
   hashKey: 'sID',
@@ -59,6 +62,7 @@ var Statuses = vogels.define('Statuses', {
     username  : Joi.string(), // Poster
   }
 });
+exports.Statuses = Statuses;
 
 var Wall = vogels.define('Wall', {
   hashKey : 'username',
@@ -69,6 +73,7 @@ var Wall = vogels.define('Wall', {
     sID : vogels.types.uuid(),
   }
 });
+exports.Wall = Wall;
 
 var StatusComments = vogels.define('StatusComments', {
   hashKey: 'sID',
@@ -81,6 +86,7 @@ var StatusComments = vogels.define('StatusComments', {
     data: Joi.string(),
   }
 });
+exports.StatusComments = StatusComments;
 
 var Affiliations = vogels.define('Affiliations', {
   hashKey: 'affiliation',
@@ -91,6 +97,7 @@ var Affiliations = vogels.define('Affiliations', {
     username: Joi.string(),
   }
 });
+exports.Affiliations = Affiliations;
 
 var Interests2User = vogels.define('Interests2User', {
   hashKey: 'interests',
@@ -101,6 +108,7 @@ var Interests2User = vogels.define('Interests2User', {
     username: Joi.string(),
   }
 });
+exports.Interests2User = Interests2User;
 
 var User2Interests = vogels.define('User2Interests', {
   hashKey: 'username',
@@ -111,6 +119,7 @@ var User2Interests = vogels.define('User2Interests', {
     username: Joi.string(),
   }
 });
+exports.User2Interests = User2Interests;
 
 var Chat2User = vogels.define('Chat2User', {
   hashKey: 'chatID',
@@ -121,6 +130,7 @@ var Chat2User = vogels.define('Chat2User', {
     username: Joi.string(),
   }
 });
+exports.Chat2User = Chat2User;
 
 var User2Chat = vogels.define('User2Chat', {
   hashKey: 'username',
@@ -131,6 +141,7 @@ var User2Chat = vogels.define('User2Chat', {
     username: Joi.string(),
   }
 });
+exports.User2Chat = User2Chat;
 
 var ChatData = vogels.define('ChatData', {
   hashKey: 'chatID',
@@ -144,3 +155,5 @@ var ChatData = vogels.define('ChatData', {
     username: Joi.string(),
   }
 });
+exports.ChatData = ChatData;
+
