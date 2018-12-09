@@ -1,4 +1,4 @@
-var schemas = require("schemas.js");
+var schemas = require("./schemas.js");
 
 
 function addUser(username, firstName, lastName, birthday, affiliation, permissions, callback) {
@@ -16,7 +16,8 @@ function addUser(username, firstName, lastName, birthday, affiliation, permissio
     birthdayString += i;
   }
 
-  schemas.User.create({username: username,
+  schemas.User.create({
+		username: username,
     firstName: firstName,
     lastName: lastName,
     birthday: Number(birthdayString),
