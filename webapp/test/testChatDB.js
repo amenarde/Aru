@@ -1,6 +1,6 @@
-var userDB = require('../models/userDB.js');
 var vogels = require('vogels');
 vogels.AWS.config.loadFromPath('../config.json');
+var userDB = require('../models/userDB.js');
 
 vogels.createTables(function(err) {
     if (err) {
