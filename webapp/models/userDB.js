@@ -13,10 +13,20 @@ function addUser(username, firstName, lastName, birthday, affiliation, permissio
   // Does not standardize european dates...
   var birthdayString = "";
   for (let i in dates) {
-    birthdayString += i;
+    birthdayString += dates[i];
   }
 
-  schemas.User.create({
+  console.log("birthday: " + birthdayString + " becomes " + Number(birthdayString));
+  var obj = {
+		username: username,
+    firstName: firstName,
+    lastName: lastName,
+    birthday: Number(birthdayString),
+    affiliation: affiliation,
+    permissions: permissions};
+
+  console.log(obj);
+  schemas.Users.create({
 		username: username,
     firstName: firstName,
     lastName: lastName,
@@ -25,7 +35,7 @@ function addUser(username, firstName, lastName, birthday, affiliation, permissio
     permissions: permissions}, {overwrite: false},
     function(err, user) {
       if (err) {
-        console.log("USER_DB) Error adding user " + username);
+        console.log("USER_DB) Error adding user " + username + "\n" + err);
       } else {
         console.log("USER_DB) Adding user " + username);
       }
@@ -45,7 +55,7 @@ function exists(username, callback) {
 }
 
 function updateFirstName(username, name, callback) {
-  schemas.User.update({username: username, firstName: name}, function (err, user) {
+  schemas.Users.update({username: username, firstName: name}, function (err, user) {
     if (err) {
       console.log("USER_DB) Update first name - " + err)
     } else {
@@ -56,7 +66,7 @@ function updateFirstName(username, name, callback) {
 }
 
 function updateLastName(username, name, callback) {
-  schemas.User.update({username: username, lastName: name}, function (err, user) {
+  schemas.Users.update({username: username, lastName: name}, function (err, user) {
     if (err) {
       console.log("USER_DB) Update last name - " + err)
     } else {
@@ -67,7 +77,7 @@ function updateLastName(username, name, callback) {
 }
 
 function updateBirthday(username, birthday, callback) {
-  schemas.User.update({username: username, birthday: birthday}, function (err, user) {
+  schemas.Users.update({username: username, birthday: birthday}, function (err, user) {
     if (err) {
       console.log("USER_DB) Update username - " + err)
     } else {
@@ -78,7 +88,7 @@ function updateBirthday(username, birthday, callback) {
 }
 
 function updateAffiliation(username, a, callback) {
-  schemas.User.update({username: username, affiliation: a}, function (err, user) {
+  schemas.Users.update({username: username, affiliation: a}, function (err, user) {
     if (err) {
       console.log("USER_DB) Update affiliation - " + err)
     } else {
@@ -89,7 +99,7 @@ function updateAffiliation(username, a, callback) {
 }
 
 function updatePermissions(username, p, callback) {
-  schemas.User.update({username: username, permissions: p}, function (err, user) {
+  schemas.Users.update({username: username, permissions: p}, function (err, user) {
     if (user) {
       console.log("USER_DB) Update permissions - " + err)
     } else {
@@ -100,14 +110,14 @@ function updatePermissions(username, p, callback) {
 }
 
 function deleteUser(username, callback) {
-  userount.destroy(username, function (err) {
+  schemas.Users.destroy(username, function (err) {
     console.log('USER_DB) User deleted: ' + username);
     callback(null, err);
   });
 }
 
 function fetch(username) {
-  schemas.User.get(username, function(err, user) {
+  schemas.Users.get(username, function(err, user) {
     callback(user, err);
   }); 
 }

@@ -30,7 +30,7 @@ var RecommendedFriends = vogels.define('RecommendedFriends', {
 });
 exports.RecommendedFriends = RecommendedFriends;
 
-var User = vogels.define('User', {
+var Users = vogels.define('Users', {
   hashKey : 'username',
  
   // add the timestamp attributes (updatedAt, createdAt)
@@ -50,7 +50,7 @@ var User = vogels.define('User', {
     // }
   }
 });
-exports.User = User;
+exports.Users = Users;
 
 var Statuses = vogels.define('Statuses', {
   hashKey: 'sID',
