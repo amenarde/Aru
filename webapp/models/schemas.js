@@ -159,3 +159,16 @@ var ChatData = vogels.define('ChatData', {
 });
 exports.ChatData = ChatData;
 
+var StatusLikes = vogels.define('ChatData', {
+  hashKey: 'sID',
+  rangeKey: 'username',
+
+  timestamps: true,
+
+  schema : {
+    sID: vogels.types.uuid(),
+    username: Joi.string(),
+  }
+});
+exports.ChatData = ChatData;
+
