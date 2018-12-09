@@ -60,9 +60,24 @@ var Statuses = vogels.define('Statuses', {
     sID : vogels.types.uuid(),
     content : Joi.string(),
     username  : Joi.string(), // Poster
+    likes : Joi.number(),
   }
 });
 exports.Statuses = Statuses;
+
+var StatusComments = vogels.define('StatusComments', {
+  hashKey: 'sID',
+  rangeKey: 'createdAt',
+
+  timestamps: true,
+  schema: {
+    sID: vogels.types.uuid(),
+    username: Joi.string(),
+    data: Joi.string(),
+    likes: Joi.number(),
+  }
+});
+exports.StatusComments = StatusComments;
 
 var Wall = vogels.define('Wall', {
   hashKey : 'username',
@@ -74,19 +89,6 @@ var Wall = vogels.define('Wall', {
   }
 });
 exports.Wall = Wall;
-
-var StatusComments = vogels.define('StatusComments', {
-  hashKey: 'sID',
-  rangeKey: 'createdAt'
-
-  timestamps: true,
-  schema: {
-    sID: vogels.types.uuid(),
-    username: Joi.string(),
-    data: Joi.string(),
-  }
-});
-exports.StatusComments = StatusComments;
 
 var Affiliations = vogels.define('Affiliations', {
   hashKey: 'affiliation',

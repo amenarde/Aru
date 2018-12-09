@@ -1,15 +1,28 @@
-function create(status) {
+var schemas = require("./schemas.js");
+
+function create(poster, content, receiver, callback) {
+    // Create the status
+    schemas.Statuses.create({}, function(err, status) {
+
+    });
+}
+
+function deleteStatus(sID, callback) {
 
 }
 
-function delete(sID) {
+function addComment(sID, comment, callback) {
 
 }
 
-function addComment(sID, comment) {
+function fetch(sID, callback) {
 
 }
 
-function fetch(sID) {
-
+var database = {
+    create: create,
+    addComment: addComment,
+    delete: deleteStatus,
+    get: fetch,
 }
+module.exports = database;
