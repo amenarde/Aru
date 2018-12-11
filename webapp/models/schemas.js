@@ -30,7 +30,7 @@ var RecommendedFriends = vogels.define('RecommendedFriends', {
 });
 exports.RecommendedFriends = RecommendedFriends;
 
-var User = vogels.define('User', {
+var Users = vogels.define('Users', {
   hashKey : 'username',
  
   // add the timestamp attributes (updatedAt, createdAt)
@@ -50,7 +50,7 @@ var User = vogels.define('User', {
     // }
   }
 });
-exports.User = User;
+exports.Users = Users;
 
 var Statuses = vogels.define('Statuses', {
   hashKey: 'sID',
@@ -155,6 +155,19 @@ var ChatData = vogels.define('ChatData', {
   schema : {
     chatID: vogels.types.uuid(),
     data: Joi.string(),
+    username: Joi.string(),
+  }
+});
+exports.ChatData = ChatData;
+
+var StatusLikes = vogels.define('ChatData', {
+  hashKey: 'sID',
+  rangeKey: 'username',
+
+  timestamps: true,
+
+  schema : {
+    sID: vogels.types.uuid(),
     username: Joi.string(),
   }
 });
