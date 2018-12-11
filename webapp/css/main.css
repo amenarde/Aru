@@ -135,4 +135,9 @@ input:hover {
   display: block;
 }
 
+.error-msg {
+  color: #F1A687;
+  position: relative;
+}
+
 

@@ -8,30 +8,60 @@
 <body>
     <div id="background">
       <div class="modal" id="login">
-        <form action="/verifyOrCreate" method="POST">
+        <% if (signupState) { %>
+           <script>
+              signup = true;
+           </script>
+        <% } %>
+        <form class="signup-hidden" id="signup-form" action="/create" method="POST">
           <div class="logo"></div>
-          <label for="firstname" class="signup-hidden" id="signup-firstname-label">First Name</label>
-          <input class="signup-hidden" type="text" name="firstname" id="signup-firstname">
-          <label for="lastname" class="signup-hidden" id="signup-lastname-label">Last Name</label>
-          <input class="signup-hidden" type="text" name="lastname" id="signup-lastname">
-          <label for="birthday" class="signup-hidden" id="signup-birthday-label">Birthday</label>
-          <input class="signup-hidden" type="date" name="birthday" id="signup-birthday">
-          <label for="affiliation" class="signup-hidden" id="signup-affiliation-label">Affiliation</label>
-          <input class="signup-hidden" type="text" name="affiliation" id="signup-affiliation">
-
+          <label for="firstname" id="signup-firstname-label">First Name</label>
+          <input type="text" name="firstname" id="signup-firstname" required>
+          <label for="lastname" id="signup-lastname-label">Last Name</label>
+          <input type="text" name="lastname" id="signup-lastname" required>
+          <label for="birthday" id="signup-birthday-label">Birthday</label>
+          <input type="date" name="birthday" id="signup-birthday" required>
+          <label for="affiliation" id="signup-affiliation-label">Affiliation</label>
+          <input type="text" name="affiliation" id="signup-affiliation" required>
           <label for="username">Username</label>
-          <input type="text" name="username" id="login-username">
+          <input type="text" name="username" id="login-username" required>
           <label for="password">Password</label>
-          <input type="password" name="password" id="login-password">
+          <input type="password" name="password" id="login-password" required>
+
+          <%if (error != null) { %>
+            <p class="error-msg" id="error-msg"><%= error %></p>
+          <% } %>
+
+          <input type="submit" name="signuppostbtn" value="SIGN UP" class="secondary-btn" id="login-signup-post-btn">
+        </form>
+
+        <form action="/verify" class="login-hidden" id="login-form" method="POST">
+          <div class="logo"></div>
+          <label for="username">Username</label>
+          <input type="text" name="username" id="login-username" required>
+          <label for="password">Password</label>
+          <input type="password" name="password" id="login-password" required>
+
+          <%if (error != null) { %>
+            <p class="error-msg" id="error-msg"><%= error %></p>
+          <% } %>
+
           <input type="submit" name="signupbtn" value="SIGN UP" class="secondary-btn" id="login-signup-btn">
-          <input type="submit" name="signuppostbtn" value="SIGN UP" class="secondary-btn signup-hidden" id="login-signup-post-btn">
           <input type="submit" name="loginbtn" value="LOG IN" class="primary-btn" id="login-login-btn">
         </form>
       </div>
     </div>
   </body>
   <script>
-    $('#login-signup-btn').click(function() {
+    var signup;
+    var missing_fields;
+
+    var goToSignup = function() {
+      $('#login-form').addClass('signup-hidden');
+      $('#signup-form').addClass('signup-shown');
+      $('#signup-form').removeClass('signup-hidden');
+
+/*
       $('#signup-firstname-label').removeClass('signup-hidden')
       $('#signup-firstname-label').addClass('signup-shown').css("opacity", "1")
       $('#signup-firstname').removeClass('signup-hidden')
@@ -50,15 +80,28 @@
       $('#signup-affiliation').addClass('signup-shown')
 
       $('#login-login-btn').addClass('signup-hidden')
+      */
 
       $('#login').css("height","120%")
-
+      /*
       $('#login-signup-btn').addClass('signup-hidden');
       $('#login-signup-btn').removeClass('signup-shown');
       $('#login-signup-post-btn').removeClass('signup-hidden');
       $('#login-signup-post-btn').addClass('signup-shown')
+      */
+    }
+
+    $('#login-signup-btn').click(function() {
+      goToSignup();
+      signup = true;
+      console.log("clicked");
       event.preventDefault();
     })
 
+    $( document ).ready(function() {
+      if (signup) {
+        goToSignup();
+      }
+    });
   </script>
 </html>

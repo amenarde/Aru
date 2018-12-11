@@ -1,63 +1,60 @@
 var db = require('../models/userDB.js');
 
 var getLogin = function(req, res) {
-  res.render('main.ejs', {error: ""});
+  res.render('main.ejs', {error: "", signupState: false, missing: []});
 };
-
-var verifyOrCreate = function(req, res) {
-  if (req.body.loginbtn === "LOG IN") {
-    verifyLogin(req, res);
-  } else {
-    createAccount(req, res);
-  }
-}
 
 var createAccount = function(req, res) {
   var ERROR_MSG = "";
+  var MISSING_FIELDS = [];
 
   var username = req.body.username;
   if (!username) {
-    ERROR_MSG = "No username provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("username");
   }
   var password = req.body.password;
   if (!password) {
-    ERROR_MSG = "No password provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("password");
   }
 
   var firstName = req.body.firstname;
   if (!firstName) {
-    ERROR_MSG = "No firstName provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("firstname");
   }
 
   var lastName = req.body.lastname;
   if (!lastName) {
-    ERROR_MSG = "No lastName provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("lastname");
   }
   // Validate birthday values
   var birthday = req.body.birthday;
   if (!birthday) {
-    ERROR_MSG = "No birthday provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("birthday");
   }
   var affiliation = req.body.affiliation;
   if (!affiliation) {
-    ERROR_MSG = "No affiliation provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("affiliation");
   }
   var permissions = req.body.permissions;
   if (!permissions) {
     permissions = 1;
   }
   if (ERROR_MSG != "") {
-    res.render('main.ejs', {error: ERROR_MSG});
-    console.log("error, with error: " + ERROR_MSG);
+    console.log(ERROR_MSG);
+    res.render('main.ejs', {error: ERROR_MSG, signupState: true, missing: MISSING_FIELDS});
     return;
   }
   db.addUser(username, password, firstName, lastName, birthday, affiliation, permissions, function(data, err) {
     if (err) {
-      console.log("ERROR!!!!");
-      res.render('main.ejs', {error: err});
+      res.render('main.ejs', {error: err, signupState: true, missing: []});
     } else if (data) {
     	req.session.account = data.username;
-      console.log("successfully added");
       res.render('newsfeed.ejs');
     	// Logged in correctly
     }
@@ -66,21 +63,25 @@ var createAccount = function(req, res) {
 
 var verifyLogin = function(req, res) {
   var ERROR_MSG = "";
+  var MISSING_FIELDS = [];
+
   var username = req.body.username;
   if (!username) {
-    ERROR_MSG = "No username provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("username");
   }
   var password = req.body.password;
   if (!password) {
-    ERROR_MSG = "No password provided!";
+    ERROR_MSG = "One or more fields are missing.";
+    MISSING_FIELDS.push("password");
   }
   if (ERROR_MSG != "") {
-    res.render('signup.ejs', {error: ERROR_MSG});
+    res.render('main.ejs', {error: ERROR_MSG, signupState: false, missing: MISSING_FIELDS});
     return;
   }
   db.verifyLogin(username, password, function(data, err) {
     if (err) {
-      res.render('main.ejs', {error: err});
+      res.render('main.ejs', {error: err, signupState: false, missing: []});
     } else if (data) {
     	req.session.account = data.username;
       // Logged in correctly
@@ -96,7 +97,8 @@ var logout = function(req, res) {
 
 var routes = {
   loginOrSignup: getLogin,
-  verifyOrCreate: verifyOrCreate,
+  verify: verifyLogin,
+  create: createAccount,
   logout: logout,
 };
 
