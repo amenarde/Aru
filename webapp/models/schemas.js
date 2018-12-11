@@ -2,7 +2,7 @@ var vogels = require('vogels');
 var Joi = require('joi');
 vogels.AWS.config.loadFromPath('./config.json');
 
-var Friendships = vogels.define('Friendships', {
+var Friendships = vogels.define('Friendship', {
   hashKey : 'user1',
   rangeKey: 'user2',
   // add the timestamp attributes (updatedAt, createdAt)
@@ -16,7 +16,7 @@ var Friendships = vogels.define('Friendships', {
 });
 exports.Friendships = Friendships;
 
-var RecommendedFriends = vogels.define('RecommendedFriends', {
+var RecommendedFriends = vogels.define('RecommendedFriend', {
   hashKey : 'user1',
   rangeKey: 'user2',
   // add the timestamp attributes (updatedAt, createdAt)
@@ -30,7 +30,7 @@ var RecommendedFriends = vogels.define('RecommendedFriends', {
 });
 exports.RecommendedFriends = RecommendedFriends;
 
-var Users = vogels.define('Users', {
+var Users = vogels.define('User', {
   hashKey : 'username',
  
   // add the timestamp attributes (updatedAt, createdAt)
@@ -53,7 +53,21 @@ var Users = vogels.define('Users', {
 });
 exports.Users = Users;
 
-var Statuses = vogels.define('Statuses', {
+var ProfileUpdates = vogels.define('ProfileUpdate', {
+  hashKey: 'username',
+  rangeKey: 'createdAt',
+
+  timestamps : true,
+
+  schema : {
+    username : Joi.string(),
+    type : Joi.string(),
+    value  : Joi.string(),
+  }
+});
+exports.ProfileUpdates = ProfileUpdates;
+
+var Statuses = vogels.define('Statuse', {
   hashKey: 'sID',
 
   timestamps : true,
@@ -67,7 +81,7 @@ var Statuses = vogels.define('Statuses', {
 });
 exports.Statuses = Statuses;
 
-var StatusComments = vogels.define('StatusComments', {
+var StatusComments = vogels.define('StatusComment', {
   hashKey: 'sID',
   rangeKey: 'createdAt',
 
@@ -92,7 +106,7 @@ var Wall = vogels.define('Wall', {
 });
 exports.Wall = Wall;
 
-var Affiliations = vogels.define('Affiliations', {
+var Affiliations = vogels.define('Affiliation', {
   hashKey: 'affiliation',
   rangeKey: 'username',
 
@@ -114,7 +128,7 @@ var Interests2User = vogels.define('Interests2User', {
 });
 exports.Interests2User = Interests2User;
 
-var User2Interests = vogels.define('User2Interests', {
+var User2Interests = vogels.define('User2Interest', {
   hashKey: 'username',
   rangeKey: 'interests',
 
