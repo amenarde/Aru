@@ -1,5 +1,5 @@
 var Heap = require('heap');
-var StatusesDB = require('../models/statusDB.js');
+var PostsDB = require('../models/postsDB.js');
 var FriendshipDB = require('../models/friendsDB.js');
 
 var open = function(req, res) {
@@ -16,64 +16,47 @@ var open = function(req, res) {
 var PAGE_SIZE = 10;
 var getFeedFor = function(req, res) {
     // Get cached values of friends
-    // Get friends of user (async!)
     let username = req.session.account;
     if (!username) {
         res.send({error: "Something went wrong. Please log in again!"});
     } else {
-        constructFeedForUser(username, function(feed, err) {
+        // Get friends of user (async!)
+        getFriends(username, function(friends, err) {
             if (err) {
                 res.send({error: err});
             } else {
-                // Return list
-                res.send({feed: feed});
+                let timestamp = req.body.timestamp; // TODO get index from req
+                // Build the newsfeed from a certain index
+                // Only need one timestep, due to guarantees
+                constructFromTime(friends, timestamp, function(feed, err) {
+                    res.send({feed: feed, error: err});
+                });
             }
         });
     }
 };
 
-function constructFeedForUser(username, callback) {
-    // Get all my friends (async!)
-    FriendshipDB.getFriends(username, function(friends, err) {
-        if (err) {
-            callback(null, err);
-        } else {
-            // Put all values in heap
-            let postsHeap = new Heap(function(a, b) {
-                // Custom comparator for entires
-                if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
-                    return 1
-                } else {
-                    return 0
-                }
-            });
-            // Get entries for each friend
-            let returned = 0;
-            // Get 10 entries for each friend for user (async!)
-            for (let i = 0; i < friends.length; i++) {
-                // Statuses
-                StatusesDB.getLastX(friends[i].get('name2'), PAGE_SIZE, function(res, err) {
-                    if (err) {
-                        // Fail gracefully?
-                    } else {
-                        // Aggregate values
-                        for (let j = 0; j < res.length; i++) {
-                            postsHeap.push(res[i]);
-                        }
-                    }
-                    returned++;
-                    if (returned == friends.length) {
-                        // Evaluate results
-                        constructFeedFromHeap(postHeap, callback);
-                    }
+//used in periodic News Feed refresh
+//e.g. give me posts since this timestamp
+var getFeedSince = function(req, res) {
+    let username = req.session.account;
+    if (!username) {
+        res.send({error: "Something went wrong. Please log in again!"});
+    } else {
+        getFriends(username, function(friends, err) {
+            if (err) {
+                res.send({error: err});
+            } else {
+                let timestamp = req.body.timestamp;
+                constructFromRecent(timestamp, function(feed, err) {
+                    res.send({feed: feed, error: err});
                 });
-                // Updates
-
             }
-        }
-    });
-}
+        });
+    }
+};
 
+// Uses content from heap to build a newsfeed for a user
 function constructFeedFromHeap(postHeap, callback) {
     let feed = [];
     // Pull desired entries from the heap
@@ -84,12 +67,83 @@ function constructFeedFromHeap(postHeap, callback) {
     callback(feed, null);
 }
 
-//used in periodic News Feed refresh
-//e.g. give me posts since this timestamp
-var getFeedSince = function(req, res) {
+// Build the newsfeed from a certain index
+function constructFromTime(friends, timestamp, callback) {
+    // Put all values in heap
+    let postsHeap = new Heap(function(a, b) {
+        // Custom comparator for entires
+        if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
+            return 1
+        } else {
+            return 0
+        }
+    });
+    // Get entries for each friend
+    let returned = 0;
+    // Get 10 entries for each friend for user (async!)
+    for (let i = 0; i < friends.length; i++) {
+        // Posts - only statuses coming after some timestamp
+        PostsDB.getXFromTime(friends[i].get('name2'), timestamp, PAGE_SIZE, function(res, err) {
+            if (err) {
+                // Fail gracefully?
+            } else {
+                // Aggregate values
+                for (let j = 0; j < res.length; i++) {
+                    postsHeap.push(res[i]);
+                }
+            }
+            returned++;
+            if (returned == friends.length) {
+                // Evaluate results
+                constructFeedFromHeap(postHeap, callback);
+            }
+        });
+    }
+}
 
-};
+function constructFromRecent(friends, timestamp, callback) {
+    // Put all values in heap
+    let postsHeap = new Heap(function(a, b) {
+       // Custom comparator for entires
+       if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
+           return 1
+       } else {
+           return 0
+       }
+   });
+   // Get entries for each friend
+   let returned = 0;
+   // Get 10 entries for each friend for user (async!)
+   for (let i = 0; i < friends.length; i++) {
+       // Posts - get all posts after that happened since a time
+       PostsDB.getXSinceTime(friends[i].get('name2'), timestamp, -1, function(res, err) {
+           if (err) {
+               // Fail gracefully?
+           } else {
+               // Aggregate values
+               for (let j = 0; j < res.length; i++) {
+                   postsHeap.push(res[i]);
+               }
+           }
+           returned++;
+           if (returned == friends.length) {
+               // Evaluate results
+               constructFeedFromHeap(postHeap, callback);
+           }
+       });
+   }
+}
 
+function getFriends(username, callback) {
+    // Get all my friends (async!)
+    FriendshipDB.getFriends(username, function(friends, err) {
+        if (err) {
+            callback(null, err);
+        } else {
+            callback(friends, null);
+        }
+    });
+}
 
 var routes = {
   open: open,
