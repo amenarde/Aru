@@ -1,6 +1,7 @@
 var express = require('express');
 var accountController = require('./controllers/accountController.js');
 var newsfeedController = require('./controllers/newsfeedController.js');
+var chatController = require('./controllers/chatController.js')
 var vogels = require('vogels');
 
 var app = express();
@@ -25,6 +26,10 @@ app.get('/newsfeed', newsfeedController.open);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);
+app.post('/createchat', chatController.createChat);
+app.post('/fetchchat', chatController.fetchChat);
+app.post('/postmessage', chatController.postMessage);
+app.get('/chat', chatController.open);
 
 /* Run the server */
 app.listen(8080);

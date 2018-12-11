@@ -134,7 +134,7 @@ function getUsersByChat(chatID, callback) {
 
 function fetchChat(chatID, callback) {
     ChatData.query(chatID).loadAll().exec(function(err, chats){
-        callback(chats);
+        callback(chats, null);
     });
 }
 
@@ -150,13 +150,22 @@ function getChatsByUser(username, callback) {
     });
 }
 
+function userInChat(username, chatID, callback) {
+    Chat2User.get(chatID, username, function(err, data) {
+        if (data != null) {
+            callback(true, null);
+        }
+    })
+}
+
 var database = {
     createChat: createChat,
     deleteChat: deleteChat,
     postToChat: postToChat,
     addUser: addUser,
     removeUser: removeUser,
-    fetchChat: fetchChat
+    fetchChat: fetchChat,
+    userInChat: userInChat
   };
 
   module.exports = database;

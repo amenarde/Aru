@@ -171,7 +171,7 @@ var PostLikes = vogels.define('PostLike', {
 
   schema : {
     pID: vogels.types.uuid(),
-    username: Joi.string(),
+    username: Joi.string()
   }
 });
 exports.PostLikes = PostLikes;
