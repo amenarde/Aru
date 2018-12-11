@@ -1,13 +1,13 @@
 var Schema = require('./schemas.js');
 var async = require('async');
+var userDB = require('./userDB.js');
 
 // Takes in a list of String : username
 function createChat(users, callback) {
 	async.each(users, function(username) {
-        // TODO: remove when userDB implemented
-        // if (!userDB.exists(username)) {
-        //     callback(null, "User does not exist: " + JSON.stringify(user));
-        // }
+         if (!userDB.exists(username)) {
+             callback(null, "User does not exist: " + JSON.stringify(user));
+         }
     }, function () {
         // Look for chat
         async.each(getChatsByUser(users[0]), function(chatID) {
@@ -47,7 +47,7 @@ function createChat(users, callback) {
                     callback(chatID, null);
                 });
             });
-            
+
         });
     });
 }
@@ -57,7 +57,7 @@ function deleteChat(chatID, callback) {
         if (users.length > 1) {
             callback(null, "Cannot delete a chat with more than one member")
         }
-    
+
         Schema.User2Chat.destroy(users[0], chatID, function(err) {
             Schema.Chat2User.destroy(chatID, users[0], function(err){
                 Schema.ChatData.destroy(chatID, function(err){
@@ -73,11 +73,11 @@ function postToChat(chatID, username, data, callback) {
         if (users === null) {
             callback(null, "Chat does not exist");
         }
-    
+
         if (!users.includes(username)) {
             callback(null, "Posting user is not part of chat");
         }
-    
+
         Schema.ChatData.create({chatID: chatID, username: username, data: data}, function(err, chat) {
             callback(true, null);
         });
@@ -89,17 +89,17 @@ function addUser(chatID, username, callback) {
         if (users === null) {
             callback(null, "Chat does not exist");
         }
-    
+
         if (users.includes(username)) {
             callback(null, "User already part of chat");
         }
-    
+
         Schema.Chat2User.create({chatID: chatID, username: username}, function(err, chat) {
             Schema.User2Chat.create({chatID: chatID, username: username}, function(err, chat) {
                 callback(true, null);
             });
         });
-    });    
+    });
 }
 
 function removeUser(chatID, userID) {
@@ -107,11 +107,11 @@ function removeUser(chatID, userID) {
         if (users === null) {
             callback(null, "Chat does not exist");
         }
-    
+
         if (users.includes(username)) {
             callback(null, "User already part of chat");
         }
-    
+
         Schema.Chat2User.create({chatID: chatID, username: username}, function(err, chat) {
             Schema.User2Chat.create({chatID: chatID, username: username}, function(err, chat) {
                 callback(true, null);
@@ -132,6 +132,12 @@ function getUsersByChat(chatID, callback) {
     });
 }
 
+function fetchChat(chatID, callback) {
+    ChatData.query(chatID).loadAll().exec(function(err, chats){
+        callback(chats);
+    });
+}
+
 function getChatsByUser(username, callback) {
     User2Chat.query(username).loadAll().exec(function(err, users){
         chats = [];
@@ -144,8 +150,13 @@ function getChatsByUser(username, callback) {
     });
 }
 
-function fetchChat(chatID, callback) {
-    ChatData.query(chatID).loadAll().exec(function(err, chats){
-        callback(chats);
-    });
-}
+var database = {
+    createChat: createChat,
+    deleteChat: deleteChat,
+    postToChat: postToChat,
+    addUser: addUser,
+    removeUser: removeUser,
+    fetchChat: fetchChat
+  };
+
+  module.exports = database;

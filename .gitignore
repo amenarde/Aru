@@ -80,3 +80,6 @@ typings/
 
 # Config secret
 config.json
+
+# Package lock
+package-lock.json

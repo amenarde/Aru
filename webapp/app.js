@@ -1,6 +1,7 @@
 var express = require('express');
 var accountController = require('./controllers/accountController.js');
 var newsfeedController = require('./controllers/newsfeedController.js');
+var chatTest = require('./test/testChatDB.js')
 
 var app = express();
 
@@ -28,3 +29,4 @@ app.get('/logout', accountController.logout);
 
 app.listen(8080);
 console.log('Server running on port 8080. Now open http://localhost:8080/ in your browser!');
+//chatTest.test();

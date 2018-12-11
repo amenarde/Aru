@@ -8,10 +8,9 @@
    "dependencies": {
       "async": "*",
       "aws-sdk": "*",
-      "dtrace-provider": "^0.8.7",
-      "ejs": "*",
+      "ejs": "^2.6.1",
       "express": "3.3.8",
-      "joi": "*",
+      "joi": "^14.3.0",
       "lru-cache": "*",
       "vogels": "^2.2.0"
    }

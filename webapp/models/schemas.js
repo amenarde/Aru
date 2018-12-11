@@ -1,6 +1,6 @@
 var vogels = require('vogels');
 var Joi = require('joi');
-vogels.AWS.config.loadFromPath('../config.json');
+vogels.AWS.config.loadFromPath('./config.json');
 
 var Friendships = vogels.define('Friendships', {
   hashKey : 'user1',
@@ -38,6 +38,7 @@ var Users = vogels.define('Users', {
  
   schema : {
     username  : Joi.string(),
+    password  : Joi.string(),
     firstName : Joi.string(),
     lastName  : Joi.string(),
     birthday  : Joi.number(),
