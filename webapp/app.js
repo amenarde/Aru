@@ -22,6 +22,7 @@ app.use('/images', express.static(__dirname + '/images'));
 
 app.get('/', accountController.loginOrSignup);
 app.get('/newsfeed', newsfeedController.open);
+app.get('/getFeedFor', newsfeedController.getFeedFor);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);

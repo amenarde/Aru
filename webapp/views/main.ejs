@@ -8,11 +8,6 @@
 <body>
     <div id="background">
       <div class="modal" id="login">
-        <% if (signupState) { %>
-           <script>
-              signup = true;
-           </script>
-        <% } %>
         <form class="signup-hidden" id="signup-form" action="/create" method="POST">
           <div class="logo"></div>
           <label for="firstname" id="signup-firstname-label">First Name</label>
@@ -24,15 +19,15 @@
           <label for="affiliation" id="signup-affiliation-label">Affiliation</label>
           <input type="text" name="affiliation" id="signup-affiliation" required>
           <label for="username">Username</label>
-          <input type="text" name="username" id="login-username" required>
+          <input type="text" name="username" id="signup-username" required>
           <label for="password">Password</label>
-          <input type="password" name="password" id="login-password" required>
+          <input type="password" name="password" id="signup-password" required>
 
           <%if (error != null) { %>
-            <p class="error-msg" id="error-msg"><%= error %></p>
+            <p class="error-msg" id="login-error-msg"><%= error %></p>
           <% } %>
 
-          <input type="submit" name="signuppostbtn" value="SIGN UP" class="secondary-btn" id="login-signup-post-btn">
+          <input type="submit" name="signuppostbtn" value="SIGN UP" class="primary-btn" id="login-signup-post-btn">
         </form>
 
         <form action="/verify" class="login-hidden" id="login-form" method="POST">
@@ -43,10 +38,10 @@
           <input type="password" name="password" id="login-password" required>
 
           <%if (error != null) { %>
-            <p class="error-msg" id="error-msg"><%= error %></p>
+            <p class="error-msg" id="signup-error-msg"><%= error %></p>
           <% } %>
 
-          <input type="submit" name="signupbtn" value="SIGN UP" class="secondary-btn" id="login-signup-btn">
+          <input type="button" name="signupbtn" value="SIGN UP" class="secondary-btn" id="login-signup-btn">
           <input type="submit" name="loginbtn" value="LOG IN" class="primary-btn" id="login-login-btn">
         </form>
       </div>
@@ -60,41 +55,13 @@
       $('#login-form').addClass('signup-hidden');
       $('#signup-form').addClass('signup-shown');
       $('#signup-form').removeClass('signup-hidden');
-
-/*
-      $('#signup-firstname-label').removeClass('signup-hidden')
-      $('#signup-firstname-label').addClass('signup-shown').css("opacity", "1")
-      $('#signup-firstname').removeClass('signup-hidden')
-      $('#signup-firstname').addClass('signup-shown')
-      $('#signup-lastname-label').removeClass('signup-hidden')
-      $('#signup-lastname-label').addClass('signup-shown')
-      $('#signup-lastname').removeClass('signup-hidden')
-      $('#signup-lastname').addClass('signup-shown')
-      $('#signup-birthday-label').removeClass('signup-hidden')
-      $('#signup-birthday-label').addClass('signup-shown')
-      $('#signup-birthday').removeClass('signup-hidden')
-      $('#signup-birthday').addClass('signup-shown')
-      $('#signup-affiliation-label').removeClass('signup-hidden')
-      $('#signup-affiliation-label').addClass('signup-shown')
-      $('#signup-affiliation').removeClass('signup-hidden')
-      $('#signup-affiliation').addClass('signup-shown')
-
-      $('#login-login-btn').addClass('signup-hidden')
-      */
-
+      $('#login-error-msg').addClass('signup-hidden');
       $('#login').css("height","120%")
-      /*
-      $('#login-signup-btn').addClass('signup-hidden');
-      $('#login-signup-btn').removeClass('signup-shown');
-      $('#login-signup-post-btn').removeClass('signup-hidden');
-      $('#login-signup-post-btn').addClass('signup-shown')
-      */
     }
 
     $('#login-signup-btn').click(function() {
       goToSignup();
       signup = true;
-      console.log("clicked");
       event.preventDefault();
     })
 

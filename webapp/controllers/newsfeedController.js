@@ -68,7 +68,7 @@ function constructFeedForUser(username, callback) {
                     }
                 });
                 // Updates
-                
+
             }
         }
     });
