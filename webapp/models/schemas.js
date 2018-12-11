@@ -88,7 +88,7 @@ var Wall = vogels.define('Wall', {
 
   schema  : {
     username  : Joi.string(), // Receiver (who's wall its being posted to)
-    createdAt : Joi.Date(),
+    createdAt : Joi.date(),
     pID : vogels.types.uuid(),
   }
 });
