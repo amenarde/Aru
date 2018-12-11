@@ -53,55 +53,43 @@ var Users = vogels.define('User', {
 });
 exports.Users = Users;
 
-var ProfileUpdates = vogels.define('ProfileUpdate', {
-  hashKey: 'username',
-  rangeKey: 'createdAt',
+var Posts = vogels.define('Post', {
+  hashKey: 'pID',
 
   timestamps : true,
 
   schema : {
-    username : Joi.string(),
-    type : Joi.string(),
-    value  : Joi.string(),
-  }
-});
-exports.ProfileUpdates = ProfileUpdates;
-
-var Statuses = vogels.define('Statuse', {
-  hashKey: 'sID',
-
-  timestamps : true,
-
-  schema : {
-    sID : vogels.types.uuid(),
+    pID : vogels.types.uuid(),
     content : Joi.string(),
     username  : Joi.string(), // Poster
     likes : Joi.number(),
+    type: Joi.string(), // Encodes Status or Update for rendering
   }
 });
-exports.Statuses = Statuses;
+exports.Posts = Posts;
 
-var StatusComments = vogels.define('StatusComment', {
-  hashKey: 'sID',
+var PostComments = vogels.define('PostComment', {
+  hashKey: 'pID',
   rangeKey: 'createdAt',
 
   timestamps: true,
   schema: {
-    sID: vogels.types.uuid(),
+    pID: vogels.types.uuid(),
     username: Joi.string(),
     data: Joi.string(),
     likes: Joi.number(),
   }
 });
-exports.StatusComments = StatusComments;
+exports.PostComments = PostComments;
 
 var Wall = vogels.define('Wall', {
   hashKey : 'username',
-  rangeKey : 'sID',
+  rangeKey: 'createdAt',
 
   schema  : {
     username  : Joi.string(), // Receiver (who's wall its being posted to)
-    sID : vogels.types.uuid(),
+    createdAt : Joi.date(),
+    pID : vogels.types.uuid(),
   }
 });
 exports.Wall = Wall;
@@ -175,16 +163,16 @@ var ChatData = vogels.define('ChatData', {
 });
 exports.ChatData = ChatData;
 
-var StatusLikes = vogels.define('ChatData', {
-  hashKey: 'sID',
+var PostLikes = vogels.define('PostLike', {
+  hashKey: 'pID',
   rangeKey: 'username',
 
   timestamps: true,
 
   schema : {
-    sID: vogels.types.uuid(),
+    pID: vogels.types.uuid(),
     username: Joi.string(),
   }
 });
-exports.ChatData = ChatData;
+exports.PostLikes = PostLikes;
 

@@ -1,7 +1,6 @@
 var schemas = require("./schemas.js");
 var bcrypt = require('bcrypt');
 
-
 function addAffiliation(affiliation, username, callback) {
   schemas.Affiliations.create({
      username: username,
