@@ -2,13 +2,13 @@ var vogels = require('vogels');
 vogels.AWS.config.loadFromPath('../config.json');
 var userDB = require('../models/userDB.js');
 
-// vogels.createTables(function(err) {
-//     if (err) {
-//       console.log('Error creating tables: ', err);
-//     } else {
-//       console.log('Tables has been created');
-//     }
-//   });
+vogels.createTables(function(err) {
+    if (err) {
+      console.log('Error creating tables: ', err);
+    } else {
+      console.log('Tables has been created');
+    }
+  });
 
 userDB.add('amenarde',
            'KGB',

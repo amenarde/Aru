@@ -9,11 +9,37 @@ var getsignup = function(req, res) {
 };
 
 var createaccount = function(req, res) {
-	
-  var username = req.body.username;
-  var password = req.body.password;
-  var fullname = req.body.fullname;
-  db.createaccount(username, password, fullname, function(data, err) {
+  var ERROR_MSG = "";
+  var username = req.get("username");
+  if (!username) {
+    ERROR_MSG = "No username provided!";
+  }
+  var password = req.get("password");
+  if (!password) {
+    ERROR_MSG = "No password provided!";
+  }
+  var lastName = req.get("firstName");
+  if (!lastName) {
+    ERROR_MSG = "No lastName provided!";
+  }
+  // Validate birthday values
+  var birthday = req.get("birthday");
+  if (!birthday) {
+    ERROR_MSG = "No birthday provided!";
+  }
+  var affiliation = req.get("affiliation");
+  if (!affiliation) {
+    ERROR_MSG = "No affiliation provided!";
+  }
+  var permissions = req.get("permissions");
+  if (!permissions) {
+    ERROR_MSG = "No permissions provided!";
+  }
+  if (ERROR_MSG != "") {
+    res.render('signup.ejs', {error: err});
+    return;
+  }
+  db.add(username, password, firstName, lastName, birthday, affiliation, permissions, function(data, err) {
     if (err) {
       res.render('signup.ejs', {error: err});
     } else if (data) {
@@ -24,8 +50,19 @@ var createaccount = function(req, res) {
 };
 
 var verifylogin = function(req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
+  var ERROR_MSG = "";
+  var username = req.get("username");
+  if (!username) {
+    ERROR_MSG = "No username provided!";
+  }
+  var password = req.get("password");
+  if (!password) {
+    ERROR_MSG = "No password provided!";
+  }
+  if (ERROR_MSG != "") {
+    res.render('signup.ejs', {error: err});
+    return;
+  }
   db.verifylogin(username, password, function(data, err) {
     if (err) {
       res.render('main.ejs', {error: err});
