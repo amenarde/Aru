@@ -4,14 +4,6 @@ var getLogin = function(req, res) {
   res.render('main.ejs', {error: ""});
 };
 
-var verifyOrCreate = function(req, res) {
-  if (req.body.loginbtn === "LOG IN") {
-    verifyLogin(req, res);
-  } else {
-    createAccount(req, res);
-  }
-}
-
 var createAccount = function(req, res) {
   var ERROR_MSG = "";
 
@@ -53,7 +45,6 @@ var createAccount = function(req, res) {
   }
   db.addUser(username, password, firstName, lastName, birthday, affiliation, permissions, function(data, err) {
     if (err) {
-      console.log("ERROR!!!!");
       res.render('main.ejs', {error: err});
     } else if (data) {
     	req.session.account = data.username;
@@ -68,14 +59,14 @@ var verifyLogin = function(req, res) {
   var ERROR_MSG = "";
   var username = req.body.username;
   if (!username) {
-    ERROR_MSG = "No username provided!";
+    ERROR_MSG += "No username provided ";
   }
   var password = req.body.password;
   if (!password) {
-    ERROR_MSG = "No password provided!";
+    ERROR_MSG += "No password provided ";
   }
   if (ERROR_MSG != "") {
-    res.render('signup.ejs', {error: ERROR_MSG});
+    res.render('main.ejs', {error: ERROR_MSG});
     return;
   }
   db.verifyLogin(username, password, function(data, err) {
@@ -96,7 +87,8 @@ var logout = function(req, res) {
 
 var routes = {
   loginOrSignup: getLogin,
-  verifyOrCreate: verifyOrCreate,
+  verify: verifyLogin,
+  create: createAccount,
   logout: logout,
 };
 

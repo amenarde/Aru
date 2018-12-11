@@ -12,6 +12,7 @@
       "express": "3.3.8",
       "joi": "^14.3.0",
       "lru-cache": "*",
-      "vogels": "^2.2.0"
+      "vogels": "^2.2.0",
+      "bcrypt": "*"
    }
 }
