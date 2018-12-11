@@ -1,38 +1,58 @@
 <!DOCTYPE html>
-
 <html>
 <head>
- <title>Login</title>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <style type="text/css">
- body {
- padding-top: 40px;
- padding-bottom: 40px;
- background-color: white;
- }
- .login-box {
- max-width: 330px;
- margin: 0 auto;
- }
- .login-box .form-control {
- margin-bottom: 10px;
- }
- </style>
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <script src="js/jquery-3.3.1.min.js"></script>
 </head>
 <body>
- <div class="login-box">
- <h4>Login</h4>
- <p style="color:red;"><%= error %></p>
- <form method="post" action="/checklogin">
- <input type="text" name="username" size="20" class="form-control" placeholder="Username" required="required">
- <input type="text" name="password" size="20" class="form-control" placeholder="Password" required="required" input type="password">
- <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block">
- </form>
-  Don't have an account? <a href="/signup">Signup</a>
-  <br>
-  Antonio Menarde (amenarde)
- </div>
+    <div id="background">
+      <div class="modal" id="login">
+        <form>
+          <div class="logo"></div>
+          <label for="firstname" class="signup-hidden" id="signup-firstname-label">First Name</label>
+          <input class="signup-hidden" type="text" name="firstname" id="signup-firstname">
+          <label for="lastname" class="signup-hidden" id="signup-lastname-label">Last Name</label>
+          <input class="signup-hidden" type="text" name="lastname" id="signup-lastname">
+          <label for="birthday" class="signup-hidden" id="signup-birthday-label">Birthday</label>
+          <input class="signup-hidden" type="date" name="birthday" id="signup-birthday">
+          <label for="affiliation" class="signup-hidden" id="signup-affiliation-label">Affiliation</label>
+          <input class="signup-hidden" type="text" name="affiliation" id="signup-affiliation">
 
-</body>
+          <label for="username">Username</label>
+          <input type="text" name="username" id="login-username">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="login-password">
+          <input type="submit" value="SIGN UP" class="secondary-btn" id="login-signup-btn">
+          <input type="submit" value="LOG IN" class="primary-btn" id="login-login-btn">
+        </form>
+      </div>
+    </div>
+  </body>
+  <script>
+    $('#login-signup-btn').click(function() {
+      $('#signup-firstname-label').removeClass('signup-hidden')
+      $('#signup-firstname-label').addClass('signup-shown').css("opacity", "1")
+      $('#signup-firstname').removeClass('signup-hidden')
+      $('#signup-firstname').addClass('signup-shown')
+      $('#signup-lastname-label').removeClass('signup-hidden')
+      $('#signup-lastname-label').addClass('signup-shown')
+      $('#signup-lastname').removeClass('signup-hidden')
+      $('#signup-lastname').addClass('signup-shown')
+      $('#signup-birthday-label').removeClass('signup-hidden')
+      $('#signup-birthday-label').addClass('signup-shown')
+      $('#signup-birthday').removeClass('signup-hidden')
+      $('#signup-birthday').addClass('signup-shown')
+      $('#signup-affiliation-label').removeClass('signup-hidden')
+      $('#signup-affiliation-label').addClass('signup-shown')
+      $('#signup-affiliation').removeClass('signup-hidden')
+      $('#signup-affiliation').addClass('signup-shown')
+
+      $('#login-login-btn').addClass('signup-hidden')
+
+      $('#login').css("height","120%")
+      event.preventDefault();
+    })
+
+  </script>
 </html>

@@ -1,0 +1,130 @@
+#newsfeed {
+  display: block;
+  position: relative;
+  margin: auto;
+  top: 15%;
+  height: 70%;
+  width: 60%;
+  min-width: 500px;
+  min-height: 450px;
+  margin-bottom: 15vh;
+  color: #6D6D6D;
+}
+
+.modal-content {
+  display: block;
+  position: relative;
+  top: 30px;
+  left: 10%;
+  width: 80%;
+}
+
+.newsfeed-title {
+  display: block;
+  position: relative;
+  letter-spacing: .2rem;
+  font-size: 10px;
+}
+
+.newsfeed-title-bar {
+  border-bottom: 1px solid #AAAAAA;
+  margin-bottom: 30px;
+}
+
+.newsfeed-card {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.newsfeed-prof-pic {
+  height: 35px;
+  width: 40px;
+  background-color: #DADADA;
+  border-radius: 50%;
+}
+
+.newsfeed-card-info {
+  width: 100%;
+  margin-left: 30px;
+  background-color: #F1F1F1;
+}
+
+.newsfeed-user-name {
+  font-size: 10px;
+  position: relative;
+  left: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.newsfeed-clickable {
+  color: #8F6363;
+  cursor: pointer;
+}
+
+.newsfeed-clickable:hover {
+  text-decoration: underline;
+}
+
+.newsfeed-status {
+  position: relative;
+  left: 15px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  width: 90%;
+}
+
+.newsfeed-likes {
+  position: relative;
+  right: 15px;
+  margin-bottom: 15px;
+  margin-right: 15px;
+  font-size: 10px;
+  float: right;
+}
+
+.newsfeed-like {
+  width: 60px;
+  height: 20px;
+  font-size: 10px;
+  text-align: center;
+}
+
+button {
+  float: right;
+  background-color: #F1F1F1;
+  color: #6D6D6D;
+  border: solid 1px #6D6D6D;
+  position: relative;
+  right: 15px;
+  transition: all .2s ease-in-out;
+  margin-bottom: 10px;
+  margin-top: -4px;
+}
+
+button:hover {
+  background-color: #6D6D6D;
+  color: #F1F1F1;
+}
+
+img {
+  max-width:100%;
+  max-height:100%;
+}
+
+.newsfeed-status-update {
+  width: 98%;
+  position: relative;
+  left: 0px;
+  margin-left: 0px;
+}
+
+#newsfeed-status-input {
+  width: 100%;
+  padding-left: 2%;
+  margin-bottom: 10px;
+}
+
+#newsfeed-status-btn {
+  width: 100%;
+}
