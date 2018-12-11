@@ -1,7 +1,7 @@
 var express = require('express');
 var accountController = require('./controllers/accountController.js');
 var newsfeedController = require('./controllers/newsfeedController.js');
-var chatTest = require('./test/testChatDB.js')
+var vogels = require('vogels');
 
 var app = express();
 
@@ -22,11 +22,10 @@ app.use('/images', express.static(__dirname + '/images'));
 
 app.get('/', accountController.loginOrSignup);
 app.get('/newsfeed', newsfeedController.open);
-app.post('/verifyOrCreate', accountController.verifyOrCreate);
+app.post('/verify', accountController.verify);
+app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);
 
 /* Run the server */
-
 app.listen(8080);
 console.log('Server running on port 8080. Now open http://localhost:8080/ in your browser!');
-//chatTest.test();

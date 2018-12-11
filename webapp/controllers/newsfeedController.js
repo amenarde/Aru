@@ -3,7 +3,12 @@ var StatusesDB = require('../models/statusDB.js');
 var FriendshipDB = require('../models/friendsDB.js');
 
 var open = function(req, res) {
-  res.render('newsfeed.ejs', {error: ""});
+  if (req.session.account) {
+    res.render('newsfeed.ejs', {error: ""});
+  }
+  else {
+    res.render('main.ejs', {error: "You must be logged in to see that page."})
+  }
 };
 
 //used in initial News Feed population and older post loading

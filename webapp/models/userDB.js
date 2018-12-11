@@ -1,4 +1,5 @@
 var schemas = require("./schemas.js");
+var bcrypt = require('bcrypt');
 
 function addAffiliation(affiliation, username, callback) {
   schemas.Affiliations.create({
@@ -58,25 +59,30 @@ function addUser(username, password, firstName, lastName, birthday, affiliation,
       callback(null, err);
     } else {
       // Add user to the database
-      schemas.Users.create({
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        password: password,
-        birthday: Number(birthdayString),
-        affiliation: affiliation,
-        permissions: permissions}, {overwrite: false},
-        function(err, user) {
-          if (err) {
-            console.log("USER_DB) Error adding user " + username + "\n" + err);
-            // Delete affiliation we made
-            deleteAffiliation(affiliation, username, callback);
-          } else {
-            console.log("USER_DB) Adding user " + username);
-            callback(user, null);
+
+      bcrypt.hash(password, 5, function(err, hash) {
+        schemas.Users.create({
+          username: username,
+          firstName: firstName,
+          lastName: lastName,
+          password: hash,
+          birthday: Number(birthdayString),
+          affiliation: affiliation,
+          permissions: permissions}, {overwrite: false},
+          function(err, user) {
+            if (err) {
+              console.log("Error adding user " + username + "\n" + err);
+              // Delete affiliation we made
+              deleteAffiliation(affiliation, username, function(err2, data) {
+                callback(null, "Error adding user " + username + "\n" + err);
+              });
+            } else {
+              console.log("USER_DB) Adding user " + username);
+              callback(user, null);
+            }
           }
-        }
-      );
+        );
+      });
     }
   });
 
@@ -192,12 +198,23 @@ function verifyLogin(username, password, callback) {
   schemas.Users.get(username, function(err, user) {
     if (err) {
       callback(null, err);
-    } else {
-      if (user.get("password") === password) {
-        callback(true, null);
-      } else {
-        callback(null, "Passwords don't match!");
-      }
+    }
+    else if (user === null) {
+      callback(null, "User does not exist")
+    } 
+    else {
+      bcrypt.compare(password, user.get('password'), function(err, res) {
+        if (err) {
+          return(null, "Error handling request, try again.");
+        }
+        if(res) {
+         // Passwords match
+         return(username, null);
+        } else {
+         // Passwords don't match
+         return(null, "Invalid password");
+        } 
+      });
     }
   });
 }
