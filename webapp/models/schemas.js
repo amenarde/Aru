@@ -65,7 +65,7 @@ var ProfileUpdates = vogels.define('ProfileUpdate', {
     value  : Joi.string(),
   }
 });
-exports.Statuses = Statuses;
+exports.ProfileUpdates = ProfileUpdates;
 
 var Statuses = vogels.define('Statuse', {
   hashKey: 'sID',
