@@ -71,30 +71,44 @@ function fetch(pID, callback) {
 }
 
 function fetchFromTimeFromUser(username, timestamp, X, callback) {
-    if (X >= 0) {
-        schemas.Wall.query(username)
-        .descending()
-        .where('timestamp').lt(timestamp)
-        .limit(X)
-        .exec(function(err, Posts) {callback(Posts, err)})
+    if (timestamp) {
+        if (X >= 0) {
+            schemas.Wall.query(username)
+            .descending()
+            .where('timestamp').lt(timestamp)
+            .limit(X)
+            .exec(function(err, Posts) {callback(Posts, err)})
+        } else {
+            schemas.Wall.query(username)
+            .descending()
+            .where('timestamp').lt(timestamp)
+            .exec(function(err, Posts) {callback(Posts, err)})
+        }
     } else {
-        schemas.Wall.query(username)
-        .descending()
-        .where('timestamp').lt(timestamp)
-        .exec(function(err, Posts) {callback(Posts, err)})
+        if (X >= 0) {
+            schemas.Wall.query(username)
+            .descending()
+            .limit(X)
+            .exec(function(err, Posts) {callback(Posts, err)})
+        } else {
+            schemas.Wall.query(username)
+            .descending()
+            .exec(function(err, Posts) {callback(Posts, err)})
+        }
     }
+    
 }
 
 function fetchSinceTimeFromUser(username, timestamp, X, callback) {
     if (X >= 0) {
         schemas.Wall.query(username)
-        .ascending()
+        .descending()
         .where('timestamp').gt(timestamp)
         .limit(X)
         .exec(function(err, Posts) {callback(Posts, err)})
     } else {
         schemas.Wall.query(username)
-        .ascending()
+        .descending()
         .where('timestamp').gt(timestamp)
         .exec(function(err, Posts) {callback(Posts, err)})
     }

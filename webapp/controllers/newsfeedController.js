@@ -25,7 +25,7 @@ var getFeedFor = function(req, res) {
             if (err) {
                 res.send({error: err});
             } else {
-                let index = 0; // TODO get index from req
+                let timestamp = req.body.timestamp; // TODO get index from req
                 // Build the newsfeed from a certain index
                 // Only need one timestep, due to guarantees
                 constructFromTime(friends, timestamp, function(feed, err) {
@@ -47,6 +47,7 @@ var getFeedSince = function(req, res) {
             if (err) {
                 res.send({error: err});
             } else {
+                let timestamp = req.body.timestamp;
                 constructFromRecent(timestamp, function(feed, err) {
                     res.send({feed: feed, error: err});
                 });
