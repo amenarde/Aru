@@ -8,7 +8,7 @@
 <body>
     <div id="background">
       <div class="modal" id="login">
-        <form>
+        <form action="/verifyOrCreate" method="POST">
           <div class="logo"></div>
           <label for="firstname" class="signup-hidden" id="signup-firstname-label">First Name</label>
           <input class="signup-hidden" type="text" name="firstname" id="signup-firstname">
@@ -23,8 +23,9 @@
           <input type="text" name="username" id="login-username">
           <label for="password">Password</label>
           <input type="password" name="password" id="login-password">
-          <input type="submit" value="SIGN UP" class="secondary-btn" id="login-signup-btn">
-          <input type="submit" value="LOG IN" class="primary-btn" id="login-login-btn">
+          <input type="submit" name="signupbtn" value="SIGN UP" class="secondary-btn" id="login-signup-btn">
+          <input type="submit" name="signuppostbtn" value="SIGN UP" class="secondary-btn signup-hidden" id="login-signup-post-btn">
+          <input type="submit" name="loginbtn" value="LOG IN" class="primary-btn" id="login-login-btn">
         </form>
       </div>
     </div>
@@ -51,6 +52,11 @@
       $('#login-login-btn').addClass('signup-hidden')
 
       $('#login').css("height","120%")
+
+      $('#login-signup-btn').addClass('signup-hidden');
+      $('#login-signup-btn').removeClass('signup-shown');
+      $('#login-signup-post-btn').removeClass('signup-hidden');
+      $('#login-signup-post-btn').addClass('signup-shown')
       event.preventDefault();
     })
 

@@ -19,11 +19,9 @@ app.use('/images', express.static(__dirname + '/images'));
    between app.get and app.post; normal web requests are GETs, but
    POST is often used when submitting web forms ('method="post"'). */
 
-app.get('/', accountController.login);
-app.get('/signup', accountController.signup);
+app.get('/', accountController.loginOrSignup);
 app.get('/newsfeed', newsfeedController.open);
-app.post('/verifylogin', accountController.verifylogin);
-app.post('/createaccount', accountController.createaccount);
+app.post('/verifyOrCreate', accountController.verifyOrCreate);
 app.get('/logout', accountController.logout);
 
 /* Run the server */

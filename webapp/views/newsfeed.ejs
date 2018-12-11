@@ -49,6 +49,28 @@
     </div>
   </body>
   <script>
+    var refresh = function() {
+      setTimeout(refresh, 10000);
+      updateFeed();
+    }
 
+    $(document).ready(function() {
+      setTimeout(refresh, 10000);
+    });
+
+    //for each user post that we get back (assuming initially finite blob of data on initial route call, we render based on the type it is)
+    var loadFeed = function() {
+      $.get('/getFeedFor', function(data) {
+
+      });
+    }
+
+    var updateFeed = function() {
+      $.get('/getFeedSince', function(data) {
+
+      });
+    }
+
+    window.onLoad = loadFeed();
   </script>
 </html>
