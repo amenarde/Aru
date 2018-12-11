@@ -13,8 +13,8 @@
           <p class="newsfeed-title">NEWSFEED</p>
           <div class="newsfeed-title-bar">
           </div>
-          <form class="newsfeed-status-update">
-            <input class="newsfeed-status-input" type="text" id="newsfeed-status-input" placeholder="What's on your mind, Tiffany?">
+          <form action="/postStatusUpdate" class="newsfeed-status-update" method="POST">
+            <input class="newsfeed-status-input" type="text" id="newsfeed-status-input" placeholder="What's on your mind?" name="statusUpdate">
             <input type="submit" value="SHARE" class="secondary-btn" id="newsfeed-status-btn">
           </form>
 
@@ -56,12 +56,13 @@
 
     $(document).ready(function() {
       setTimeout(refresh, 10000);
+      loadFeed();
     });
 
     //for each user post that we get back (assuming initially finite blob of data on initial route call, we render based on the type it is)
     var loadFeed = function() {
       $.get('/getFeedFor', function(data) {
-
+        console.log("data is: " + data);
       });
     }
 
