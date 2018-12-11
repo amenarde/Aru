@@ -70,6 +70,13 @@ function fetch(sID, callback) {
     })
 }
 
+function fetchLastX(sID, X, callback) {
+    schemas.Statuses.query(sID)
+        .ascending()
+        .limit(X)
+        .exec(callback)
+}
+
 function updateStatusContent(sID, content, callback) {
     schemas.Statuses.update({sID: sID, content: content}, function(err, status) {
         if (err) {
@@ -119,7 +126,7 @@ function updateStatusCommentLikes(sID, poster, numLikes, callback) {
 }
 
 var database = {
-    create: create,
+    createStatus: create,
     addComment: addComment,
     delete: deleteStatus,
     get: fetch,
