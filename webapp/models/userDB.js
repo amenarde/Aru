@@ -1,6 +1,5 @@
 var schemas = require("./schemas.js");
 
-
 function addAffiliation(affiliation, username, callback) {
   schemas.Affiliations.create({
      username: username,
