@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Newsfeed</title>
+  <link rel="stylesheet" type="text/css" href="../css/main.css">
+  <link rel="stylesheet" type="text/css" href="../css/wall.css">
+  <script src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+    <div id="background">
+      <div class="modal" id="wall">
+        <div class="modal-content">
+          <p class="profile-title">NEWSFEED</p>
+          <div class="profile-title-bar"></div>
+          <form action="/postStatusUpdate" class="newsfeed-status-update" method="POST">
+            <input class="newsfeed-status-input" type="text" id="newsfeed-status-input" placeholder="What's on your mind?" name="statusUpdate">
+            <input type="submit" value="SHARE" class="secondary-btn" id="newsfeed-status-btn">
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

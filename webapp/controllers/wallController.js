@@ -34,6 +34,13 @@ function editComment(sID, username, newContent, callback) {
 }
 
 // Get info to display to a user
-function getWallContent() {
-
+var getWallContent = function(req, res) {
+    console.log(req.params);
+    res.render('wall.ejs', {error: ""});
 }
+
+var routes = {
+    openProfile: getWallContent,
+}
+
+module.exports = routes;
