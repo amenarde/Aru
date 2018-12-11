@@ -52,11 +52,7 @@ var createAccount = function(req, res) {
   }
   db.addUser(username, password, firstName, lastName, birthday, affiliation, permissions, function(data, err) {
     if (err) {
-<<<<<<< HEAD
       res.render('main.ejs', {error: err});
-=======
-      res.render('main.ejs', {error: err, signupState: true, missing: []});
->>>>>>> 92a3285978af506318d88b18b55d5c07e2db2121
     } else if (data) {
     	req.session.account = data.username;
       res.render('newsfeed.ejs');
@@ -71,7 +67,6 @@ var verifyLogin = function(req, res) {
 
   var username = req.body.username;
   if (!username) {
-<<<<<<< HEAD
     ERROR_MSG += "No username provided ";
   }
   var password = req.body.password;
@@ -80,18 +75,6 @@ var verifyLogin = function(req, res) {
   }
   if (ERROR_MSG != "") {
     res.render('main.ejs', {error: ERROR_MSG});
-=======
-    ERROR_MSG = "One or more fields are missing.";
-    MISSING_FIELDS.push("username");
-  }
-  var password = req.body.password;
-  if (!password) {
-    ERROR_MSG = "One or more fields are missing.";
-    MISSING_FIELDS.push("password");
-  }
-  if (ERROR_MSG != "") {
-    res.render('main.ejs', {error: ERROR_MSG, signupState: false, missing: MISSING_FIELDS});
->>>>>>> 92a3285978af506318d88b18b55d5c07e2db2121
     return;
   }
   db.verifyLogin(username, password, function(data, err) {

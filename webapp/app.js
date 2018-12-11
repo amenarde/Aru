@@ -26,13 +26,6 @@ app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);
 
-vogels.createTables(function(err) {
-    if (err) {
-        console.log("Error creating tables for app");
-        return;
-    }
-
-    /* Run the server */
-    app.listen(8080);
-    console.log('Server running on port 8080. Now open http://localhost:8080/ in your browser!');
-});
+/* Run the server */
+app.listen(8080);
+console.log('Server running on port 8080. Now open http://localhost:8080/ in your browser!');
