@@ -1,4 +1,5 @@
 var vogels = require('vogels');
+
 vogels.AWS.config.loadFromPath('config.json');
 
 var chatDB = require('../models/chatDB.js')
@@ -42,4 +43,3 @@ module.exports = {
     });
   }
 } 
-
