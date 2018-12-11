@@ -205,14 +205,14 @@ function verifyLogin(username, password, callback) {
     else {
       bcrypt.compare(password, user.get('password'), function(err, res) {
         if (err) {
-          return(null, "Error handling request, try again.");
+          callback(null, "Error handling request, try again.");
         }
         if(res) {
          // Passwords match
-         return(username, null);
+         callback(username, null);
         } else {
          // Passwords don't match
-         return(null, "Invalid password");
+         callback(null, "Invalid password");
         } 
       });
     }
