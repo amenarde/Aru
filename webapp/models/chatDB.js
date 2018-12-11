@@ -4,10 +4,9 @@ var async = require('async');
 // Takes in a list of String : username
 function createChat(users, callback) {
 	async.each(users, function(username) {
-        // TODO: remove when userDB implemented
-        // if (!userDB.exists(username)) {
-        //     callback(null, "User does not exist: " + JSON.stringify(user));
-        // }
+         if (!userDB.exists(username)) {
+             callback(null, "User does not exist: " + JSON.stringify(user));
+         }
     }, function () {
         // Look for chat
         async.each(getChatsByUser(users[0]), function(chatID) {
@@ -132,6 +131,12 @@ function getUsersByChat(chatID, callback) {
     });
 }
 
+function fetchChat(chatID, callback) {
+    ChatData.query(chatID).loadAll().exec(function(err, chats){
+        callback(chats);
+    });
+}
+
 function getChatsByUser(username, callback) {
     User2Chat.query(username).loadAll().exec(function(err, users){
         chats = [];
@@ -144,8 +149,13 @@ function getChatsByUser(username, callback) {
     });
 }
 
-function fetchChat(chatID, callback) {
-    ChatData.query(chatID).loadAll().exec(function(err, chats){
-        callback(chats);
-    });
-}
+var database = { 
+    createChat: createChat,
+    deleteChat: deleteChat,
+    postToChat: postToChat,
+    addUser: addUser,
+    removeUser: removeUser,
+    fetchChat: fetchChat
+  };
+                                          
+  module.exports = database;
