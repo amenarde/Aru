@@ -6,11 +6,13 @@
       "start": "node app.js"
    },
    "dependencies": {
-      "express": "3.3.8",
-      "aws-sdk": "*",
-      "ejs": "*",
       "async": "*",
+      "aws-sdk": "*",
+      "dtrace-provider": "^0.8.7",
+      "ejs": "*",
+      "express": "3.3.8",
+      "joi": "*",
       "lru-cache": "*",
-      "vogels": "*"
+      "vogels": "^2.2.0"
    }
 }
