@@ -1,5 +1,6 @@
 var db = require('../models/userDB.js');
 var FriendshipDB = require("../models/friendsDB.js");
+var PostDB = require("../models/postsDB.js");
 
 var getLogin = function(req, res) {
   res.render('main.ejs', {error: ""});
@@ -107,7 +108,13 @@ function acceptFriendRequest(req, res) {
           if (err) {
             res.send({error: err});
           } else {
-            res.send({friendship: friendship});
+            newFriendship(user, user2, function(post, error) {
+              if (error) {
+                res.send({error: error});
+              } else {
+                res.send({post: post})
+              }
+            });
           }
         });
       } else {
@@ -136,7 +143,7 @@ function issueFriendRequest(req, res) {
   user2 = "amenarde";
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
     console.log("Friends: " + friends);
-    res.send({error: err});
+    res.send({friends: friends, error: err});    
   });
 }
 
@@ -166,14 +173,19 @@ function getFriends(req, res) {
   });
 }
 
+// Tested with hardcoded values worked
 function updateFirstName(req, res) {
   let username = req.session.account;
   let newFirst = req.body.firstName;
+  username = "ptaggs";
+  newFirst = "Lord Admiral Farquad";
   db.updateFirstName(username, newFirst, function(success, err) {
+    console.log("Update first name: " + success);
     if (err) {
       res.send({error: err});
     } else {
       profileUpdate(username, "first name", newFirst, function(success, err) {
+        console.log("Status for update: " + success);
         res.send({error: err, success: success});
       });
     }
@@ -216,7 +228,7 @@ function updateAffiliation(req, res) {
     if (err) {
       res.send({error: err});
     } else {
-      profileUpdate(username, " affiliation ", affiliation, function(success, err) {
+      profileUpdate(username, "affiliation", affiliation, function(success, err) {
         res.send({error: err, success: success});
       });
     }
@@ -251,12 +263,13 @@ function createPost(poster, content, type, receiver, callback) {
   if (!content) { callback(null, "No post data recieved!"); return;}
   if (!receiver) { callback(null, "No receiver provided!"); return;}
   if (!type) { callback(null, "No type provided!"); return;}
-  PostDB.create(poster, content, type, receiver, callback);
+  PostDB.createposts(poster, content, type, receiver, callback);
 }
 
 // Tested - works
 function getAccountInformation(req, res) {
   let username = req.session.account;
+  username = "ptaggs";
   db.get(username, function(user, err) {
     if (err) {
       res.send({error: err});

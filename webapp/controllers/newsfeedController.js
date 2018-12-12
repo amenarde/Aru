@@ -17,11 +17,13 @@ var PAGE_SIZE = 10;
 var getFeedFor = function(req, res) {
     // Get cached values of friends
     let username = req.session.account;
+    username = "ptaggs";
     if (!username) {
         res.send({error: "Something went wrong. Please log in again!"});
     } else {
         // Get friends of user (async!)
         getFriends(username, function(friends, err) {
+            console.log("Got friends: " + friends);
             if (err) {
               console.log("error");
                 res.send({error: err});
@@ -139,7 +141,10 @@ function constructFromRecent(friends, timestamp, callback) {
 
 function getFriends(username, callback) {
     // Get all my friends (async!)
+    console.log("Getting friends for: " + username);
     FriendshipDB.getFriends(username, function(friends, err) {
+        console.log("Friends: " + friends);
+        console.log("Error: " + err);
         if (err) {
             callback(null, err);
         } else {

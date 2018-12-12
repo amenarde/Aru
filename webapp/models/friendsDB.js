@@ -107,21 +107,22 @@ function issueFriendRequest(user1, user2, callback) {
 }
 
 function getFriends(user, callback) {
+    console.log("Querying for friends of: " + user);
     schemas.Friendships.query(user)
     .where('status').equals('confirmed')
-    .exec(callback);
+    .exec(function(err, friends) {callback(friends, err)});
 }
 
 function getPendingRequest(user, callback) {
     schemas.Friendships.query(user)
     .where('status').equals('pending')
-    .exec(callback);
+    .exec(function(err, friends) {callback(friends, err);});
 }
 
 function getIncomingRequest(user, callback) {
     schemas.Friendships.query(user)
     .where('status').equals('incoming')
-    .exec(callback);
+    .exec(function(err, friends) {callback(friends, err)});
 }
 
 function rejectFriendRequest(user, user2, callback) {

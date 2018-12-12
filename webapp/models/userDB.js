@@ -97,6 +97,7 @@ function exists(username, callback) {
   });
 }
 
+// Tested - worked (for well formed inputs)
 function updateFirstName(username, name, callback) {
   schemas.Users.update({username: username, firstName: name}, function (err, user) {
     if (err) {
@@ -108,6 +109,7 @@ function updateFirstName(username, name, callback) {
   });
 }
 
+// Tested - worked (for well formed inputs)
 function updateLastName(username, name, callback) {
   schemas.Users.update({username: username, lastName: name}, function (err, user) {
     if (err) {
@@ -193,6 +195,7 @@ function fetch(username, callback) {
   }
   
   schemas.Users.get(username, function(err, user) {
+    // Need to update birthday
     callback(user, err);
   });
 }
@@ -232,7 +235,7 @@ var database = {
   updateAffiliation: updateAffiliation,
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
-  updateFirstName: updateLastName,
+  updateLastName: updateLastName,
 };
 
 module.exports = database;
