@@ -45,6 +45,10 @@ function likePost(sID, username, callback) {
     // Make sure user hasn't liked this comment before
 }
 
+function unlikePost(sID, username, callback) {
+    
+}
+
 function editPost(sID, username, newContent, callback) {
     // Make sure the user can edit the Post
 }
@@ -113,7 +117,7 @@ function constructFeedFromHeap(postHeap, callback) {
 }
 
 var controller = {
-    getWall: getWallContent,
+    openProfile: getWallContent,
     editComment: editComment,
     editPost: editPost,
     likePost: likePost,
