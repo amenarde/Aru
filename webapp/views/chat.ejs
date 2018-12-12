@@ -12,6 +12,18 @@
     var currentChat = "";
     var socket = io.connect('http://localhost:8080/');
 
+    // Find your chats and populate
+    window.onload = function () {
+        $.post( "/getchats", function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                // TODO
+            }
+        });
+    }
+
     var createChat = function() {
 	var data = {"username": $('input[name="username"]').val(), }
 
@@ -82,6 +94,19 @@
 </script>
 
 <body>
+
+    <p> Your chats </p>
+    <p id="activeChatList"> </p>
+
+    <title id="chatTitle"></title>
+
+    <table style="display:none" id="chatWindow">
+            <tr>
+              <th>username</th>
+              <th>message</th>
+            </tr>
+    </table>
+
     <form method="post" action="javascript:createChat();" id="createChat">
         Who would you like to chat? <input type="text" name="username" placeholder="username" required="required">
         <input type="submit" value="Create Chat">
@@ -90,7 +115,7 @@
     <form style="display:none" id="chat" action="javascript:chat();">
             <input type="text" name="message" placeholder="message" required="required">
             <input type="submit" value="Submit">
-        </form>
+    </form>
 
     <form style="display:none" id="addUser" action="javascript:addUser();">
         Who would you like to add to the chat? <input type="text" name="addusername" placeholder="username" required="required">
@@ -101,13 +126,4 @@
             Who would you like to remove from the chat? <input type="text" name="removeusername" placeholder="username" required="required">
             <input type="submit" value="Remove user">
     </form>
-
-    <title id="chatTitle"></title>
-
-    <table style="display:none" id="chatWindow">
-            <tr>
-              <th>username</th>
-              <th>message</th>
-            </tr>
-    </table>
 </body>>

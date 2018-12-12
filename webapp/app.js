@@ -32,6 +32,7 @@ app.get('/', accountController.loginOrSignup);
 app.post('/createchat', chatController.createChat);
 app.post('/fetchchat', chatController.fetchChat);
 app.post('/postmessage', chatController.postMessage);
+app.post('/getchats', chatController.getChatUsersByUser);
 
 // Account routes
 app.get('/logout', accountController.logout);
@@ -60,6 +61,9 @@ app.get('/updateFirstName', accountController.updateFirstName);
 app.get('/issueFriendRequest', accountController.issueFriendRequest);
 app.get('/acceptFriendRequest', accountController.acceptFriendRequest);
 app.get('/getFriendRequests', accountController.getFriendRequests);
+
+
+
 
 // Magical stuff to allow sessions in socket.io
 // https://stackoverflow.com/questions/25532692/how-to-share-sessions-with-socket-io-1-x-and-express-4-x
