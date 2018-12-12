@@ -93,7 +93,14 @@ function acceptFriendRequest(req, res) {
       if (err) {
           res.send({error: err});
       } else {
-          res.send({friendship: friendship});
+        newFriendship(user, user2, function(success, err) {
+          if (err) {
+            res.send({error: err});
+          } else {
+            res.send({friendship: friendship});
+          }
+        });
+          
       }
   });
 }
@@ -129,6 +136,94 @@ function getFriends(req, res) {
   });
 }
 
+function updateFirstName(req, res) {
+  let username = req.session.account;
+  let newFirst = req.body.firstName;
+  db.updateFirstName(username, newFirst, function(success, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      profileUpdate(username, "first name", newFirst, function(success, err) {
+        res.send({error: err, success: success});
+      });
+    }
+  });
+}
+
+function updateLastName(req, res) {
+  let username = req.session.account;
+  let lastName = req.body.lastName;
+  db.updateLastName(username, lastName, function(success, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      profileUpdate(username, "last name", lastName, function(success, err) {
+        res.send({error: err, success: success});
+      });
+    }
+  });
+}
+
+function updateBirthday(res, res) {
+  let username = req.session.account;
+  let birthday = req.body.birthday;
+  db.updateLastName(username, birthday, function(success, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      profileUpdate(username, " birthday ", birthday, function(success, err) {
+        res.send({error: err, success: success});
+      });
+    }
+  });
+}
+
+// Double check this code
+function updateAffiliation(req, res) {
+  let username = req.session.account;
+  let affiliation = req.body.birthday;
+  db.updateLastName(affiliation, birthday, function(success, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      profileUpdate(username, " affiliation ", affiliation, function(success, err) {
+        res.send({error: err, success: success});
+      });
+    }
+  });
+}
+
+function profileUpdate(username, attribute, value, callback) {
+  // Create a post about it
+  createPost(username, username + " updated " + attribute + " to " + value, "profileUpdate", username, function(success, err) {
+    callback(success, err);  
+  });
+}
+function newFriendship(username, user2, callback) {
+    createPost(username, username + " became friends with " + user2, "newFriendship", user2, function(success, err) {
+      if (err) {
+        console.log("Could not make status for new friendship between " + username + " and " + user2);
+        callback(null, err);
+      } else {
+        // Make a post for the other user as well
+        createPost(user2, user2 + " became friends with " + username, "newFriendship", username, function(success, err) {
+          if (err) {
+            console.log("Friendship status update made for " + username + " but not for " + user2);
+          }
+          callback(success, err);
+        })  
+      }
+    });
+}
+function createPost(poster, content, type, receiver, callback) {
+  // Make sure user is online
+  if (!poster) { callback(null, "Something went wrong. Please log in again."); return;}
+  if (!content) { callback(null, "No post data recieved!"); return;}
+  if (!receiver) { callback(null, "No receiver provided!"); return;}
+  if (!type) { callback(null, "No type provided!"); return;}
+  PostDB.create(poster, content, type, receiver, callback);
+}
+
 var routes = {
   loginOrSignup: getLogin,
   verify: verifyLogin,
@@ -139,6 +234,10 @@ var routes = {
   issueFriendRequest: issueFriendRequest,
   getFriends: getFriends,
   getFriendRequests: getPendingRequest,
+  updateAffiliation: updateAffiliation,
+  updateBirthday: updateBirthday,
+  updateFirstName: updateFirstName,
+  updateLastName: updateLastName
 };
 
 module.exports = routes;

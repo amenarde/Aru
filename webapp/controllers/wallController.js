@@ -1,33 +1,37 @@
 var PostDB = require("../models/postsDB.js");
-
-/*
-TODO
------
-AreFriends
-*/
+var FriendshipDB = require("../models/friendsDB.js");
 
 // Functions for Postes
-function newPost(req, res) {
-    createPost(req.session.username, req.body.post, req.session.receiver, function(success, err) {
-        res.send({error: err});
+function newStatusUpdate(req, res) {
+    createPost(req.session.account, req.body.post, "statusUpdate", req.body.receiver, function(success, err) {
+        res.send({error: err, post: success});
     });
 }
-function createPost(poster, content, receiver, callback) {
-    // Make sure user is online
-    if (!username) { callback(null, "Something went wrong. Please log in again."); }
-    // Make sure use is friends with the person (async)
-    areFriends(poster, receiver, function(result, err) {
+function newFriendPost(req, res) {
+    // Make sure friends with person
+    FriendshipDB.checkFriends(poster, receiver, function(result, err) {
         if (err) {
             callback(null, err);
         } else {
             if (result) {
                 // Create the Post
-                PostDB.create(poster, content, receiver, callback);
+                createPost(req.session.account, req.body.post, "friendPost", req.body.receiver, function(success, err) {
+                    res.send({error: err, post: success});
+                });
             } else {
                 callback(null, "You can't post to non-friends walls. Please don't hack our program :(");
             }
         }
     });
+}
+
+function createPost(poster, content, type, receiver, callback) {
+    // Make sure user is online
+    if (!poster) { callback(null, "Something went wrong. Please log in again."); return;}
+    if (!content) { callback(null, "No post data recieved!"); return;}
+    if (!receiver) { callback(null, "No receiver provided!"); return;}
+    if (!type) { callback(null, "No type provided!"); return;}
+    PostDB.create(poster, content, type, receiver, callback);
 }
 
 function deletePost(sID, wall, callback) {
@@ -124,7 +128,8 @@ var controller = {
     unlikePost: unlikePost,
     addComment: addComment,
     deletePost: deletePost,
-    createPost: newPost,
+    newStatusUpdate: newStatusUpdate,
+    newFriendPost: newFriendPost,
 }
 module.exports = controller;
 
