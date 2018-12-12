@@ -4,50 +4,65 @@ var userDB = require('./userDB.js');
 
 // Takes in a list of String : username
 function createChat(users, callback) {
-	async.each(users, function(username) {
-         if (!userDB.exists(username)) {
-             callback(null, "User does not exist: " + JSON.stringify(user));
-         }
-    }, function () {
+	async.each(users, function(username, completed) {
+        userDB.exists(username, function(data, err) {
+            if (data === false) {
+                callback(null, "User does not exist: " + username);
+            }
+            completed(null);
+        });
+    }, function (err) {
         // Look for chat
-        async.each(getChatsByUser(users[0]), function(chatID) {
 
-            found = true;
+        getChatsByUser(users[0], function(data, err) {
+            async.each(data, function(chatID, completed) {
 
-            getUsersByChat(chatID, function(usersInChat, err) {
-                async.each(usersInChat, function(username) {
-                    if (!users.contains(username)) {
-                        found = false;
-                    }
-                }, function () {
-                    // Found a chat that had everyone, so return that one
-                    if (found === true) {
+                found = true;
+    
+                getUsersByChat(chatID, function(usersInChat, err) {
+                    async.each(usersInChat, function(username, completed) {
+                        if (!users.includes(username)) {
+                            found = false;
+                        }
+                        completed(null);
+                    }, function () {
+                        // Found a chat that had everyone, so return that one
+                        if (found === true) {
+                            callback(chatID, null);
+                        }
+                    });
+                });
+            }, function () {
+    
+                chatID = null;
+                usernameToSkip = "";
+                // Since we didn't find a chat, we make a new one
+                // First we tell the chat about the users, putting the person in defines the chatid
+                Schema.Chat2User.create({username: users[0]}, function(err, chat) {
+                    // Save the newfound chat
+                    chatID = chat.get('chatID');
+                    usernameToSkip = chat.get('username')
+    
+                    // Fill out the Chat tables
+                    async.each(users, function(username, completed) {
+                        if (username != usernameToSkip) {
+                            Schema.Chat2User.create({username: username, chatID: chatID}, function(err, chat) {
+                                Schema.User2Chat.create({username: username, chatID: chatID}, function(err, chat) {
+                                    completed(null);
+                                });
+                            });
+                        }
+                        else {
+                            Schema.User2Chat.create({username: username, chatID: chatID}, function(err, chat) {
+                                completed(null);
+                            });
+                        }
+                    }, function () {
                         callback(chatID, null);
-                    }
+                    });
                 });
+    
             });
-        }, function () {
-
-            chatID = null;
-            usernameToSkip = "";
-            // Since we didn't find a chat, we make a new one
-            // First we tell the chat about the users, putting the person in defines the chatid
-            Schema.Chat2User.create({username: users[0]}, function(err, chat) {
-                // Save the newfound chat
-                chatID = chat.get('ChatID');
-                usernameToSkip = chat.get('username')
-
-                // Fill out the Chat tables
-                async.each(users, function(username) {
-                    if (username != usernameToSkip) {
-                        Schema.Chat2User.create({username: username, chatID: chatID}, function(err, chat) {});
-                    }
-                    Schema.User2Chat.create({username: username, chatID: chatID}, function(err, chat) {});
-                }, function () {
-                    callback(chatID, null);
-                });
-            });
-
         });
     });
 }
@@ -121,33 +136,53 @@ function removeUser(chatID, userID) {
 }
 
 function getUsersByChat(chatID, callback) {
-    Chat2User.query(chatID).loadAll().exec(function(err, chats){
+    Schema.Chat2User.query(chatID).loadAll().exec(function(err, data){
         users = [];
-            // Add usernames to users, return
-            async.each(chats, function(chat) {
-                users.push(chats.get('username'));
-            }, function () {
+
+            if (data.Count === 0) {
+                callback([], null);
+                return;
+            }
+
+            async.each(data.Items, function(chat, completed) {
+                users.push(chat.attrs.username);
+                completed(null); 
+            }, function (err) {
                 callback(users, null);
             });
     });
 }
 
 function fetchChat(chatID, callback) {
-    ChatData.query(chatID).loadAll().exec(function(err, chats){
-        callback(chats);
+    Schema.ChatData.query(chatID).loadAll().exec(function(err, chats){
+        callback(chats, null);
     });
 }
 
 function getChatsByUser(username, callback) {
-    User2Chat.query(username).loadAll().exec(function(err, users){
+    Schema.User2Chat.query(username).loadAll().exec(function(err, data){
         chats = [];
             // Add usernames to users, return
-            async.each(users, function(user) {
-                chats.push(user.get('chatID'));
-            }, function () {
+            if (data.Count === 0) {
+                callback([], null);
+                return;
+            }
+
+            async.each(data.Items, function(user, completed) {
+                chats.push(user.attrs.chatID);
+                completed(null); 
+            }, function (err) {
                 callback(chats, null);
             });
     });
+}
+
+function userInChat(username, chatID, callback) {
+    Schema.Chat2User.get(chatID, username, function(err, data) {
+        if (data != null) {
+            callback(true, null);
+        }
+    })
 }
 
 var database = {
@@ -156,7 +191,8 @@ var database = {
     postToChat: postToChat,
     addUser: addUser,
     removeUser: removeUser,
-    fetchChat: fetchChat
+    fetchChat: fetchChat,
+    userInChat: userInChat
   };
 
   module.exports = database;

@@ -83,3 +83,6 @@ config.json
 
 # Package lock
 package-lock.json
+
+# vscode
+vscode/*

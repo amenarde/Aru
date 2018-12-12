@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <script src="js/jquery-3.3.1.min.js"></script>
+</head>
+
+<script type="text/javascript">
+
+    var currentChat = "";
+
+    var createChat = function() {
+	var data = {"username": $('input[name="username"]').val(), }
+
+        $.post( "/createchat", data, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                currentChat = result.chatid;
+                buildChat();
+            }
+        });
+
+    }
+    
+    var buildChat = function() {
+
+        document.getElementById('createChat').style.display = "none";
+        document.getElementById('chatWindow').style.display = "block";
+        document.getElementById('chat').style.display = "block";
+
+        $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                var chats = result.chats.Items;
+                var table = document.getElementById('chatWindow');
+
+                chats.forEach(chat => {
+                    var row = table.insertRow(0);
+                    row.insertCell(0).innerHTML = chat.username;
+                    row.insertCell(2).innerHTML = chat.data;
+                });
+            }
+        });
+    }
+
+    var addUser = function() {
+
+    }
+
+    var removeUser = function() {
+
+    }
+
+    var chat = function() {
+        var data = {"message": $('input[name="message"]').val(), 
+                    "chatID": currentChat};
+
+        $.post( "/postmessage", data, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                alert("Chat posted");
+            }
+        });
+    }
+	
+
+</script>
+
+<body>
+    <form method="post" action="javascript:createChat();" id="createChat">
+        Who would you like to chat? <input type="text" name="username" placeholder="username" required="required">
+        <input type="submit" value="Create Chat">
+    </form>
+
+    <form style="display:none" id="chat" action="javascript:chat();">
+            <input type="text" name="message" placeholder="message" required="required">
+            <input type="submit" value="Submit">
+        </form>
+
+    <form style="display:none" id="addUser" action="javascript:addUser();">
+        Who would you like to add to the chat? <input type="text" name="addusername" placeholder="username" required="required">
+        <input type="submit" value="Add user">
+    </form>
+
+    <form style="display:none" id="removeUser" action="javascript:removeUser();">
+            Who would you like to remove from the chat? <input type="text" name="removeusername" placeholder="username" required="required">
+            <input type="submit" value="Remove user">
+    </form>
+
+    <title id="chatTitle"></title>
+
+    <table style="display:none" id="chatWindow">
+            <tr>
+              <th>username</th>
+              <th>message</th>
+            </tr>
+    </table>
+</body>>
