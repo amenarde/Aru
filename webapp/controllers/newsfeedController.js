@@ -23,12 +23,15 @@ var getFeedFor = function(req, res) {
         // Get friends of user (async!)
         getFriends(username, function(friends, err) {
             if (err) {
+              console.log("error");
                 res.send({error: err});
             } else {
                 let timestamp = req.body.timestamp; // TODO get index from req
                 // Build the newsfeed from a certain index
                 // Only need one timestep, due to guarantees
+                console.log("timestamp");
                 constructFromTime(friends, timestamp, function(feed, err) {
+                    console.log("here in getFriends" + feed);
                     res.send({feed: feed, error: err});
                 });
             }
@@ -145,10 +148,22 @@ function getFriends(username, callback) {
     });
 }
 
+var postStatusUpdate = function(req, res) {
+  console.log(req.body.statusUpdate);
+  PostsDB.createposts(req.session.account, req.body.statusUpdate, req.session.account, "statusUpdate", function(data, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      console.log("successfully updated");
+    }
+  });
+}
+
 var routes = {
   open: open,
   getFeedFor: getFeedFor,
   getFeedSince: getFeedSince,
+  postStatusUpdate: postStatusUpdate,
 };
 
 module.exports = routes;

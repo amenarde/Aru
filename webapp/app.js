@@ -1,6 +1,7 @@
 var express = require('express');
 var accountController = require('./controllers/accountController.js');
 var newsfeedController = require('./controllers/newsfeedController.js');
+var wallController = require('./controllers/wallController.js');
 var vogels = require('vogels');
 
 var app = express();
@@ -22,9 +23,12 @@ app.use('/images', express.static(__dirname + '/images'));
 
 app.get('/', accountController.loginOrSignup);
 app.get('/newsfeed', newsfeedController.open);
+app.get('/getFeedFor', newsfeedController.getFeedFor);
+app.post('/postStatusUpdate', newsfeedController.postStatusUpdate);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);
+app.get('/user/:username', wallController.openProfile);
 
 /* Run the server */
 app.listen(8080);

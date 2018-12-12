@@ -61,7 +61,8 @@ function getWallContent(req, res) {
     } else {
         // Get friends of user (async!)
         constructFromTime(username, timestamp, function(feed, err) {
-            res.send({feed: feed, error: err});
+            res.render('wall.ejs', {error: err});
+            res.send({feed: feed});
         });
     }
 }
@@ -122,3 +123,4 @@ var controller = {
     createPost: newPost,
 }
 module.exports = controller;
+
