@@ -27,22 +27,39 @@ var chatController = require('./controllers/chatController.js');
 var ioController = chatController.socket(io);
 
 app.get('/', accountController.loginOrSignup);
-app.get('/newsfeed', newsfeedController.open);
-app.get('/getFeedFor', newsfeedController.getFeedFor);
-app.post('/postStatusUpdate', wallController.newStatusUpdate);
-app.post('/verify', accountController.verify);
-app.post('/create', accountController.create);
-app.get('/logout', accountController.logout);
+
+// Chat routes
 app.post('/createchat', chatController.createChat);
 app.post('/fetchchat', chatController.fetchChat);
 app.post('/postmessage', chatController.postMessage);
-app.get('/chat', chatController.open);
+
+// Account routes
+app.get('/logout', accountController.logout);
+app.post('/verify', accountController.verify);
+app.post('/create', accountController.create);
+app.post('/updateLastName', accountController.updateLastName);
+app.post('/updateFirstName', accountController.updateFirstName);
+app.post('/updateBirthday', accountController.updateBirthday);
+app.post('/updateAffiliation', accountController.updateAffiliation);
+
+// Wall routes
 app.get('/user/:username', wallController.openProfile);
-// app.get('/test', accountController.updateFirstName);
-// app.get('/test2', accountController.issueFriendRequest);
-// app.get('/test3', accountController.acceptFriendRequest);
-// app.get('/test4', accountController.openProfile);
-// app.get('/test5', newsfeedController.getFeedFor);
+
+// Newsfeed routes
+app.get('/newsfeed', newsfeedController.open);
+app.get('/getFeedFor', newsfeedController.getFeedFor);
+// app.get('/getFeedSince', newsfeedController.getFeedSince);
+
+// Post Routes
+app.get('/chat', chatController.open);
+app.post('/postStatusUpdate', wallController.newStatusUpdate);
+app.post('/comment', wallController.addComment);
+
+// Friend request routes
+app.get('/updateFirstName', accountController.updateFirstName);
+app.get('/issueFriendRequest', accountController.issueFriendRequest);
+app.get('/acceptFriendRequest', accountController.acceptFriendRequest);
+app.get('/getFriendRequests', accountController.getFriendRequests);
 
 // Magical stuff to allow sessions in socket.io
 // https://stackoverflow.com/questions/25532692/how-to-share-sessions-with-socket-io-1-x-and-express-4-x
