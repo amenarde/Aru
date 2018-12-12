@@ -24,11 +24,15 @@ app.use('/images', express.static(__dirname + '/images'));
 app.get('/', accountController.loginOrSignup);
 app.get('/newsfeed', newsfeedController.open);
 app.get('/getFeedFor', newsfeedController.getFeedFor);
-app.post('/postStatusUpdate', newsfeedController.postStatusUpdate);
+app.post('/postStatusUpdate', wallController.newStatusUpdate);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);
 app.get('/user/:username', wallController.openProfile);
+app.get('/test', accountController.issueFriendRequest);
+app.get('/test2', accountController.acceptFriendRequest);
+app.get('/test3', accountController.rejectFriendRequest);
+app.get('/test4', accountController.removeFriend);
 
 /* Run the server */
 app.listen(8080);

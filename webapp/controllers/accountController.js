@@ -88,37 +88,67 @@ var logout = function(req, res) {
 function acceptFriendRequest(req, res) {
   let user = req.session.account; 
   let user2 = req.body.friender;
-  // user is the person who initia
-  FriendshipDB.acceptRequest(user, user2, function(friendship, err) {
-      if (err) {
-          res.send({error: err});
-      } else {
-        newFriendship(user, user2, function(success, err) {
+  // user2 is the person who initia
+  user2 = "ptaggs";
+  user = "amenarde";
+  // Check if friends
+  FriendshipDB.checkFriendship(user, user2, function(status, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      console.log("Status: " + status);
+      if (status === "confirmed") {
+        res.send({error: "Already friends!"});
+      } else if (status === "incoming") {
+        // Should check if there is pending request
+        FriendshipDB.acceptRequest(user, user2, function(friendship, err) {
+          console.log(err);
+          console.log(friendship);
           if (err) {
             res.send({error: err});
           } else {
             res.send({friendship: friendship});
           }
         });
-          
+      } else {
+        res.send({error: "No friend request incoming!"});
       }
+    }
   });
 }
 
+// Tested - works (for hardcoded values of user and user2)
 function rejectFriendRequest(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
-  FriendshipDB.rejectRequest(user, user2, function() {
+  user = "amenarde";
+  user2 = "ptaggs";
+  FriendshipDB.rejectRequest(user, user2, function(err) {
     res.send({error: err});
   });
 }
 
+// Tested - works (for hardcoded values of user and user2)
 function issueFriendRequest(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
-  FriendshipDB.issueFriendRequest(user, user2, function(friends, err) {
+  user = "ptaggs";
+  user2 = "amenarde";
+  FriendshipDB.friendRequest(user, user2, function(friends, err) {
+    console.log("Friends: " + friends);
     res.send({error: err});
-  })
+  });
+}
+
+function removeFriend(req, res) {
+  let user = req.session.account;
+  let user2 = req.body.friender;
+  user = "ptaggs";
+  user2 = "amenarde";
+  FriendshipDB.removeFriend(user, user2, function(friends, err) {
+    console.log("friend removed - " + err);
+    res.send({error: err});
+  });
 }
 
 function getPendingRequest(req, res) {
@@ -164,7 +194,7 @@ function updateLastName(req, res) {
   });
 }
 
-function updateBirthday(res, res) {
+function updateBirthday(req, res) {
   let username = req.session.account;
   let birthday = req.body.birthday;
   db.updateLastName(username, birthday, function(success, err) {
@@ -224,6 +254,26 @@ function createPost(poster, content, type, receiver, callback) {
   PostDB.create(poster, content, type, receiver, callback);
 }
 
+// Tested - works
+function getAccountInformation(req, res) {
+  let username = req.session.account;
+  db.get(username, function(user, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      // Remove password from the object
+      let userData = {
+        username: user.attrs.username,
+        firstName: user.attrs.firstName,
+        lastName: user.attrs.lastName,
+        affiliation: user.attrs.affiliation,
+        birthday: user.attrs.birthday,
+      }
+      res.send(userData);
+    }
+  })
+}
+
 var routes = {
   loginOrSignup: getLogin,
   verify: verifyLogin,
@@ -237,7 +287,9 @@ var routes = {
   updateAffiliation: updateAffiliation,
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
-  updateLastName: updateLastName
+  updateLastName: updateLastName,
+  openProfile: getAccountInformation,
+  removeFriend: removeFriend,
 };
 
 module.exports = routes;

@@ -1,9 +1,9 @@
-var PostDB = require("../models/postsDB.js");
+var PostDB = require('../models/postsDB.js');
 var FriendshipDB = require("../models/friendsDB.js");
 
 // Functions for Postes
 function newStatusUpdate(req, res) {
-    createPost(req.session.account, req.body.post, "statusUpdate", req.body.receiver, function(success, err) {
+    createPost(req.session.account, req.body.statusUpdate, "statusUpdate", req.session.account, function(success, err) {
         res.send({error: err, post: success});
     });
 }
@@ -31,33 +31,41 @@ function createPost(poster, content, type, receiver, callback) {
     if (!content) { callback(null, "No post data recieved!"); return;}
     if (!receiver) { callback(null, "No receiver provided!"); return;}
     if (!type) { callback(null, "No type provided!"); return;}
-    PostDB.create(poster, content, type, receiver, callback);
+    console.log("Trying to create new entry with  " + poster + " - " + content + " - " + type + " - " + receiver );
+    PostDB.createposts(poster, content, type, receiver, callback);
 }
 
-function deletePost(sID, wall, callback) {
+// Needs sID, wall
+function deletePost(req, res) {
     // Make sure person deleting has permisions (so make sure they made the post)
 
     // Remove the Post
     PostDB.delete(sID, wall, callback);
 }
 
-function addComment(sID, poster, comment, callback) {
+// Needs sID, poster, comment,
+function addComment(req, res) {
     // Make sure user is friends with the poster?
+
 }
 
-function likePost(sID, username, callback) {
+// Needs sID, username
+function likePost(req, res) {
     // Make sure user hasn't liked this comment before
 }
 
-function unlikePost(sID, username, callback) {
+// Needs sID, username
+function unlikePost(req, res) {
     
 }
 
-function editPost(sID, username, newContent, callback) {
+// Needs sID, username, newContent
+function editPost(req, res) {
     // Make sure the user can edit the Post
 }
 
-function editComment(sID, username, newContent, callback) {
+// Needs sID, username, newContent
+function editComment(req, res) {
     // Make sure user can edit the comment
 }
 
