@@ -1,4 +1,5 @@
 var schemas = require("./schemas.js");
+var async = require('async');
 
 // User 1 request accepted, user 2 get new friend
 function acceptFriendRequest(user1, user2, callback) {
@@ -108,21 +109,57 @@ function issueFriendRequest(user1, user2, callback) {
 
 function getFriends(user, callback) {
     console.log("Querying for friends of: " + user);
-    schemas.Friendships.query(user)
-    .where('status').equals('confirmed')
-    .exec(function(err, friends) {callback(friends, err)});
+    schemas.Friendships.query(user).usingIndex('StatusIndex')
+    .where('status').equals('confirmed').loadAll()
+    .exec(function(err, friends) {
+        if (err) {
+            callback(null, err);
+        } else {
+            var friendNames = [];
+            async.each(friends.Items, function(friend, completed) {
+                friendNames.push(friend.attrs.user2);
+                completed(null); 
+            }, function (err) {
+                callback(friendNames, null);
+            });
+        }
+    });
 }
 
 function getPendingRequest(user, callback) {
-    schemas.Friendships.query(user)
-    .where('status').equals('pending')
-    .exec(function(err, friends) {callback(friends, err);});
+    schemas.Friendships.query(user).usingIndex('StatusIndex')
+    .where('status').equals('pending').loadAll()
+    .exec(function(err, friends) {
+        if (err) {
+            callback(null, err);
+        } else {
+            var friendNames = [];
+            async.each(friends.Items, function(friend, completed) {
+                friendNames.push(friend.attrs.user2);
+                completed(null); 
+            }, function (err) {
+                callback(friendNames, null);
+            });
+        }
+    });
 }
 
 function getIncomingRequest(user, callback) {
-    schemas.Friendships.query(user)
-    .where('status').equals('incoming')
-    .exec(function(err, friends) {callback(friends, err)});
+    schemas.Friendships.query(user).usingIndex('StatusIndex')
+    .where('status').equals('incoming').loadAll()
+    .exec(function(err, friends) {
+        if (err) {
+            callback(null, err);
+        } else {
+            var friendNames = [];
+            async.each(friends.Items, function(friend, completed) {
+                friendNames.push(friend.attrs.user2);
+                completed(null); 
+            }, function (err) {
+                callback(friendNames, null);
+            });
+        }
+    });
 }
 
 function rejectFriendRequest(user, user2, callback) {

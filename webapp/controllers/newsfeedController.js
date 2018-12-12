@@ -23,23 +23,44 @@ var getFeedFor = function(req, res) {
     } else {
         // Get friends of user (async!)
         getFriends(username, function(friends, err) {
-            console.log("Got friends: " + friends);
+            console.log("Got friends: ");
+            console.log(friends);
             if (err) {
               console.log("error");
                 res.send({error: err});
             } else {
                 let timestamp = req.body.timestamp; // TODO get index from req
+                friends.push(username);
                 // Build the newsfeed from a certain index
                 // Only need one timestep, due to guarantees
-                console.log("timestamp");
-                constructFromTime(friends, timestamp, function(feed, err) {
-                    console.log("here in getFriends" + feed);
-                    res.send({feed: feed, error: err});
+                constructFromTime(friends, timestamp, function(feedIDs, err) {
+                    // Convert ids into actual newsfeed with posts and comments
+                    if (err) {
+                        res.send({error: err});
+                    } else {
+                        console.log("Constructing feed from: ");
+                        console.log(feedIDs);
+                        constructFeedFromIDs(feedIDs, function(feed, err) {
+                            res.send({feed: feed, error: err});
+                        });
+                    }
                 });
             }
         });
     }
 };
+
+function constructFeedFromIDs(feedIDs, callback) {
+    // Pull ID out of object
+    postData = [];
+    for (let i = 0; i < feedIDs.length; i++) {
+        postData.push({pID: feedIDs[i].pID, receiver: feedIDs[i].username});
+    }
+    // Find the posts, comments and return them
+    PostsDB.getPosts(postData, function(feed, error) {
+        callback(feed, error);
+    });
+}
 
 //used in periodic News Feed refresh
 //e.g. give me posts since this timestamp
@@ -66,6 +87,9 @@ function constructFeedFromHeap(postHeap, callback) {
     let feed = [];
     // Pull desired entries from the heap
     for (let i = 0; i < PAGE_SIZE; i++) {
+        if (postHeap.empty()) {
+            break;
+        }
         feed.push(postHeap.pop());
     }
     // Return list
@@ -77,7 +101,7 @@ function constructFromTime(friends, timestamp, callback) {
     // Put all values in heap
     let postsHeap = new Heap(function(a, b) {
         // Custom comparator for entires
-        if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
+        if (new Date(a.createdAt) > new Date(b.createdAt)) {
             return 1
         } else {
             return 0
@@ -88,19 +112,19 @@ function constructFromTime(friends, timestamp, callback) {
     // Get 10 entries for each friend for user (async!)
     for (let i = 0; i < friends.length; i++) {
         // Posts - only statuses coming after some timestamp
-        PostsDB.getXFromTime(friends[i].get('name2'), timestamp, PAGE_SIZE, function(res, err) {
+        PostsDB.getXFromTime(friends[i], timestamp, PAGE_SIZE, function(posts, err) {
             if (err) {
                 // Fail gracefully?
             } else {
                 // Aggregate values
-                for (let j = 0; j < res.length; i++) {
-                    postsHeap.push(res[i]);
+                for (let j = 0; j < posts.length; j++) {
+                    postsHeap.push(posts[j]);
                 }
             }
             returned++;
             if (returned == friends.length) {
                 // Evaluate results
-                constructFeedFromHeap(postHeap, callback);
+                constructFeedFromHeap(postsHeap, callback);
             }
         });
     }
@@ -110,7 +134,7 @@ function constructFromRecent(friends, timestamp, callback) {
     // Put all values in heap
     let postsHeap = new Heap(function(a, b) {
        // Custom comparator for entires
-       if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
+       if (new Date(a.createdAt) > new Date(b.createdAt)) {
            return 1
        } else {
            return 0
@@ -121,19 +145,19 @@ function constructFromRecent(friends, timestamp, callback) {
    // Get 10 entries for each friend for user (async!)
    for (let i = 0; i < friends.length; i++) {
        // Posts - get all posts after that happened since a time
-       PostsDB.getXSinceTime(friends[i].get('name2'), timestamp, -1, function(res, err) {
+       PostsDB.getXSinceTime(friends[i], timestamp, -1, function(posts, err) {
            if (err) {
                // Fail gracefully?
            } else {
                // Aggregate values
-               for (let j = 0; j < res.length; i++) {
-                   postsHeap.push(res[i]);
+               for (let j = 0; j < posts.length; j++) {
+                   postsHeap.push(posts[j]);
                }
            }
            returned++;
            if (returned == friends.length) {
                // Evaluate results
-               constructFeedFromHeap(postHeap, callback);
+               constructFeedFromHeap(postsHeap, callback);
            }
        });
    }

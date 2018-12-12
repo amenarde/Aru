@@ -90,8 +90,6 @@ function acceptFriendRequest(req, res) {
   let user = req.session.account; 
   let user2 = req.body.friender;
   // user2 is the person who initia
-  user2 = "ptaggs";
-  user = "amenarde";
   // Check if friends
   FriendshipDB.checkFriendship(user, user2, function(status, err) {
     if (err) {
@@ -128,8 +126,6 @@ function acceptFriendRequest(req, res) {
 function rejectFriendRequest(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
-  user = "amenarde";
-  user2 = "ptaggs";
   FriendshipDB.rejectRequest(user, user2, function(err) {
     res.send({error: err});
   });
@@ -139,8 +135,6 @@ function rejectFriendRequest(req, res) {
 function issueFriendRequest(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
-  user = "ptaggs";
-  user2 = "amenarde";
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
     console.log("Friends: " + friends);
     res.send({friends: friends, error: err});    
@@ -150,8 +144,6 @@ function issueFriendRequest(req, res) {
 function removeFriend(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
-  user = "ptaggs";
-  user2 = "amenarde";
   FriendshipDB.removeFriend(user, user2, function(friends, err) {
     console.log("friend removed - " + err);
     res.send({error: err});
@@ -161,7 +153,7 @@ function removeFriend(req, res) {
 function getPendingRequest(req, res) {
   let user = req.session.account;
   FriendshipDB.getPending(user, function(pending, err) {
-    res.send({error: err});
+    res.send({error: err, pending: pending});
   });
 }
 
@@ -177,8 +169,6 @@ function getFriends(req, res) {
 function updateFirstName(req, res) {
   let username = req.session.account;
   let newFirst = req.body.firstName;
-  username = "ptaggs";
-  newFirst = "Lord Admiral Farquad";
   db.updateFirstName(username, newFirst, function(success, err) {
     console.log("Update first name: " + success);
     if (err) {
@@ -237,7 +227,7 @@ function updateAffiliation(req, res) {
 
 function profileUpdate(username, attribute, value, callback) {
   // Create a post about it
-  createPost(username, username + " updated " + attribute + " to " + value, "profileUpdate", username, function(success, err) {
+  createPost(username, attribute + " to " + value, "profileUpdate", username, function(success, err) {
     callback(success, err);  
   });
 }
@@ -269,7 +259,6 @@ function createPost(poster, content, type, receiver, callback) {
 // Tested - works
 function getAccountInformation(req, res) {
   let username = req.session.account;
-  username = "ptaggs";
   db.get(username, function(user, err) {
     if (err) {
       res.send({error: err});

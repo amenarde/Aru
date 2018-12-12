@@ -12,7 +12,10 @@ var Friendships = vogels.define('Friendship', {
     user1   : Joi.string(), // hash key
     user2   : Joi.string(), // Need to make sort keu
     status  : Joi.string(), // Outgoing, Incoming, Friend
-  }
+  },
+  indexes : [{
+    hashKey : 'user1', rangeKey : 'status', type : 'local', name : 'StatusIndex'
+  }]
 });
 exports.Friendships = Friendships;
 
@@ -134,7 +137,7 @@ var Chat2User = vogels.define('Chat2User', {
   schema : {
     chatID: vogels.types.uuid(),
     username: Joi.string(),
-  }
+  },
 });
 exports.Chat2User = Chat2User;
 

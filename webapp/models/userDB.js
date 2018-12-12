@@ -224,6 +224,10 @@ function verifyLogin(username, password, callback) {
   });
 }
 
+function findUsersStartingWith(prefix, callback) {
+
+}
+
 var database = {
   addUser: addUser,
   get: fetch,

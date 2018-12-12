@@ -1,5 +1,6 @@
 var schemas = require("./schemas.js");
 var dbName = "posts_DB";
+var async = require('async');
 
 function create(poster, content, type, receiver, callback) {
     // Create the posts
@@ -72,30 +73,95 @@ function fetch(pID, callback) {
     })
 }
 
+function getPosts(postData, callback) {
+    var postList = [];
+    console.log("Post data: ");
+    console.log(postData);
+    async.each(postData, function(data, completed) {
+        // Request the data
+        console.log("Asked to fetch");
+        console.log(data);
+        fetch(data.pID, function(post, err) {
+            if (err) {
+                completed(err);
+            } else {
+                post.attrs.receiver = data.receiver;
+                postList.push(post.attrs);
+                completed(null);
+            }
+        });
+    }, function (err) {
+        console.log("Returning posts");
+        console.log(postList);
+        callback(postList, null);
+    });
+}
+
+function collectPostData(posts, callback) {
+    var postList = [];
+    // This isn't async?
+    async.each(posts.Items, function(post, completed) {
+        postList.push(post.attrs);
+        completed(null); 
+    }, function (err) {
+        console.log("Returning collected posts");
+        console.log(postList);
+        callback(postList, null);
+    });
+}
+
 function fetchFromTimeFromUser(username, timestamp, X, callback) {
     if (timestamp) {
         if (X >= 0) {
             schemas.Wall.query(username)
             .descending()
-            .where('timestamp').lt(timestamp)
+            .where('createdAt').lt(timestamp)
             .limit(X)
-            .exec(function(err, Posts) {callback(Posts, err)})
+            .loadAll()
+            .exec(function(err, posts) {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    collectPostData(posts, callback);
+                }
+            });
         } else {
             schemas.Wall.query(username)
             .descending()
-            .where('timestamp').lt(timestamp)
-            .exec(function(err, Posts) {callback(Posts, err)})
+            .where('createdAt').lt(timestamp)
+            .loadAll()
+            .exec(function(err, posts) {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    collectPostData(posts, callback);
+                }
+            });
         }
     } else {
         if (X >= 0) {
             schemas.Wall.query(username)
             .descending()
             .limit(X)
-            .exec(function(err, Posts) {callback(Posts, err)})
+            .loadAll()
+            .exec(function(err, posts) {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    collectPostData(posts, callback);
+                }
+            });
         } else {
             schemas.Wall.query(username)
             .descending()
-            .exec(function(err, Posts) {callback(Posts, err)})
+            .loadAll()
+            .exec(function(err, posts) {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    collectPostData(posts, callback);
+                }
+            });
         }
     }
     
@@ -105,14 +171,26 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
     if (X >= 0) {
         schemas.Wall.query(username)
         .descending()
-        .where('timestamp').gt(timestamp)
+        .where('createdAt').gt(timestamp)
         .limit(X)
-        .exec(function(err, Posts) {callback(Posts, err)})
+        .exec(function(err, posts) {
+            if (err) {
+                callback(null, err);
+            } else {
+                collectPostData(posts, callback);
+            }
+        });
     } else {
         schemas.Wall.query(username)
         .descending()
-        .where('timestamp').gt(timestamp)
-        .exec(function(err, Posts) {callback(Posts, err)})
+        .where('createdAt').gt(timestamp)
+        .exec(function(err, posts) {
+            if (err) {
+                callback(null, err);
+            } else {
+                collectPostData(posts, callback);
+            }
+        });
     }
 }
 
@@ -169,8 +247,9 @@ var database = {
     addComment: addComment,
     delete: deleteposts,
     get: fetch,
-    getFromTime: fetchFromTimeFromUser,
-    getSinceTime: fetchSinceTimeFromUser,
+    getPosts: getPosts,
+    getXFromTime: fetchFromTimeFromUser,
+    getXSinceTime: fetchSinceTimeFromUser,
     updatepostsLikes: updatepostsLikes,
     updatepostsContent: updatepostsContent,
     updatepostsCommentLikes: updatepostsCommentLikes,
