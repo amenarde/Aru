@@ -8,18 +8,24 @@ function getNewsfeed(attachPoint, offset) {
         // For each entry create a post div
         for (let i = 0; i < feed.length; i++) {
             let div = null;
-            console.log("Type: " + feed[i].type);
-            console.log(feed[i]);
-            if (feed.type === "newFriendship") {
-
-            } else if (feed.type === "statusUpdate") {
-
-            } else if (feed.type === "friendPost") {
-
-            } else if (feed.type === "profileUpdate") {
-                
-            }
-            switch(feed.type) {
+            // console.log("Type: " + feed[i].type);
+            // console.log(feed[i]);
+            // if (feed[i].type === "newFriendship") {
+            //     console.log("newFriendship");
+            //     div = createNewFriendship(feed[i]);
+            //     console.log(div);
+            // } else if (feed[i].type === "statusUpdate") {
+            //     console.log("newFriendship");
+            //     div = createStatusUpdate(feed[i]);
+            //     console.log(div);
+            // } else if (feed[i].type === "friendPost") {
+            //     div = createFriendPost(feed[i]);
+            //     console.log(div);
+            // } else if (feed[i].type === "profileUpdate") {
+            //     div = createProfileUpdate(feed[i]);
+            //     console.log(div);
+            // }
+            switch(feed[i].type) {
                 case "newFriendship":
                     div = createNewFriendship(feed[i]);
                     console.log(div);
@@ -37,7 +43,7 @@ function getNewsfeed(attachPoint, offset) {
                     console.log(div);
                     break;
             }
-            console.log(div);
+            console.log("End: " + div);
             if (div) {
                 attachPoint.appendChild(div);
             }
