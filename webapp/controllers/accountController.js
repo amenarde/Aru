@@ -111,18 +111,22 @@ function rejectFriendRequest(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
   FriendshipDB.rejectRequest(user, user2, function() {
-
+    res.send({error: err});
   });
 }
 
 function issueFriendRequest(req, res) {
   let user = req.session.account;
+  let user2 = req.body.friender;
+  FriendshipDB.issueFriendRequest(user, user2, function(friends, err) {
+    res.send({error: err});
+  })
 }
 
 function getPendingRequest(req, res) {
   let user = req.session.account;
   FriendshipDB.getPending(user, function(pending, err) {
-    res.send({pendingRequests: pending, error: err});
+    res.send({error: err});
   });
 }
 
