@@ -66,6 +66,33 @@ function addComment(pID, username, comment, callback) {
     });
 }
 
+function deleteComment(pID, createdAt, callback) {
+    schemas.PostComments.destroy(pID, createdAt, function(err) {
+        if (err) {
+            console.log("PostCommentsDB) Failed to delete comment\n" + err);
+        }
+        callback(err);
+    });
+}
+
+function getCommentsForPost(pID, callback) {
+    var commentList = [];
+    schemas.PostComments.query(pID)
+    .descending().loadAll()
+    .exec(function(err, comments) {
+        if (err) {
+            callback(null, err);
+        } else {
+            async.each(comments.Items, function(comment, completed) {
+                commentList.push(comment.attrs);
+                completed(null); 
+            }, function (err) {
+                callback(commentList, null);
+            });
+        }
+    });
+}
+
 function fetch(pID, callback) {
     schemas.Posts.get(pID, function(err, posts) {
         console.log(dbName + ") getting " + pID);
@@ -73,6 +100,7 @@ function fetch(pID, callback) {
     })
 }
 
+// Returns a post and its comments
 function getPosts(postData, callback) {
     var postList = [];
     console.log("Post data: ");
@@ -87,7 +115,15 @@ function getPosts(postData, callback) {
             } else {
                 post.attrs.receiver = data.receiver;
                 postList.push(post.attrs);
-                completed(null);
+                // Now get comments for the post
+                getCommentsForPost(data.pID, function(comments, err) {
+                    if (err) {
+                        completed(err);
+                    }  else {
+                        post.attrs.comments = comments;
+                        completed(null);
+                    }
+                });
             }
         });
     }, function (err) {
@@ -97,6 +133,7 @@ function getPosts(postData, callback) {
     });
 }
 
+// Aggregates the items into list of just attributes
 function collectPostData(posts, callback) {
     var postList = [];
     // This isn't async?

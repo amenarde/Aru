@@ -34,11 +34,11 @@ app.post('/fetchchat', chatController.fetchChat);
 app.post('/postmessage', chatController.postMessage);
 app.get('/chat', chatController.open);
 app.get('/user/:username', wallController.openProfile);
-app.get('/test', accountController.updateFirstName);
-app.get('/test2', accountController.issueFriendRequest);
-app.get('/test3', accountController.acceptFriendRequest);
-app.get('/test4', accountController.openProfile);
-app.get('/test5', newsfeedController.getFeedFor);
+// app.get('/test', accountController.updateFirstName);
+// app.get('/test2', accountController.issueFriendRequest);
+// app.get('/test3', accountController.acceptFriendRequest);
+// app.get('/test4', accountController.openProfile);
+// app.get('/test5', newsfeedController.getFeedFor);
 
 /* Run the server */
 app.listen(8080);

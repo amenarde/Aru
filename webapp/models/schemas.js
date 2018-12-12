@@ -79,7 +79,7 @@ var PostComments = vogels.define('PostComment', {
   schema: {
     pID: vogels.types.uuid(),
     username: Joi.string(),
-    data: Joi.string(),
+    content: Joi.string(),
     likes: Joi.number(),
   }
 });
