@@ -38,6 +38,8 @@ app.post('/fetchchat', chatController.fetchChat);
 app.post('/postmessage', chatController.postMessage);
 app.get('/chat', chatController.open);
 app.get('/user/:username', wallController.openProfile);
+app.post('/getchats', chatController.getChatUsersByUser)
+
 // app.get('/test', accountController.updateFirstName);
 // app.get('/test2', accountController.issueFriendRequest);
 // app.get('/test3', accountController.acceptFriendRequest);

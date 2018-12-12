@@ -67,6 +67,21 @@ function createChat(users, callback) {
     });
 }
 
+function getChatUsersByUser(username, callback) {
+    var chats = [];
+    
+    getChatsByUser(username, function(data, err) {
+        async.each(data, function(chatID, completed) {
+            getUsersByChat(chatID, function(usersInChat, err) {
+                chats.push(usersInChat);
+                completed(null);
+            });
+        }, function (err) {
+            callback(chats, null);
+        });
+    });
+}
+
 function deleteChat(chatID, callback) {
     getUsersByChat(chatID, function(users, err) {
         if (users.length > 1) {
@@ -192,7 +207,8 @@ var database = {
     addUser: addUser,
     removeUser: removeUser,
     fetchChat: fetchChat,
-    userInChat: userInChat
+    userInChat: userInChat,
+    getChatUsersByUser: getChatUsersByUser
   };
 
   module.exports = database;
