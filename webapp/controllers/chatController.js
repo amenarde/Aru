@@ -78,11 +78,55 @@ function removeUser(chatID, userID) {
 	// Check whether or not to delete chat if empty
 }
 
+function ioPostMessage(username, chatID, message, callback) {
+	chatDB.userInChat(username, chatID, function(data, err) {
+		if(data === true) {
+			chatDB.postToChat(chatID, username, message, function(data, err) {
+				if(err) {
+					callback(false, err);
+				}
+
+				callback(true, null);
+			});
+		}
+	});
+}
+
+
+
+// Chat sockets
+
+function socketFunc(io) {
+	io.on('connection', (socket) => {
+		// when the client emits 'post message', this listens and executes
+		socket.on('post message', (data) => {
+		  // we tell the client to execute 'new message'
+		  ioPostMessage(socket.handshake.session.account, data.chatID, data.message, function(success, err) {
+			  if (success === true) {
+				  io.in(data.chatID).emit('new message', {
+					  username: socket.handshake.session.account,
+					  message: data.message
+				  });
+			  }
+		  });
+		});
+	  
+		socket.on('join room', (chatID) => {
+		  chatDB.userInChat(socket.handshake.session.account, chatID, function(data, err) {
+			  if(data === true) {
+				  socket.join(chatID);
+			  }
+		  });
+		});
+	  });
+}
+
 var routes = {
 	createChat: createChat,
 	fetchChat: fetchChat,
 	postMessage: postToChat,
-	open: open
+	open: open,
+	socket: socketFunc
   };
   
   module.exports = routes;
