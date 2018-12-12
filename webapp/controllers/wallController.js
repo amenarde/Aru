@@ -79,21 +79,28 @@ function getAccountInformation(req, res) {
       res.send({error: err});
     } else {
       // Remove password from the object
-      let userData = {
-        username: user.attrs.username,
-        firstName: user.attrs.firstName,
-        lastName: user.attrs.lastName,
-        affiliation: user.attrs.affiliation,
-        birthday: user.attrs.birthday,
+      console.log("Got user");
+      console.log(user);
+      if (user) {
+        let userData = {
+            username: user.attrs.username,
+            firstName: user.attrs.firstName,
+            lastName: user.attrs.lastName,
+            affiliation: user.attrs.affiliation,
+            birthday: user.attrs.birthday,
+          }
+          let timestamp = req.body.timestamp;
+          getWallContent(username, timestamp, function(feed, err) {
+            if (err) {
+                res.send({error: err});
+            } else {
+                res.render('wall.ejs', {error: err, userData : userData, wallContent: feed});
+            }
+          });
+      } else {
+          callback(null, "No user found for " + username);
       }
-      let timestamp = req.body.timestamp;
-      getWallContent(username, timestamp, function(feed, err) {
-        if (err) {
-            res.send({error: err});
-        } else {
-            res.render('wall.ejs', {error: err, userData : userData, wallContent: feed});
-        }
-      });
+      
     }
   })
 }
@@ -110,6 +117,7 @@ function getWallContent(username, timestamp, callback) {
     }
 }
 
+let PAGE_SIZE = 10;
 // Build the newsfeed from a certain index
 function constructFromTime(username, timestamp, callback) {
     // Put all values in heap
@@ -123,25 +131,21 @@ function constructFromTime(username, timestamp, callback) {
     });
     // Get entries for each friend
     let returned = 0;
-    // Get 10 entries for each friend for user (async!)
-    for (let i = 0; i < friends.length; i++) {
-        // Posts - only statuses coming after some timestamp
-        PostsDB.getXFromTime(username, timestamp, PAGE_SIZE, function(res, err) {
-            if (err) {
-                // Fail gracefully?
-            } else {
-                // Aggregate values
-                for (let j = 0; j < res.length; i++) {
-                    postsHeap.push(res[i]);
-                }
+    // Posts - only statuses coming after some timestamp
+    PostDB.getXFromTime(username, timestamp, PAGE_SIZE, function(posts, err) {
+        if (err) {
+            // Fail gracefully?
+            callback(null, err);
+        } else {
+            // Aggregate values
+            console.log(posts);
+            for (let j = 0; j < posts.length; j++) {
+                postsHeap.push(posts[j]);
             }
-            returned++;
-            if (returned == friends.length) {
-                // Evaluate results
-                constructFeedFromHeap(postHeap, callback);
-            }
-        });
-    }
+            constructFeedFromHeap(postsHeap, callback);
+        }
+        
+    });
 }
 
 // Uses content from heap to build a newsfeed for a user
