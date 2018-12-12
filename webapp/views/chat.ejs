@@ -4,11 +4,13 @@
   <title>Chat</title>
   <link rel="stylesheet" type="text/css" href="css/main.css">
   <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <script type="text/javascript">
 
     var currentChat = "";
+    var socket = io.connect('http://localhost:8080/');
 
     var createChat = function() {
 	var data = {"username": $('input[name="username"]').val(), }
@@ -19,6 +21,7 @@
             }
             else{
                 currentChat = result.chatid;
+                socket.emit('join room', currentChat);
                 buildChat();
             }
         });
@@ -42,7 +45,7 @@
                 chats.forEach(chat => {
                     var row = table.insertRow(0);
                     row.insertCell(0).innerHTML = chat.username;
-                    row.insertCell(2).innerHTML = chat.data;
+                    row.insertCell(1).innerHTML = chat.data;
                 });
             }
         });
@@ -60,15 +63,20 @@
         var data = {"message": $('input[name="message"]').val(), 
                     "chatID": currentChat};
 
-        $.post( "/postmessage", data, function(result) {
-            if(result.error) {
-                alert(result.error);
-            }
-            else{
-                alert("Chat posted");
-            }
-        });
+        socket.emit('post message', data);
+    }   
+
+    const addChatMessage = (data) => {
+        var table = document.getElementById('chatWindow');
+        var row = table.insertRow(0);
+        row.insertCell(0).innerHTML = data.username;
+        row.insertCell(1).innerHTML = data.message;
     }
+
+      // Whenever the server emits 'new message', update the chat body
+    socket.on('new message', (data) => {
+        addChatMessage(data);
+    });
 	
 
 </script>
