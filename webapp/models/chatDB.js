@@ -20,8 +20,8 @@ function createChat(users, callback) {
                 found = true;
     
                 getUsersByChat(chatID, function(usersInChat, err) {
-                    async.each(usersInChat, function(username) {
-                        if (!users.contains(username)) {
+                    async.each(usersInChat, function(username, completed) {
+                        if (!users.includes(username)) {
                             found = false;
                         }
                         completed(null);
@@ -136,12 +136,18 @@ function removeUser(chatID, userID) {
 }
 
 function getUsersByChat(chatID, callback) {
-    Schema.Chat2User.query(chatID).loadAll().exec(function(err, chats){
+    Schema.Chat2User.query(chatID).loadAll().exec(function(err, data){
         users = [];
-            // Add usernames to users, return
-            async.each(chats, function(chat) {
-                users.push(chats.get('username'));
-            }, function () {
+
+            if (data.Count === 0) {
+                callback([], null);
+                return;
+            }
+
+            async.each(data.Items, function(chat, completed) {
+                users.push(chat.attrs.username);
+                completed(null); 
+            }, function (err) {
                 callback(users, null);
             });
     });
@@ -162,8 +168,8 @@ function getChatsByUser(username, callback) {
                 return;
             }
 
-            async.each(data, function(user, completed) {
-                chats.push(user.get('chatID'));
+            async.each(data.Items, function(user, completed) {
+                chats.push(user.attrs.chatID);
                 completed(null); 
             }, function (err) {
                 callback(chats, null);

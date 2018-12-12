@@ -31,19 +31,18 @@
         document.getElementById('chatWindow').style.display = "block";
         document.getElementById('chat').style.display = "block";
 
-        $.post( "/fetchchat", currentChat, function(result) {
+        $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
             if(result.error) {
                 alert(result.error);
             }
             else{
-                var chats = JSON.parse(result);
+                var chats = result.chats.Items;
                 var table = document.getElementById('chatWindow');
 
                 chats.forEach(chat => {
                     var row = table.insertRow(0);
-                    row.insertCell(0).innerHTML = JSON.stringify(chat.username);
-                    row.insertCell(1).innerHTML = JSON.stringify(chat.createdAt);
-                    row.insertCell(2).innerHTML = JSON.stringify(chat.data);
+                    row.insertCell(0).innerHTML = chat.username;
+                    row.insertCell(2).innerHTML = chat.data;
                 });
             }
         });
@@ -58,9 +57,10 @@
     }
 
     var chat = function() {
+        var data = {"message": $('input[name="message"]').val(), 
+                    "chatID": currentChat};
+
         $.post( "/postmessage", data, function(result) {
-            var data = {"message": $('input[name="message"]').val(), 
-                        "chatID": currentChat}
             if(result.error) {
                 alert(result.error);
             }
@@ -79,16 +79,6 @@
         <input type="submit" value="Create Chat">
     </form>
 
-    <title id="chatTitle"></title>
-
-    <table style="display:none" id="chatWindow">
-            <tr>
-              <th>username</th>
-              <th>timestamp</th> 
-              <th>Message</th>
-            </tr>
-    </table>
-
     <form style="display:none" id="chat" action="javascript:chat();">
             <input type="text" name="message" placeholder="message" required="required">
             <input type="submit" value="Submit">
@@ -103,4 +93,13 @@
             Who would you like to remove from the chat? <input type="text" name="removeusername" placeholder="username" required="required">
             <input type="submit" value="Remove user">
     </form>
+
+    <title id="chatTitle"></title>
+
+    <table style="display:none" id="chatWindow">
+            <tr>
+              <th>username</th>
+              <th>message</th>
+            </tr>
+    </table>
 </body>>
