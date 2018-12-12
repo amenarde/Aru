@@ -33,7 +33,7 @@
 
 .newsfeed-card {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .newsfeed-prof-pic {
@@ -69,7 +69,7 @@
 .newsfeed-status {
   position: relative;
   left: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   font-size: 14px;
   width: 90%;
 }

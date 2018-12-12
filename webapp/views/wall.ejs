@@ -7,17 +7,54 @@
   <script src="js/jquery-3.3.1.min.js"></script>
 </head>
 <body>
-    <div id="background">
-      <div class="modal" id="wall">
+    <div id="wall-background" class="parallax">
         <div class="modal-content">
-          <p class="profile-title">NEWSFEED</p>
+          <div class="profile-picture"></div>
+          <% if (userData != null) { %>
+            <p class="profile-title"><%= userData.firstName + ' ' + userData.lastName %></p>
+          <% } %>
           <div class="profile-title-bar"></div>
-          <form action="/postStatusUpdate" class="newsfeed-status-update" method="POST">
-            <input class="newsfeed-status-input" type="text" id="newsfeed-status-input" placeholder="What's on your mind?" name="statusUpdate">
-            <input type="submit" value="SHARE" class="secondary-btn" id="newsfeed-status-btn">
+          <form class="wall-status-update" method="POST">
+            <input class="wall-status-input" type="text" id="wall-status-input" placeholder="Finally tell her you love her..." name="statusUpdate">
+            <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
           </form>
+          <div class="profile-title-bar"></div>
+          <div class="wall-card">
+            <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
+            <div class="wall-card-info">
+            </div>
+          </div>
+          <div class="wall-card">
+            <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
+            <div class="wall-card-info">
+            </div>
+          </div>
+          <div class="wall-card">
+            <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
+            <div class="wall-card-info">
+            </div>
+          </div>
+          <div class="wall-card">
+            <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
+            <div class="wall-card-info">
+            </div>
+          </div>
+          <div class="wall-card">
+            <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
+            <div class="wall-card-info">
+            </div>
+          </div>
         </div>
-      </div>
+        <div class="parallax__layer--back account-info">
+          <p class="account-info-title">Birthday</p>
+          <p class="account-info-content"><%= userData.birthday %></p>
+          <p class="account-info-title">Affiliation</p>
+          <p class="account-info-content"><%= userData.affiliation %></p>
+          <p class="account-info-title">Username</p>
+          <p class="account-info-content"><%= userData.username %></p>
+          <p class="account-info-title">Interests</p>
+          <p class="account-info-content"><%= userData.interests %></p>
+        </div>
     </div>
   </body>
 </html>

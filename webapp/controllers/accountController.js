@@ -87,7 +87,7 @@ var logout = function(req, res) {
 };
 
 function acceptFriendRequest(req, res) {
-  let user = req.session.account; 
+  let user = req.session.account;
   let user2 = req.body.friender;
   // user2 is the person who initia
   // Check if friends
@@ -137,7 +137,7 @@ function issueFriendRequest(req, res) {
   let user2 = req.body.friender;
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
     console.log("Friends: " + friends);
-    res.send({friends: friends, error: err});    
+    res.send({friends: friends, error: err});
   });
 }
 
@@ -228,7 +228,7 @@ function updateAffiliation(req, res) {
 function profileUpdate(username, attribute, value, callback) {
   // Create a post about it
   createPost(username, attribute + " to " + value, "profileUpdate", username, function(success, err) {
-    callback(success, err);  
+    callback(success, err);
   });
 }
 function newFriendship(username, user2, callback) {
@@ -243,7 +243,7 @@ function newFriendship(username, user2, callback) {
             console.log("Friendship status update made for " + username + " but not for " + user2);
           }
           callback(success, err);
-        })  
+        })
       }
     });
 }
@@ -254,26 +254,6 @@ function createPost(poster, content, type, receiver, callback) {
   if (!receiver) { callback(null, "No receiver provided!"); return;}
   if (!type) { callback(null, "No type provided!"); return;}
   PostDB.createposts(poster, content, type, receiver, callback);
-}
-
-// Tested - works
-function getAccountInformation(req, res) {
-  let username = req.session.account;
-  db.get(username, function(user, err) {
-    if (err) {
-      res.send({error: err});
-    } else {
-      // Remove password from the object
-      let userData = {
-        username: user.attrs.username,
-        firstName: user.attrs.firstName,
-        lastName: user.attrs.lastName,
-        affiliation: user.attrs.affiliation,
-        birthday: user.attrs.birthday,
-      }
-      res.send(userData);
-    }
-  })
 }
 
 var routes = {
@@ -290,7 +270,6 @@ var routes = {
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
-  openProfile: getAccountInformation,
   removeFriend: removeFriend,
 };
 

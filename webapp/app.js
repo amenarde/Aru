@@ -59,7 +59,7 @@ server.listen(8080, () => { console.log('Server running on port 8080. Now open h
 // socket.io stuff
 io.use(sharedsession(session, {
     autoSave:true
-})); 
+}));
 
 
 

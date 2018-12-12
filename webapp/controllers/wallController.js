@@ -1,5 +1,7 @@
 var PostDB = require('../models/postsDB.js');
 var FriendshipDB = require("../models/friendsDB.js");
+var db = require('../models/userDB.js');
+var Heap = require('heap');
 
 // Functions for Postes
 function newStatusUpdate(req, res) {
@@ -56,7 +58,7 @@ function likePost(req, res) {
 
 // Needs sID, username
 function unlikePost(req, res) {
-    
+
 }
 
 // Needs sID, username, newContent
@@ -69,16 +71,41 @@ function editComment(req, res) {
     // Make sure user can edit the comment
 }
 
+// Tested - works
+function getAccountInformation(req, res) {
+  let username = req.params.username;
+  db.get(username, function(user, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      // Remove password from the object
+      let userData = {
+        username: user.attrs.username,
+        firstName: user.attrs.firstName,
+        lastName: user.attrs.lastName,
+        affiliation: user.attrs.affiliation,
+        birthday: user.attrs.birthday,
+      }
+      let timestamp = req.body.timestamp;
+      getWallContent(username, timestamp, function(feed, err) {
+        if (err) {
+            res.send({error: err});
+        } else {
+            res.render('wall.ejs', {error: err, userData : userData, wallContent: feed});
+        }
+      });
+    }
+  })
+}
+
 // Get info to display to a user
-function getWallContent(req, res) {
-    let username = req.session.account;
+function getWallContent(username, timestamp, callback) {
     if (!username) {
         res.send({error: "Something went wrong. Please log in again!"});
     } else {
         // Get friends of user (async!)
         constructFromTime(username, timestamp, function(feed, err) {
-            res.render('wall.ejs', {error: err});
-            res.send({feed: feed});
+            callback(feed, null)
         });
     }
 }
@@ -129,7 +156,7 @@ function constructFeedFromHeap(postHeap, callback) {
 }
 
 var controller = {
-    openProfile: getWallContent,
+    openProfile: getAccountInformation,
     editComment: editComment,
     editPost: editPost,
     likePost: likePost,
