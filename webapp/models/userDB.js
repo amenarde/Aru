@@ -85,7 +85,6 @@ function addUser(username, password, firstName, lastName, birthday, affiliation,
       });
     }
   });
-
 }
 
 function exists(username, callback) {
@@ -189,6 +188,9 @@ function deleteUser(username, callback) {
 }
 
 function fetch(username, callback) {
+  if (!username) {
+    callback(null, "Something went wrong. Please log in.");
+  }
   schemas.Users.get(username, function(err, user) {
     callback(user, err);
   });

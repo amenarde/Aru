@@ -3,11 +3,13 @@ var dbName = "posts_DB";
 
 function create(poster, content, type, receiver, callback) {
     // Create the posts
+    console.log("Creating new entry in database with " + poster + " - " + content + " - type:" + type + " - " + receiver );
     schemas.Posts.create({content: content, username: poster, likes: 0, type: type}, function(err, posts) {
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);
         } else {
+            console.log("Type: " + posts.get("type"));
             // Add the posts to a wall
             schemas.Wall.create({pID: posts.get("pID"), username: receiver, createdAt: posts.get("createdAt")}, function(err2, wall) {
                 if (err2) {
