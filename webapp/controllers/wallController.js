@@ -1,7 +1,7 @@
 var PostDB = require('../models/postsDB.js');
 var FriendshipDB = require("../models/friendsDB.js");
 
-// Functions for Postes
+// Functions for Posts
 function newStatusUpdate(req, res) {
     createPost(req.session.account, req.body.statusUpdate, "statusUpdate", req.session.account, function(success, err) {
         res.send({error: err, post: success});
@@ -38,6 +38,8 @@ function createPost(poster, content, type, receiver, callback) {
 // Needs sID, wall
 function deletePost(req, res) {
     // Make sure person deleting has permisions (so make sure they made the post)
+    let username = req.session.account;
+    let sID = req.body.sID;
 
     // Remove the Post
     PostDB.delete(sID, wall, callback);
@@ -45,8 +47,13 @@ function deletePost(req, res) {
 
 // Needs sID, poster, comment,
 function addComment(req, res) {
+    let username = req.session.account;
+    let content = req.body.content;
+    let pID = req.body.pID;
     // Make sure user is friends with the poster?
+    PostDB.addComment(pID, username, content, function(comment, err) {
 
+    });
 }
 
 // Needs sID, username

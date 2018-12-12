@@ -1,24 +1,49 @@
-function getNewsfeed(attachPoint) {
+function getNewsfeed(attachPoint, offset) {
     $.get('/getFeedFor', function(postData) {
         // Get the content for each post
-        console.log("data is: " + data);
+        console.log("data is: ")
+        console.log(postData);
+        // TODO - Handle error
+        let feed = postData.feed;
         // For each entry create a post div
-        for (let i = 0; i < postIds.length; i++) {
+        for (let i = 0; i < feed.length; i++) {
             let div = null;
-            switch(postData.type) {
+            // console.log("Type: " + feed[i].type);
+            // console.log(feed[i]);
+            // if (feed[i].type === "newFriendship") {
+            //     console.log("newFriendship");
+            //     div = createNewFriendship(feed[i]);
+            //     console.log(div);
+            // } else if (feed[i].type === "statusUpdate") {
+            //     console.log("newFriendship");
+            //     div = createStatusUpdate(feed[i]);
+            //     console.log(div);
+            // } else if (feed[i].type === "friendPost") {
+            //     div = createFriendPost(feed[i]);
+            //     console.log(div);
+            // } else if (feed[i].type === "profileUpdate") {
+            //     div = createProfileUpdate(feed[i]);
+            //     console.log(div);
+            // }
+            switch(feed[i].type) {
                 case "newFriendship":
-                    div = createNewFriendship(postData[i]);
+                    div = createNewFriendship(feed[i]);
+                    console.log(div);
                     break;
                 case "statusUpdate":
-                    div = createStatusUpdate(postData[i]);
+                    div = createStatusUpdate(feed[i]);
+                    console.log(div);
                     break;
                 case "friendPost":
-                    div = createFriendPost(postData[i]);
+                    div = createFriendPost(feed[i]);
+                    console.log(div);
                     break;
                 case "profileUpdate":
-                    div = createProfileUpdate(postData[i]);
+                    div = createProfileUpdate(feed[i]);
+                    console.log(div);
                     break;
             }
+            console.log("End: " + div);
             if (div) {
                 attachPoint.appendChild(div);
             }
@@ -122,13 +147,6 @@ function createFriendPost(postData) {
     return div;
 }
 
-<div class="newsfeed-card">
-            <div class="newsfeed-prof-pic">
-            </div>
-            <div class="newsfeed-card-info">
-              <div class="newsfeed-user-name"> <span class="newsfeed-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
-            </div>
-          </div>
 function createProfileUpdate(postData) {
     let div = document.createElement('div');
     div.classList.add("newsfeed-card");
