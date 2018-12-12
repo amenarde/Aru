@@ -85,7 +85,6 @@ function addUser(username, password, firstName, lastName, birthday, affiliation,
       });
     }
   });
-
 }
 
 function exists(username, callback) {

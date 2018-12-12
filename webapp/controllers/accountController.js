@@ -1,4 +1,5 @@
 var db = require('../models/userDB.js');
+var FriendshipDB = require("../models/friendsDB.js");
 
 var getLogin = function(req, res) {
   res.render('main.ejs', {error: "", signupState: false, missing: []});
@@ -93,11 +94,56 @@ var logout = function(req, res) {
 	res.render('main.ejs', {error: "You have been logged out"});
 };
 
+function acceptFriendRequest(req, res) {
+  let user = req.session.account; 
+  let user2 = req.body.friender;
+  // user is the person who initia
+  FriendshipDB.acceptRequest(user, user2, function(friendship, err) {
+      if (err) {
+          res.send({error: err});
+      } else {
+          res.send({friendship: friendship});
+      }
+  });
+}
+
+function rejectFriendRequest(req, res) {
+  let user = req.session.account;
+  let user2 = req.body.friender;
+  FriendshipDB.rejectRequest(user, user2, function() {
+
+  });
+}
+
+function issueFriendRequest(req, res) {
+  let user = req.session.account;
+}
+
+function getPendingRequest(req, res) {
+  let user = req.session.account;
+  FriendshipDB.getPending(user, function(pending, err) {
+    res.send({pendingRequests: pending, error: err});
+  });
+}
+
+function getFriends(req, res) {
+  let user = req.session.account;
+  FriendshipDB.getFriends(user, function(friends, err) {
+    // Might have to encode to database objects
+    res.send({friends: friends, error: err});
+  });
+}
+
 var routes = {
   loginOrSignup: getLogin,
   verify: verifyLogin,
   create: createAccount,
   logout: logout,
+  acceptFriendRequest: acceptFriendRequest,
+  rejectFriendRequest: rejectFriendRequest,
+  issueFriendRequest: issueFriendRequest,
+  getFriends: getFriends,
+  getFriendRequests: getPendingRequest,
 };
 
 module.exports = routes;
