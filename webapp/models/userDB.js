@@ -90,7 +90,7 @@ function addUser(username, password, firstName, lastName, birthday, affiliation,
 
 function exists(username, callback) {
   fetch(username, function(user, err) {
-    if (user) {
+    if (user != null) {
       callback(true, err);
     } else {
       callback(false, err);
@@ -188,7 +188,7 @@ function deleteUser(username, callback) {
   });
 }
 
-function fetch(username) {
+function fetch(username, callback) {
   schemas.Users.get(username, function(err, user) {
     callback(user, err);
   });
