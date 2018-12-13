@@ -94,13 +94,20 @@ function getAccountInformation(req, res) {
             if (err) {
                 res.send({error: err});
             } else {
-                res.render('wall.ejs', {error: err, userData : userData, wallContent: feed});
+                console.log("feed is: " + JSON.stringify(feed));
+                constructFeedFromIDs(feed, function(wallContent, err) {
+                    if (err) {
+                        res.send({error: err});
+                    } else {
+                        res.render('wall.ejs', {error: err, userData : userData, wallContent: wallContent});
+                    }
+                });
             }
           });
       } else {
           callback(null, "No user found for " + username);
       }
-      
+
     }
   })
 }
@@ -123,10 +130,12 @@ function constructFromTime(username, timestamp, callback) {
     // Put all values in heap
     let postsHeap = new Heap(function(a, b) {
         // Custom comparator for entires
-        if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
-            return 1
+        console.log("a " + JSON.stringify(a));
+        console.log("b " + JSON.stringify(b));
+        if (new Date(a.createdAt) > new Date(b.createdAt)) {
+            return 1;
         } else {
-            return 0
+            return 0;
         }
     });
     // Get entries for each friend
@@ -144,7 +153,7 @@ function constructFromTime(username, timestamp, callback) {
             }
             constructFeedFromHeap(postsHeap, callback);
         }
-        
+
     });
 }
 
@@ -157,6 +166,20 @@ function constructFeedFromHeap(postHeap, callback) {
     }
     // Return list
     callback(feed, null);
+}
+
+function constructFeedFromIDs(feedIDs, callback) {
+    // Pull ID out of object
+    postData = [];
+    for (let i = 0; i < feedIDs.length; i++) {
+        if (feedIDs[i] != null) {
+            postData.push({pID: feedIDs[i].pID, receiver: feedIDs[i].username});
+        }
+    }
+    // Find the posts, comments and return them
+    PostDB.getPosts(postData, function(feed, error) {
+        callback(feed, error);
+    });
 }
 
 var controller = {

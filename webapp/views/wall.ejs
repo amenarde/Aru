@@ -19,6 +19,14 @@
             <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
           </form>
           <div class="profile-title-bar"></div>
+          <% for(var i=0; i < wallContent.length; i++) { %>
+            <div class="wall-card">
+              <div class="wall-user-name"> <span class="wall-clickable"><%= wallContent[i].username %></span> updated her status.</div>
+              <div class="wall-card-info">
+                <div class="wall-status"><%= wallContent[i].content %></div>
+              </div>
+            </div>
+          <% } %>
           <div class="wall-card">
             <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
             <div class="wall-card-info">
