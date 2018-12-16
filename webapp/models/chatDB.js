@@ -17,22 +17,17 @@ function createChat(users, callback) {
         getChatsByUser(users[0], function(data, err) {
             async.each(data, function(chatID, completed) {
 
-                found = true;
+                found = false;
     
                 getUsersByChat(chatID, function(usersInChat, err) {
-                    async.each(usersInChat, function(username, completed) {
-                        if (!users.includes(username)) {
-                            found = false;
-                        }
-                        completed(null);
-                    }, function () {
-                        // Found a chat that had everyone, so return that one
-                        if (found === true) {
-                            callback(chatID, null);
-                        }
-                    });
+                    if (arraysEqual(users, usersInChat)) {
+                        found = true;
+                        callback(chatID, null);
+                        return;
+                    }
+                    completed(null);
                 });
-            }, function () {
+            },function (err) {
     
                 chatID = null;
                 usernameToSkip = "";
@@ -234,6 +229,28 @@ function userInChat(username, chatID, callback) {
         }
     });
 }
+
+// This utility function adapted from
+// https://stackoverflow.com/questions/6229197/how-to-know-if-two-arrays-have-the-same-values
+function arraysEqual(_arr1, _arr2) {
+
+    if (!Array.isArray(_arr1) || ! Array.isArray(_arr2) || _arr1.length !== _arr2.length)
+      return false;
+
+    var arr1 = _arr1.concat().sort();
+    var arr2 = _arr2.concat().sort();
+
+    for (var i = 0; i < arr1.length; i++) {
+
+        if (arr1[i] !== arr2[i])
+            return false;
+
+    }
+
+    return true;
+
+}
+
 
 var database = {
     createChat: createChat,
