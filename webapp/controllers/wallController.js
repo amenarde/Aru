@@ -9,7 +9,19 @@ function newStatusUpdate(req, res) {
         if (err) {
           res.send({error: err});
         } else {
-          res.redirect('back');
+            if (err) {
+                console.log("Err");
+                res.redirect('back');
+            } else {
+                res.redirect('back');
+                // PostDB.updatepostsLikes(success.attrs.pID, req.session.account, function(result, err) {
+                //     if (err) {
+                //         res.redirect('back');
+                //     } else {
+                //         res.redirect('back');
+                //     }
+                // });
+            }
         }
     });
 }
@@ -25,7 +37,19 @@ function newFriendPost(req, res) {
                 console.log("post created");
                 // Create the Post
                 createPost(req.session.account, req.body.content, "friendPost", receiver, function(success, err) {
-                    res.redirect('back');
+                    if (err) {
+                        console.log("Err: " + err);
+                        res.redirect('back');
+                    } else {
+                        res.redirect('back');
+                        // PostDB.updatepostsLikes(success.attrs.pID, poster, function(result, err) {
+                        //     if (err) {
+                        //         res.redirect('back');
+                        //     } else {
+                        //         res.redirect('back');
+                        //     }
+                        // });
+                    }                    
                 });
             } else {
                 res.send({error: null, post: "You can't post to non-friends walls. Please don't hack our program :("});

@@ -91,6 +91,24 @@ function getCommentsForPost(pID, callback) {
     });
 }
 
+function getLikesForPost(pID, callback) {
+    var likeList = [];
+    schemas.PostLikes.query(pID)
+    .descending().loadAll()
+    .exec(function(err, likes) {
+        if (err) {
+            callback(null, err);
+        } else {
+            async.each(likes.Items, function(like, completed) {
+                likeList.push(like.attrs.username);
+                completed(null);
+            }, function (err) {
+                callback(likeList, null);
+            });
+        }
+    });
+}
+
 function fetch(pID, callback) {
     schemas.Posts.get(pID, function(err, posts) {
         console.log(dbName + ") getting " + pID);
@@ -119,9 +137,21 @@ function getPosts(postData, callback) {
                         completed(err);
                     }  else {
                         postData[data.index].comments = comments;
+                        // Get the likes as well (works if want to enable)
+                        // getLikesForPost(data.pID, function(likes, err) {
+                        //     if (err) {
+                        //         completed(err);
+                        //     } else {
+                        //         console.log("Got likes: " + likes);
+                        //         postData[data.index].likes = likes;
+                        //         completed(null);
+                        //     }
+                        // });
                         completed(null);
                     }
                 });
+
+                
             }
         });
     }, function (err) {
@@ -195,7 +225,6 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
             });
         }
     }
-
 }
 
 function fetchSinceTimeFromUser(username, timestamp, X, callback) {
@@ -227,6 +256,24 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
     }
 }
 
+function fetchCommentsSinceTime(pID, timestamp, callback) {
+    schemas.PostComments.query(pID).usingIndex('timeIndex')
+    .where('createdAt').gt(timestamp).loadAll()
+    .exec(function(err, comments) {
+        if (err) {
+            callback(null, err);
+        } else {
+            var commentList = [];
+            async.each(comments.Items, function(comment, completed) {
+                commentList.push(comment.attrs);
+                completed(null);
+            }, function (err) {
+                callback(commentList, null);
+            });
+        }
+    });
+}
+
 function updatepostsContent(pID, content, callback) {
     schemas.Posts.update({pID: pID, content: content}, function(err, posts) {
         if (err) {
@@ -246,21 +293,7 @@ function updatepostsLikes(pID, username, callback) {
             callback(null, err);
         } else {
             console.log("PostLikes) update posts likes");
-            schemas.Posts.get(pID, function(err, post) {
-                if (err) {
-                    callback(null, err);
-                } else {
-                    schemas.Posts.update({pID: pID, likes: post.likes + 1}, function(err, posts) {
-                        if (err) {
-                            console.log(dbName + ") update posts likes " + err);
-                            callback(null, err);
-                        } else {
-                            console.log(dbName + ") update posts likes ");
-                            callback(true, null);
-                        }
-                    });
-                }
-            });
+            callback(null, err);
         }
     });
     
@@ -302,5 +335,6 @@ var database = {
     updatepostsContent: updatepostsContent,
     updatepostsCommentLikes: updatepostsCommentLikes,
     updatepostsCommentContent: updatepostsCommentContent,
+    fetchCommentsSinceTime: fetchCommentsSinceTime,
 }
 module.exports = database;

@@ -81,7 +81,10 @@ var PostComments = vogels.define('PostComment', {
     username: Joi.string(),
     content: Joi.string(),
     likes: Joi.number(),
-  }
+  },
+  indexes : [{
+    hashKey : 'pID', rangeKey : 'createdAt', type : 'local', name : 'timeIndex'
+  }]
 });
 exports.PostComments = PostComments;
 

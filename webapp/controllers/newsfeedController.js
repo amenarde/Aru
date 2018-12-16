@@ -75,13 +75,37 @@ var getFeedSince = function(req, res) {
                 res.send({error: err});
             } else {
                 let timestamp = req.body.timestamp;
-                constructFromRecent(timestamp, function(feed, err) {
+                friends.push(username);
+                constructFromRecent(friends, timestamp, function(feed, err) {
                     res.send({feed: feed, error: err});
                 });
             }
         });
     }
 };
+
+var getCommentsSince = function(req, res) {
+    let username = req.session.account;
+    let pIDs = null; // TODO get pIDs from request somehow
+    let timestamp = null; // TODO get timestamp from request somehow
+    if (!username) {
+        res.render('main.ejs', {error: "You must be logged in to see that page."});
+    } else {
+        let commentList = [];
+        async.each(pIDs, function(pID, completed) {
+            PostsDB.fetchCommentsSinceTime(pID, timestamp, function(comments, err) {
+                if (err) {
+                    completed(err);
+                } else {
+                    commentList.push({pID: pID, comments: comments});
+                    completed(null);
+                }
+            });            
+        }, function (err) {
+            res.send({commentList: commentList, error: err});
+        });
+    }
+}
 
 // Uses content from heap to build a newsfeed for a user
 function constructFeedFromHeap(postHeap, callback) {
@@ -184,6 +208,7 @@ var routes = {
   open: open,
   getFeedFor: getFeedFor,
   getFeedSince: getFeedSince,
+  getCommentsSince: getCommentsSince,
 };
 
 module.exports = routes;
