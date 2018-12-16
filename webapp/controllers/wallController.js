@@ -72,7 +72,7 @@ function likePost(req, res) {
     if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
 
     // Make sure user hasn't liked this comment before
-    
+
 }
 
 // Needs sID, username
@@ -131,7 +131,7 @@ function getAccountInformation(req, res) {
                       });
                 } else {
                     console.log("not friends!!");
-                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: "pending"})
+                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: status})
                 }
             }
           })

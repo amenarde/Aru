@@ -49,7 +49,7 @@ var createAccount = function(req, res) {
     if (err) {
       res.render('main.ejs', {error: err});
     } else if (data) {
-    	req.session.account = data.username;
+    	req.session.account = data.attrs.username;
       res.redirect('/newsfeed');
     }
   });
@@ -90,7 +90,7 @@ function acceptFriendRequest(req, res) {
 
   let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
-  let user2 = req.body.friender;
+  let user2 = req.body.friender.slice(0, -1);
   // user2 is the person who initia
   // Check if friends
   FriendshipDB.checkFriendship(user, user2, function(status, err) {
@@ -98,6 +98,8 @@ function acceptFriendRequest(req, res) {
       res.send({error: err});
     } else {
       console.log("Status: " + status);
+      console.log("user is: " + user);
+      console.log("friender is: " + user2);
       if (status === "confirmed") {
         res.send({error: "Already friends!"});
       } else if (status === "incoming") {
@@ -110,7 +112,7 @@ function acceptFriendRequest(req, res) {
               if (error) {
                 res.send({error: error});
               } else {
-                res.send({post: post})
+                res.redirect('/newsfeed');
               }
             });
           }
@@ -138,7 +140,11 @@ function issueFriendRequest(req, res) {
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender.slice(0, -1);
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
-    res.send({friends: friends, error: err});
+    if (err) {
+      res.send({err: "Sorry, an error has occurred while issuing this friend request"});
+    } else {
+      res.redirect('back')
+    }
   });
 }
 
@@ -151,11 +157,18 @@ function removeFriend(req, res) {
   });
 }
 
-function getPendingRequest(req, res) {
+function getPendingRequest(req, res, callback) {
   let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   FriendshipDB.getIncomingRequest(user, function(incoming, err) {
-    res.send({error: err, friendRequests: incoming});
+    console.log("INCOMING IS: " + incoming);
+    console.log("ERR IS: " + err);
+    if (err) {
+      console.log("IN ERROR");
+      callback({err: "Sorry, an error has occurred while getting friend requests.", friendRequests: null});
+    } else {
+      callback(null, incoming);
+    }
   });
 }
 

@@ -183,6 +183,7 @@
   width: 25%;
   letter-spacing: 0.1rem;
   margin: none;
+  z-index: -1;
 }
 
 .account-info-title {
@@ -240,4 +241,8 @@
 
 .btn-disabled:hover {
   color: #6D6D6D;
+}
+
+.friendship-status {
+
 }

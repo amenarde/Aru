@@ -61,7 +61,7 @@ app.post('/comment', wallController.addComment);
 // Friend request routes
 app.get('/updateFirstName', accountController.updateFirstName);
 app.post('/issueFriendRequest', accountController.issueFriendRequest);
-app.get('/acceptFriendRequest', accountController.acceptFriendRequest);
+app.post('/acceptFriendRequest', accountController.acceptFriendRequest);
 app.get('/getFriendRequests', accountController.getFriendRequests);
 
 

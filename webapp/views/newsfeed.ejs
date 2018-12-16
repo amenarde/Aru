@@ -42,6 +42,15 @@
               </div>
             <% } else if (feed[i].type === "profileUpdate") { %>
             <% } else if (feed[i].type === "newFriendship") { %>
+              <div class="newsfeed-card">
+                <div class="newsfeed-prof-pic">
+                </div>
+                <div class="newsfeed-card-info">
+                  <div class="newsfeed-user-name"><%= feed[i].content %></div>
+                  <div class="newsfeed-status">&#x2665;</div>
+                  <button type="button" class="newsfeed-comment">COMMENT</button>
+                </div>
+              </div>
             <% } %>
           <% } %>
           <div class="newsfeed-card">
@@ -70,6 +79,20 @@
               <div class="newsfeed-user-name"> <span class="newsfeed-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
             </div>
           </div>
+        </div>
+        <div class="newsfeed-friend-requests">
+          <p>FRIEND REQUESTS</p>
+          <div class="newsfeed-friend-bar"></div>
+          <% if (friendRequests.length === 0) { %>
+            <p>No requests.</p>
+          <% } %>
+          <% for (var i = 0; i < friendRequests.length; i++) { %>
+            <form class="newsfeed-friend-request" method="POST" action="/acceptFriendRequest">
+              <input type="hidden" name="friender" value= <%= friendRequests[i] %>/>
+              <p><%= friendRequests[i] %></p>
+              <input type="submit" value="ACCEPT" class="secondary-btn friend-accept-btn">
+            </form>
+          <% } %>
         </div>
     </div>
     <div class="navigation">
