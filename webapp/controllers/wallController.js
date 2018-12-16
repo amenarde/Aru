@@ -95,10 +95,12 @@ function constructFromTime(username, timestamp, callback) {
     // Put all values in heap
     let postsHeap = new Heap(function(a, b) {
         // Custom comparator for entires
-        if (new Date(a.get('createdAt')) > new Date(b.get('createdAt'))) {
-            return 1
-        } else {
+        if (new Date(a.createdAt) > new Date(b.createdAt)) {
+            return -1
+        } else if (new Date(a.createdAt) === new Date(b.createdAt)) {
             return 0
+        } else {
+            return 1;
         }
     });
     // Get entries for each friend

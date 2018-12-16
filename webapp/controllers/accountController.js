@@ -221,6 +221,26 @@ function updateAffiliation(req, res) {
   });
 }
 
+function aggregateProfileUpdate(userData, callback) {
+  let statusUpdates = [];
+  for (var property in userData) {
+    if (userData.hasOwnProperty(property) && property != "username") {
+      async.each(posts.Items, function(post, completed) {
+        profileUpdate(userData.username, property, userData[property], function(update, err) {
+          if (!err) {
+            statusUpdates.push(update);
+          }
+          completed(err); 
+        });
+        
+      }, function (err) {
+        callback(statusUpdates, err);
+      });
+        
+    }
+}
+}
+
 function profileUpdate(username, attribute, value, callback) {
   // Create a post about it
   createPost(username, attribute + " to " + value, "profileUpdate", username, function(success, err) {

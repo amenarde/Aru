@@ -97,6 +97,18 @@ function exists(username, callback) {
   });
 }
 
+function updateUser(userData, callback) {
+  // Username must be an attribute of userData
+  schemas.Users.update(userData, function (err, user) {
+    if (err) {
+      console.log("USER_DB) Update first name - " + err)
+    } else {
+      console.log('USER_DB) Update first name to ' + name + ' for:', user.get('username'));
+    }
+    callback(user, err);
+  });
+}
+
 // Tested - worked (for well formed inputs)
 function updateFirstName(username, name, callback) {
   schemas.Users.update({username: username, firstName: name}, function (err, user) {
@@ -234,6 +246,7 @@ var database = {
   verifyLogin: verifyLogin,
   delete: deleteUser,
   exists: exists,
+  updateUser: updateUser,
   updatePermissions: updatePermissions,
   updateAffiliation: updateAffiliation,
   updateBirthday: updateBirthday,
