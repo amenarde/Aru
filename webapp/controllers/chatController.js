@@ -111,9 +111,11 @@ function getChatUsersByUser(req, res) {
 					completed2(null);
 				});
 			}, function(err) {
-			
-				chats.push({chat: chat.chat, users: names});
-				completed(null);
+				
+				chatDB.getChatType(chat.chat, function(type, err) {
+					chats.push({chat: chat.chat, users: names, type: type});
+					completed(null);
+				});
 			});
 
 		}, function(err) {

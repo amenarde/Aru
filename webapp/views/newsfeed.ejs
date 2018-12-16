@@ -10,6 +10,10 @@
 <body>
     <div id="newsfeed-background">
         <div class="modal-content">
+
+          <input class="newsfeed-status-input" type="text" id="search-bar" placeholder="Search for a user by first name" onchange="search()">
+          <p id="search-results"></p>
+
           <p class="newsfeed-title">NEWSFEED</p>
           <div class="newsfeed-title-bar">
           </div>
@@ -108,6 +112,33 @@
 
       });
     }
+
+    $(function(){ // this will be called when the DOM is ready
+      $('#search-bar').keyup(function() {
+        var prefix = document.getElementById("search-bar").value;
+        document.getElementById("search-results").innerHTML = "";
+      
+        if (prefix.length === 0) {
+          return;
+        }
+
+      $.post( "/search", {"prefix": prefix}, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                if (result.length != 0) {
+                    result.forEach(element => {
+                      var myhref = '/user/' + element.username;
+                      div = document.createElement('div');
+                      $(div).html("<p><a href=" + myhref + ">" + element.name + "</a></p>")
+                        .appendTo($("#search-results")) //main div
+                    });
+                }
+            }
+        });
+      });
+    });
 
     window.onLoad = loadFeed();
   </script>

@@ -2,6 +2,7 @@ var express = require('express');
 var accountController = require('./controllers/accountController.js');
 var newsfeedController = require('./controllers/newsfeedController.js');
 var wallController = require('./controllers/wallController.js');
+var searchController = require('./controllers/searchController.js');
 var vogels = require('vogels');
 var session = require("express-session")({
     secret: "amenarde",
@@ -45,6 +46,7 @@ app.post('/updateLastName', accountController.updateLastName);
 app.post('/updateFirstName', accountController.updateFirstName);
 app.post('/updateBirthday', accountController.updateBirthday);
 app.post('/updateAffiliation', accountController.updateAffiliation);
+app.post('/search', searchController.search);
 
 // Wall routes
 app.get('/user/:username', wallController.openProfile);

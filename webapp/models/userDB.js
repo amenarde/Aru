@@ -1,5 +1,6 @@
 var schemas = require("./schemas.js");
 var bcrypt = require('bcrypt');
+var async = require('async');
 
 function addAffiliation(affiliation, username, callback) {
   schemas.Affiliations.create({
@@ -280,6 +281,27 @@ function removeInterest(username, interest, callback) {
   });
 }
 
+function getUsersByPrefix(prefix, callback) {
+
+  var searchResults = [];
+
+  schemas.Users.scan()
+  .where('username').beginsWith(prefix)
+  .exec(function(err, results) {
+    if (results === null) {
+      callback(searchResults, null);
+      return;
+    }
+
+    async.each(results.Items, function(user, completed) {
+      searchResults.push({username: user.attrs.username, name: user.attrs.firstName + " " + user.attrs.lastName});
+      completed();
+    }, function(err) {
+      callback(searchResults, null);
+    });
+  });
+}
+
 var database = {
   addUser: addUser,
   get: fetch,
@@ -294,6 +316,7 @@ var database = {
   updateLastName: updateLastName,
   addInsterest: addInsterest,
   removeInterest: removeInterest,
+  getUsersByPrefix: getUsersByPrefix,
 };
 
 module.exports = database;

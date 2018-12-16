@@ -20,7 +20,15 @@
             }
             else{
                 results.forEach(function(result) {
+
                     var users = "";
+
+                    if (result.type === 'dm') {
+                        users += "Direct message with ";
+                    }
+                    else {
+                        users += "Groupchat with ";
+                    }
                     result.users.forEach(function(user) {
                         users += (user + " /  ");
                     });
