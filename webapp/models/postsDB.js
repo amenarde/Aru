@@ -4,13 +4,11 @@ var async = require('async');
 
 function create(poster, content, type, receiver, callback) {
     // Create the posts
-    console.log("Creating new entry in database with " + poster + " - " + content + " - type:" + type + " - " + receiver );
     schemas.Posts.create({content: content, username: poster, likes: 0, type: type}, function(err, posts) {
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);
         } else {
-            console.log("Type: " + posts.get("type"));
             // Add the posts to a wall
             schemas.Wall.create({pID: posts.get("pID"), username: receiver, createdAt: posts.get("createdAt")}, function(err2, wall) {
                 if (err2) {
@@ -85,7 +83,7 @@ function getCommentsForPost(pID, callback) {
         } else {
             async.each(comments.Items, function(comment, completed) {
                 commentList.push(comment.attrs);
-                completed(null); 
+                completed(null);
             }, function (err) {
                 callback(commentList, null);
             });
@@ -102,34 +100,32 @@ function fetch(pID, callback) {
 
 // Returns a post and its comments
 function getPosts(postData, callback) {
-    var postList = [];
-    console.log("Post data: ");
-    console.log(postData);
+    // Need to maintain order
     async.each(postData, function(data, completed) {
         // Request the data
-        console.log("Asked to fetch");
-        console.log(data);
         fetch(data.pID, function(post, err) {
             if (err) {
                 completed(err);
             } else {
-                post.attrs.receiver = data.receiver;
-                postList.push(post.attrs);
+                // Need to place in appropiate place (update at corresponding index)
+                postData[data.index].content = post.attrs.content;
+                postData[data.index].type = post.attrs.type;
+                postData[data.index].likes = post.attrs.likes;
+                postData[data.index].createdAt = post.attrs.createdAt
+                postData[data.index].username = post.attrs.username;
                 // Now get comments for the post
                 getCommentsForPost(data.pID, function(comments, err) {
                     if (err) {
                         completed(err);
                     }  else {
-                        post.attrs.comments = comments;
+                        postData[data.index].comments = comments;
                         completed(null);
                     }
                 });
             }
         });
     }, function (err) {
-        console.log("Returning posts");
-        console.log(postList);
-        callback(postList, null);
+        callback(postData, null);
     });
 }
 
@@ -139,10 +135,8 @@ function collectPostData(posts, callback) {
     // This isn't async?
     async.each(posts.Items, function(post, completed) {
         postList.push(post.attrs);
-        completed(null); 
+        completed(null);
     }, function (err) {
-        console.log("Returning collected posts");
-        console.log(postList);
         callback(postList, null);
     });
 }
@@ -151,8 +145,8 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
     if (timestamp) {
         if (X >= 0) {
             schemas.Wall.query(username)
-            .descending()
             .where('createdAt').lt(timestamp)
+            .descending()
             .limit(X)
             .loadAll()
             .exec(function(err, posts) {
@@ -164,8 +158,8 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
             });
         } else {
             schemas.Wall.query(username)
-            .descending()
             .where('createdAt').lt(timestamp)
+            .descending()
             .loadAll()
             .exec(function(err, posts) {
                 if (err) {
@@ -178,8 +172,8 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
     } else {
         if (X >= 0) {
             schemas.Wall.query(username)
-            .descending()
             .limit(X)
+            .descending()
             .loadAll()
             .exec(function(err, posts) {
                 if (err) {
@@ -201,15 +195,16 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
             });
         }
     }
-    
+
 }
 
 function fetchSinceTimeFromUser(username, timestamp, X, callback) {
     if (X >= 0) {
         schemas.Wall.query(username)
-        .descending()
         .where('createdAt').gt(timestamp)
+        .descending()
         .limit(X)
+        .loadAll()
         .exec(function(err, posts) {
             if (err) {
                 callback(null, err);
@@ -219,8 +214,9 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
         });
     } else {
         schemas.Wall.query(username)
-        .descending()
         .where('createdAt').gt(timestamp)
+        .descending()
+        .loadAll()
         .exec(function(err, posts) {
             if (err) {
                 callback(null, err);
@@ -243,16 +239,31 @@ function updatepostsContent(pID, content, callback) {
     });
 }
 
-function updatepostsLikes(pID, numLikes, callback) {
-    schemas.Posts.update({pID: pID, likes: numLikes}, function(err, posts) {
+function updatepostsLikes(pID, username, callback) {
+    schemas.PostLikes.create({pID: pID, username: username}, {overwrite: false}, function(err, post) {
         if (err) {
-            console.log(dbName + ") update posts likes " + err);
+            console.log("PostLikes) update posts likes " + err);
             callback(null, err);
         } else {
-            console.log(dbName + ") update posts likes ");
-            callback(true, null);
+            console.log("PostLikes) update posts likes");
+            schemas.Posts.get(pID, function(err, post) {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    schemas.Posts.update({pID: pID, likes: post.likes + 1}, function(err, posts) {
+                        if (err) {
+                            console.log(dbName + ") update posts likes " + err);
+                            callback(null, err);
+                        } else {
+                            console.log(dbName + ") update posts likes ");
+                            callback(true, null);
+                        }
+                    });
+                }
+            });
         }
     });
+    
 }
 
 function updatepostsCommentContent(pID, poster, content, callback) {

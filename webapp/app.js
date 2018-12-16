@@ -40,6 +40,7 @@ app.post('/leavechat', chatController.leaveChat);
 app.get('/logout', accountController.logout);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
+app.post('/updateInfo', accountController.updateInfo);
 app.post('/updateLastName', accountController.updateLastName);
 app.post('/updateFirstName', accountController.updateFirstName);
 app.post('/updateBirthday', accountController.updateBirthday);
@@ -56,11 +57,12 @@ app.get('/getFeedFor', newsfeedController.getFeedFor);
 // Post Routes
 app.get('/chat', chatController.open);
 app.post('/postStatusUpdate', wallController.newStatusUpdate);
+app.post('/newFriendPost', wallController.newFriendPost);
 app.post('/comment', wallController.addComment);
 
 // Friend request routes
 app.get('/updateFirstName', accountController.updateFirstName);
-app.get('/issueFriendRequest', accountController.issueFriendRequest);
+app.post('/issueFriendRequest', accountController.issueFriendRequest);
 app.get('/acceptFriendRequest', accountController.acceptFriendRequest);
 app.get('/getFriendRequests', accountController.getFriendRequests);
 
@@ -82,7 +84,7 @@ server.listen(8080, () => { console.log('Server running on port 8080. Now open h
 // socket.io stuff
 io.use(sharedsession(session, {
     autoSave:true
-})); 
+}));
 
 
 

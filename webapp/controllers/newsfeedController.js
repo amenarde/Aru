@@ -4,29 +4,32 @@ var FriendshipDB = require('../models/friendsDB.js');
 
 var open = function(req, res) {
   if (req.session.account) {
-    res.render('newsfeed.ejs', {error: ""});
+    getFeedFor(req, res, function(feed, err) {
+      if (err) {
+        res.render('main.ejs', {error: "Sorry an error has occurred."});
+      } else {
+        console.log("feed is: " + JSON.stringify(feed[0]));
+        res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account});
+      }
+    })
   }
   else {
-    res.render('main.ejs', {error: "You must be logged in to see that page."})
+    res.render('main.ejs', {error: "You must be logged in to see that page."});
   }
 };
 
 //used in initial News Feed population and older post loading
 //e.g. give me most recent 0-10, give me most recent pageOffset + updateOffset
 var PAGE_SIZE = 10;
-var getFeedFor = function(req, res) {
+var getFeedFor = function(req, res, callback) {
     // Get cached values of friends
     let username = req.session.account;
-    username = "ptaggs";
     if (!username) {
-        res.send({error: "Something went wrong. Please log in again!"});
+        res.render('main.ejs', {error: "You must be logged in to see that page."})
     } else {
         // Get friends of user (async!)
         getFriends(username, function(friends, err) {
-            console.log("Got friends: ");
-            console.log(friends);
             if (err) {
-              console.log("error");
                 res.send({error: err});
             } else {
                 let timestamp = req.body.timestamp; // TODO get index from req
@@ -38,10 +41,8 @@ var getFeedFor = function(req, res) {
                     if (err) {
                         res.send({error: err});
                     } else {
-                        console.log("Constructing feed from: ");
-                        console.log(feedIDs);
                         constructFeedFromIDs(feedIDs, function(feed, err) {
-                            res.send({feed: feed, error: err});
+                            callback(feed, err);
                         });
                     }
                 });
@@ -54,7 +55,7 @@ function constructFeedFromIDs(feedIDs, callback) {
     // Pull ID out of object
     postData = [];
     for (let i = 0; i < feedIDs.length; i++) {
-        postData.push({pID: feedIDs[i].pID, receiver: feedIDs[i].username});
+        postData.push({pID: feedIDs[i].pID, receiver: feedIDs[i].username, index: i});
     }
     // Find the posts, comments and return them
     PostsDB.getPosts(postData, function(feed, error) {
@@ -67,7 +68,7 @@ function constructFeedFromIDs(feedIDs, callback) {
 var getFeedSince = function(req, res) {
     let username = req.session.account;
     if (!username) {
-        res.send({error: "Something went wrong. Please log in again!"});
+        res.render('main.ejs', {error: "You must be logged in to see that page."});
     } else {
         getFriends(username, function(friends, err) {
             if (err) {
@@ -102,9 +103,11 @@ function constructFromTime(friends, timestamp, callback) {
     let postsHeap = new Heap(function(a, b) {
         // Custom comparator for entires
         if (new Date(a.createdAt) > new Date(b.createdAt)) {
-            return 1
-        } else {
+            return -1
+        } else if (new Date(a.createdAt) === new Date(b.createdAt)) {
             return 0
+        } else {
+            return 1;
         }
     });
     // Get entries for each friend
@@ -133,12 +136,14 @@ function constructFromTime(friends, timestamp, callback) {
 function constructFromRecent(friends, timestamp, callback) {
     // Put all values in heap
     let postsHeap = new Heap(function(a, b) {
-       // Custom comparator for entires
-       if (new Date(a.createdAt) > new Date(b.createdAt)) {
-           return 1
-       } else {
-           return 0
-       }
+        // Custom comparator for entires
+        if (new Date(a.createdAt) > new Date(b.createdAt)) {
+            return -1
+        } else if (new Date(a.createdAt) === new Date(b.createdAt)) {
+            return 0
+        } else {
+            return 1;
+        }
    });
    // Get entries for each friend
    let returned = 0;
@@ -165,11 +170,9 @@ function constructFromRecent(friends, timestamp, callback) {
 
 function getFriends(username, callback) {
     // Get all my friends (async!)
-    console.log("Getting friends for: " + username);
     FriendshipDB.getFriends(username, function(friends, err) {
-        console.log("Friends: " + friends);
-        console.log("Error: " + err);
         if (err) {
+            console.log("Error: " + err);
             callback(null, err);
         } else {
             callback(friends, null);
@@ -177,22 +180,10 @@ function getFriends(username, callback) {
     });
 }
 
-var postStatusUpdate = function(req, res) {
-  console.log(req.body.statusUpdate);
-  PostsDB.createposts(req.session.account, req.body.statusUpdate, req.session.account, "statusUpdate", function(data, err) {
-    if (err) {
-      res.send({error: err});
-    } else {
-      console.log("successfully updated");
-    }
-  });
-}
-
 var routes = {
   open: open,
   getFeedFor: getFeedFor,
   getFeedSince: getFeedSince,
-  postStatusUpdate: postStatusUpdate,
 };
 
 module.exports = routes;

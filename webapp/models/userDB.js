@@ -97,6 +97,18 @@ function exists(username, callback) {
   });
 }
 
+function updateUser(userData, callback) {
+  // Username must be an attribute of userData
+  schemas.Users.update(userData, function (err, user) {
+    if (err) {
+      console.log("USER_DB) Update first name - " + err)
+    } else {
+      console.log('USER_DB) Updated user info');
+    }
+    callback(user, err);
+  });
+}
+
 // Tested - worked (for well formed inputs)
 function updateFirstName(username, name, callback) {
   schemas.Users.update({username: username, firstName: name}, function (err, user) {
@@ -206,7 +218,7 @@ function verifyLogin(username, password, callback) {
     }
     else if (user === null) {
       callback(null, "User does not exist")
-    } 
+    }
     else {
       bcrypt.compare(password, user.get('password'), function(err, res) {
         if (err) {
@@ -218,14 +230,54 @@ function verifyLogin(username, password, callback) {
         } else {
          // Passwords don't match
          callback(null, "Invalid password");
-        } 
+        }
       });
     }
   });
 }
 
-function findUsersStartingWith(prefix, callback) {
+function addInsterest(username, interest, callback) {
+  schemas.User2Interests.create({username: username, interest:interest}, {overwrite: false}, function(err, u2i) {
+    if (err) {
+      callback(null, err);
+    } else {
+      schemas.Interests2User.create({username: username, interest: interest}, {overwrite: false}, function(err, i2u) {
+        if (err) {
+          schemas.User2Interests.destroy({username: username, interest: interest}, function(errDestroy) {
+            if (errDestroy) {
+              callback("Database in unstable state!\n" + errDestroy + "\n" + err);
+            } else {
+              callback(null, err);
+            }
+          });
+        } else {
+          callback(u2i, null);
+        }
+      });
+    }
+  });
+}
 
+function removeInterest(username, interest, callback) {
+  schemas.User2Interests.destroy({username: username, interest: interest}, function(err) {
+    if (err) {
+      callback(null, err);
+    } else {
+      schemas.Interests2User.destroy({username: username, interest: interest}, function(err) {
+        if (err) {
+          schemas.User2Interests.create({username: username, interest: interest}, function(errCreate) {
+            if (errCreate) {
+              callback(null, "Database in unstable state!\n" + errCreate + "\n" + err);
+            } else {
+              callback(null, err);
+            }
+          });
+        } else {
+          callback(null, null);
+        }
+      });
+    }
+  });
 }
 
 var database = {
@@ -234,11 +286,14 @@ var database = {
   verifyLogin: verifyLogin,
   delete: deleteUser,
   exists: exists,
+  updateUser: updateUser,
   updatePermissions: updatePermissions,
   updateAffiliation: updateAffiliation,
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
+  addInsterest: addInsterest,
+  removeInterest: removeInterest,
 };
 
 module.exports = database;

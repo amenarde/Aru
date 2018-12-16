@@ -109,11 +109,11 @@ var Affiliations = vogels.define('Affiliation', {
 exports.Affiliations = Affiliations;
 
 var Interests2User = vogels.define('Interests2User', {
-  hashKey: 'interests',
+  hashKey: 'interest',
   rangeKey: 'username',
 
   schema : {
-    interests: Joi.string(),
+    interest: Joi.string(),
     username: Joi.string(),
   }
 });
@@ -121,10 +121,10 @@ exports.Interests2User = Interests2User;
 
 var User2Interests = vogels.define('User2Interest', {
   hashKey: 'username',
-  rangeKey: 'interests',
+  rangeKey: 'interest',
 
   schema : {
-    interests: Joi.string(),
+    interest: Joi.string(),
     username: Joi.string(),
   }
 });
