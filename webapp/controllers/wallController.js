@@ -6,22 +6,29 @@ var Heap = require('heap');
 // Functions for Postes
 function newStatusUpdate(req, res) {
     createPost(req.session.account, req.body.statusUpdate, "statusUpdate", req.session.account, function(success, err) {
-        res.send({error: err, post: success});
+        if (err) {
+          res.send({error: err});
+        } else {
+          res.redirect('back');
+        }
     });
 }
 function newFriendPost(req, res) {
     // Make sure friends with person
+    let poster = req.session.account;
+    let receiver = req.body.receiver.slice(0, -1);
     FriendshipDB.checkFriends(poster, receiver, function(result, err) {
         if (err) {
-            callback(null, err);
+            res.send(null, err);
         } else {
             if (result) {
+                console.log("post created");
                 // Create the Post
-                createPost(req.session.account, req.body.post, "friendPost", req.body.receiver, function(success, err) {
-                    res.send({error: err, post: success});
+                createPost(req.session.account, req.body.content, "friendPost", receiver, function(success, err) {
+                    res.redirect('back');
                 });
             } else {
-                callback(null, "You can't post to non-friends walls. Please don't hack our program :(");
+                res.send({error: null, post: "You can't post to non-friends walls. Please don't hack our program :("});
             }
         }
     });
@@ -99,13 +106,13 @@ function getAccountInformation(req, res) {
                     if (err) {
                         res.send({error: err});
                     } else {
-                        res.render('wall.ejs', {error: err, userData : userData, wallContent: wallContent});
+                        res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: wallContent});
                     }
                 });
             }
           });
       } else {
-          callback(null, "No user found for " + username);
+          res.send({error: "No user found for " + username});
       }
 
     }

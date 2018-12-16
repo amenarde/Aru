@@ -50,7 +50,7 @@ var createAccount = function(req, res) {
       res.render('main.ejs', {error: err});
     } else if (data) {
     	req.session.account = data.username;
-      res.render('newsfeed.ejs');
+      res.redirect('/newsfeed');
     }
   });
 };
@@ -76,7 +76,7 @@ var verifyLogin = function(req, res) {
     } else if (data) {
       // Logged in correctly
     	req.session.account = data;
-      res.render('newsfeed.ejs');
+      res.redirect('/newsfeed');
     }
   });
 };

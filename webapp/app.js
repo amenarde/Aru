@@ -30,6 +30,7 @@ app.get('/', accountController.loginOrSignup);
 app.get('/newsfeed', newsfeedController.open);
 app.get('/getFeedFor', newsfeedController.getFeedFor);
 app.post('/postStatusUpdate', wallController.newStatusUpdate);
+app.post('/newFriendPost', wallController.newFriendPost);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
 app.get('/logout', accountController.logout);

@@ -177,22 +177,10 @@ function getFriends(username, callback) {
     });
 }
 
-var postStatusUpdate = function(req, res) {
-  console.log(req.body.statusUpdate);
-  PostsDB.createposts(req.session.account, req.body.statusUpdate, req.session.account, "statusUpdate", function(data, err) {
-    if (err) {
-      res.send({error: err});
-    } else {
-      console.log("successfully updated");
-    }
-  });
-}
-
 var routes = {
   open: open,
   getFeedFor: getFeedFor,
   getFeedSince: getFeedSince,
-  postStatusUpdate: postStatusUpdate,
 };
 
 module.exports = routes;
