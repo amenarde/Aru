@@ -236,8 +236,48 @@ function verifyLogin(username, password, callback) {
   });
 }
 
-function findUsersStartingWith(prefix, callback) {
+function addInsterest(username, interest, callback) {
+  schemas.User2Interests.create({username: username, interest:interest}, {overwrite: false}, function(err, u2i) {
+    if (err) {
+      callback(null, err);
+    } else {
+      schemas.Interests2User.create({username: username, interest: interest}, {overwrite: false}, function(err, i2u) {
+        if (err) {
+          schemas.User2Interests.destroy({username: username, interest: interest}, function(errDestroy) {
+            if (errDestroy) {
+              callback("Database in unstable state!\n" + errDestroy + "\n" + err);
+            } else {
+              callback(null, err);
+            }
+          });
+        } else {
+          callback(u2i, null);
+        }
+      });
+    }
+  });
+}
 
+function removeInterest(username, interest, callback) {
+  schemas.User2Interests.destroy({username: username, interest: interest}, function(err) {
+    if (err) {
+      callback(null, err);
+    } else {
+      schemas.Interests2User.destroy({username: username, interest: interest}, function(err) {
+        if (err) {
+          schemas.User2Interests.create({username: username, interest: interest}, function(errCreate) {
+            if (errCreate) {
+              callback(null, "Database in unstable state!\n" + errCreate + "\n" + err);
+            } else {
+              callback(null, err);
+            }
+          });
+        } else {
+          callback(null, null);
+        }
+      });
+    }
+  });
 }
 
 var database = {
@@ -252,6 +292,8 @@ var database = {
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
+  addInsterest: addInsterest,
+  removeInterest: removeInterest,
 };
 
 module.exports = database;

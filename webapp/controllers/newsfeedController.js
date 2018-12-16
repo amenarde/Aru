@@ -62,7 +62,7 @@ function constructFeedFromIDs(feedIDs, callback) {
 var getFeedSince = function(req, res) {
     let username = req.session.account;
     if (!username) {
-        res.render('main.ejs', {error: "You must be logged in to see that page."})
+        res.render('main.ejs', {error: "You must be logged in to see that page."});
     } else {
         getFriends(username, function(friends, err) {
             if (err) {

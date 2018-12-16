@@ -239,16 +239,31 @@ function updatepostsContent(pID, content, callback) {
     });
 }
 
-function updatepostsLikes(pID, numLikes, callback) {
-    schemas.Posts.update({pID: pID, likes: numLikes}, function(err, posts) {
+function updatepostsLikes(pID, username, callback) {
+    schemas.PostLikes.create({pID: pID, username: username}, {overwrite: false}, function(err, post) {
         if (err) {
-            console.log(dbName + ") update posts likes " + err);
+            console.log("PostLikes) update posts likes " + err);
             callback(null, err);
         } else {
-            console.log(dbName + ") update posts likes ");
-            callback(true, null);
+            console.log("PostLikes) update posts likes");
+            schemas.Posts.get(pID, function(err, post) {
+                if (err) {
+                    callback(null, err);
+                } else {
+                    schemas.Posts.update({pID: pID, likes: post.likes + 1}, function(err, posts) {
+                        if (err) {
+                            console.log(dbName + ") update posts likes " + err);
+                            callback(null, err);
+                        } else {
+                            console.log(dbName + ") update posts likes ");
+                            callback(true, null);
+                        }
+                    });
+                }
+            });
         }
     });
+    
 }
 
 function updatepostsCommentContent(pID, poster, content, callback) {

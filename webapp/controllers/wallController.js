@@ -31,7 +31,6 @@ function createPost(poster, content, type, receiver, callback) {
     if (!content) { callback(null, "No post data recieved!"); return;}
     if (!receiver) { callback(null, "No receiver provided!"); return;}
     if (!type) { callback(null, "No type provided!"); return;}
-    console.log("Trying to create new entry with  " + poster + " - " + content + " - " + type + " - " + receiver );
     PostDB.createposts(poster, content, type, receiver, callback);
 }
 
@@ -39,6 +38,7 @@ function createPost(poster, content, type, receiver, callback) {
 function deletePost(req, res) {
     // Make sure person deleting has permisions (so make sure they made the post)
     let username = req.session.account;
+    if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
     let sID = req.body.sID;
 
     // Remove the Post
@@ -48,6 +48,7 @@ function deletePost(req, res) {
 // Needs sID, poster, comment,
 function addComment(req, res) {
     let username = req.session.account;
+    if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
     let content = req.body.content;
     let pID = req.body.pID;
     // Make sure user is friends with the poster?
@@ -58,7 +59,11 @@ function addComment(req, res) {
 
 // Needs sID, username
 function likePost(req, res) {
+    let username = req.account.session;
+    if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
+
     // Make sure user hasn't liked this comment before
+    
 }
 
 // Needs sID, username

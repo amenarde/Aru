@@ -88,6 +88,7 @@ var logout = function(req, res) {
 
 function acceptFriendRequest(req, res) {
   let user = req.session.account; 
+  if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender;
   // user2 is the person who initia
   // Check if friends
@@ -123,6 +124,7 @@ function acceptFriendRequest(req, res) {
 // Tested - works (for hardcoded values of user and user2)
 function rejectFriendRequest(req, res) {
   let user = req.session.account;
+  if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender;
   FriendshipDB.rejectRequest(user, user2, function(err) {
     res.send({error: err});
@@ -132,6 +134,7 @@ function rejectFriendRequest(req, res) {
 // Tested - works (for hardcoded values of user and user2)
 function issueFriendRequest(req, res) {
   let user = req.session.account;
+  if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender;
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
     res.send({friends: friends, error: err});    
@@ -140,6 +143,7 @@ function issueFriendRequest(req, res) {
 
 function removeFriend(req, res) {
   let user = req.session.account;
+  if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender;
   FriendshipDB.removeFriend(user, user2, function(friends, err) {
     res.send({error: err});
@@ -148,6 +152,7 @@ function removeFriend(req, res) {
 
 function getPendingRequest(req, res) {
   let user = req.session.account;
+  if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   FriendshipDB.getIncomingRequest(user, function(incoming, err) {
     res.send({error: err, friendRequests: incoming});
   });
@@ -155,6 +160,7 @@ function getPendingRequest(req, res) {
 
 function getFriends(req, res) {
   let user = req.session.account;
+  if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   FriendshipDB.getFriends(user, function(friends, err) {
     // Might have to encode to database objects
     res.send({friends: friends, error: err});
@@ -164,6 +170,7 @@ function getFriends(req, res) {
 // Tested with hardcoded values worked
 function updateFirstName(req, res) {
   let username = req.session.account;
+  if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let newFirst = req.body.firstName;
   db.updateFirstName(username, newFirst, function(success, err) {
     console.log("Update first name: " + success);
@@ -180,6 +187,7 @@ function updateFirstName(req, res) {
 
 function updateLastName(req, res) {
   let username = req.session.account;
+  if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let lastName = req.body.lastName;
   db.updateLastName(username, lastName, function(success, err) {
     if (err) {
@@ -194,6 +202,7 @@ function updateLastName(req, res) {
 
 function updateBirthday(req, res) {
   let username = req.session.account;
+  if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let birthday = req.body.birthday;
   db.updateLastName(username, birthday, function(success, err) {
     if (err) {
@@ -209,6 +218,7 @@ function updateBirthday(req, res) {
 // Double check this code
 function updateAffiliation(req, res) {
   let username = req.session.account;
+  if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let affiliation = req.body.birthday;
   db.updateLastName(affiliation, birthday, function(success, err) {
     if (err) {
@@ -275,6 +285,7 @@ function createPost(poster, content, type, receiver, callback) {
 // Tested - works
 function getAccountInformation(req, res) {
   let username = req.session.account;
+  if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   db.get(username, function(user, err) {
     if (err) {
       res.send({error: err});
