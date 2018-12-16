@@ -53,7 +53,8 @@ function deleteposts(timestamp, username, callback) {
 }
 
 function addComment(pID, username, comment, callback) {
-    schemas.postsComments.create({pID: pID, username: username, data: comment, likes: 0}, function(err, posts) {
+    schemas.PostComments.create({pID: pID, username: username, content: comment, likes: 0}, function(err, posts) {
+        console.log("pID is: " + pID);
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);
@@ -296,7 +297,7 @@ function updatepostsLikes(pID, username, callback) {
             callback(null, err);
         }
     });
-    
+
 }
 
 function updatepostsCommentContent(pID, poster, content, callback) {
