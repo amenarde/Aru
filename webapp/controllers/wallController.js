@@ -9,7 +9,19 @@ function newStatusUpdate(req, res) {
         if (err) {
           res.send({error: err});
         } else {
-          res.redirect('back');
+            if (err) {
+                console.log("Err");
+                res.redirect('back');
+            } else {
+                res.redirect('back');
+                // PostDB.updatepostsLikes(success.attrs.pID, req.session.account, function(result, err) {
+                //     if (err) {
+                //         res.redirect('back');
+                //     } else {
+                //         res.redirect('back');
+                //     }
+                // });
+            }
         }
     });
 }
@@ -17,7 +29,7 @@ function newFriendPost(req, res) {
     // Make sure friends with person
     let poster = req.session.account;
     let receiver = req.body.receiver.slice(0, -1);
-    FriendshipDB.checkFriends(poster, receiver, function(result, err) {
+    FriendshipDB.checkFriendship(poster, receiver, function(result, err) {
         if (err) {
             res.send(null, err);
         } else {
@@ -25,7 +37,19 @@ function newFriendPost(req, res) {
                 console.log("post created");
                 // Create the Post
                 createPost(req.session.account, req.body.content, "friendPost", receiver, function(success, err) {
-                    res.redirect('back');
+                    if (err) {
+                        console.log("Err: " + err);
+                        res.redirect('back');
+                    } else {
+                        res.redirect('back');
+                        // PostDB.updatepostsLikes(success.attrs.pID, poster, function(result, err) {
+                        //     if (err) {
+                        //         res.redirect('back');
+                        //     } else {
+                        //         res.redirect('back');
+                        //     }
+                        // });
+                    }                    
                 });
             } else {
                 res.send({error: null, post: "You can't post to non-friends walls. Please don't hack our program :("});
@@ -59,10 +83,11 @@ function addComment(req, res) {
     let username = req.session.account;
     if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
     let content = req.body.content;
-    let pID = req.body.pID;
+    let pID = req.body.pID.slice(0, -1);
+    console.log("content is: " + content);
     // Make sure user is friends with the poster?
     PostDB.addComment(pID, username, content, function(comment, err) {
-
+        res.redirect('back');
     });
 }
 
@@ -72,7 +97,7 @@ function likePost(req, res) {
     if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
 
     // Make sure user hasn't liked this comment before
-    
+
 }
 
 // Needs sID, username
@@ -131,7 +156,7 @@ function getAccountInformation(req, res) {
                       });
                 } else {
                     console.log("not friends!!");
-                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: "pending"})
+                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: status})
                 }
             }
           })

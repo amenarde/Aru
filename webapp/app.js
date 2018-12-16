@@ -54,18 +54,18 @@ app.get('/user/:username', wallController.openProfile);
 // Newsfeed routes
 app.get('/newsfeed', newsfeedController.open);
 app.get('/getFeedFor', newsfeedController.getFeedFor);
-// app.get('/getFeedSince', newsfeedController.getFeedSince);
+app.post('/getFeedSince', newsfeedController.getFeedSince);
 
 // Post Routes
 app.get('/chat', chatController.open);
 app.post('/postStatusUpdate', wallController.newStatusUpdate);
 app.post('/newFriendPost', wallController.newFriendPost);
-app.post('/comment', wallController.addComment);
+app.post('/addComment', wallController.addComment);
 
 // Friend request routes
 app.get('/updateFirstName', accountController.updateFirstName);
 app.post('/issueFriendRequest', accountController.issueFriendRequest);
-app.get('/acceptFriendRequest', accountController.acceptFriendRequest);
+app.post('/acceptFriendRequest', accountController.acceptFriendRequest);
 app.get('/getFriendRequests', accountController.getFriendRequests);
 
 
