@@ -39,6 +39,16 @@
                   <% } %>
                   <div class="wall-card-info">
                     <div class="wall-status"><%= wallContent[i].content %></div>
+                    <% for (var j = 0; j < wallContent[i].comments.length; j++) { %>
+                      <div class="wall-comment-card">
+                        <div class="wall-comment-text"><span class="wall-clickable wall-comment-user"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].comments[j].username %>><%= wallContent[i].comments[j].username %></a></span><%= wallContent[i].comments[j].content %></div>
+                      </div>
+                    <% } %>
+                    <form action="/addComment" method="POST" class="wall-add-comment">
+                      <input type="text" placeholder="Add comment..." name="content" class="wall-comment-input">
+                      <input type="hidden" name="pID" value= <%= wallContent[i].pID %>/>
+                      <button type="submit" class="wall-comment">COMMENT</button>
+                    </form>
                   </div>
                 </div>
               <% } else if (wallContent[i].type === "statusUpdate") { %>
@@ -46,20 +56,52 @@
                 <% if (userData.username === user) { %>
                   <div class="wall-user-name">You updated your status.</div>
                   <div class="wall-card-info">
-                  <div class="wall-status"><%= wallContent[i].content %></div>
+                    <div class="wall-status"><%= wallContent[i].content %></div>
+                    <% for (var j = 0; j < wallContent[i].comments.length; j++) { %>
+                      <div class="wall-comment-card">
+                        <div class="wall-comment-text"><span class="wall-clickable wall-comment-user"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].comments[j].username %>><%= wallContent[i].comments[j].username %></a></span><%= wallContent[i].comments[j].content %></div>
+                      </div>
+                    <% } %>
+                    <form action="/addComment" method="POST" class="wall-add-comment">
+                      <input type="text" placeholder="Add comment..." name="content" class="wall-comment-input">
+                      <input type="hidden" name="pID" value= <%= wallContent[i].pID %>/>
+                      <button type="submit" class="wall-comment">COMMENT</button>
+                    </form>
                   </div>
                 <% } else { %>
                   <div class="wall-user-name"><%= userData.firstName %> updated their status.</div>
                   <div class="wall-card-info">
-                  <div class="wall-status"><%= wallContent[i].content %></div>
+                    <div class="wall-status"><%= wallContent[i].content %></div>
+                    <% for (var j = 0; j < wallContent[i].comments.length; j++) { %>
+                      <div class="wall-comment-card">
+                        <div class="wall-comment-text"><span class="wall-clickable wall-comment-user"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].comments[j].username %>><%= wallContent[i].comments[j].username %></a></span><%= wallContent[i].comments[j].content %></div>
+                      </div>
+                    <% } %>
+                    <form action="/addComment" method="POST" class="wall-add-comment">
+                      <input type="text" placeholder="Add comment..." name="content" class="wall-comment-input">
+                      <input type="hidden" name="pID" value= <%= wallContent[i].pID %>/>
+                      <button type="submit" class="wall-comment">COMMENT</button>
+                    </form>
                   </div>
                 <% } %>
               </div>
               <% } else if (wallContent[i].type === "profileUpdate") { %>
               <% } else if (wallContent[i].type === "newFriendship") { %>
-                <div class="wall-user-name"><%= wallContent[i].content %></div>
-                  <div class="wall-card-info">
-                  <div class="wall-status friendship-status">&#x2665;</div>
+                <div class="wall-card">
+                  <div class="wall-user-name"><%= wallContent[i].content %></div>
+                    <div class="wall-card-info">
+                    <div class="wall-status friendship-status">&#x2665;</div>
+                    <% for (var j = 0; j < wallContent[i].comments.length; j++) { %>
+                      <div class="wall-comment-card">
+                        <div class="wall-comment-text"><span class="wall-clickable wall-comment-user"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].comments[j].username %>><%= wallContent[i].comments[j].username %></a></span><%= wallContent[i].comments[j].content %></div>
+                      </div>
+                    <% } %>
+                    <form action="/addComment" method="POST" class="wall-add-comment">
+                      <input type="text" placeholder="Add comment..." name="content" class="wall-comment-input">
+                      <input type="hidden" name="pID" value= <%= wallContent[i].pID %>/>
+                      <button type="submit" class="wall-comment">COMMENT</button>
+                    </form>
+                  </div>
                 </div>
               <% } %>
             <% } %>

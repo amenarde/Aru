@@ -63,7 +63,7 @@ function addComment(req, res) {
     console.log("content is: " + content);
     // Make sure user is friends with the poster?
     PostDB.addComment(pID, username, content, function(comment, err) {
-
+        res.redirect('back');
     });
 }
 
