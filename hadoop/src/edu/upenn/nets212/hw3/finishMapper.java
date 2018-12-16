@@ -14,11 +14,11 @@ public class finishMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable key, Text value, Context context) 
 			throws java.io.IOException, InterruptedException
 	{
-		String[] components = value.toString().split("|");
+		String[] components = value.toString().split("\t");
 		String[] labelsAndWeights = components[2].split(" ");
 		for (int i = 0; i < labelsAndWeights.length/2; i++) {
-			Text key = new Text(labelsAndWeights[i*2]);
-			context.write(key, new Text(components[0] + " " + labelsAndWeights[i * 2 + 1]));
+			Text reducerkey = new Text(labelsAndWeights[i*2]);
+			context.write(reducerkey, new Text(components[0] + " " + labelsAndWeights[i * 2 + 1]));
 		}
 	}
 }

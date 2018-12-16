@@ -1,13 +1,4 @@
 package edu.upenn.nets212.hw3;
-import diffCombiner;
-import diffReducer;
-import finishMapper;
-import finishReducer;
-import InitFriendGraphMapper;
-import InitFriendGraphReducer;
-import InitFriendGraphMapper;
-import IterAdsorptionMapper;
-import IterAdsorptionReducer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,31 +32,32 @@ public class FriendRecomendationDriver
 	      System.exit(-1);
 	  } else if (args[0].equals("composite")) {
 		  if (args.length == 7) {
-			  SocialRankDriver.composite(args[1], args[2], args[3], args[4], args[5], Integer.parseInt(args[6]));
+			  FriendRecomendationDriver.composite(args[1], args[2], args[3], args[4], args[5], Integer.parseInt(args[6]));
 		  } else {
 			  System.err.println("Usage: composite <inputDir> <outputDir> <intermDir1> <intermDir2> <diffDir> <#reducers>");
 		  }
 	  } else if (args[0].equals("init")) {
 		  if (args.length != 5) {
-			  SocialRankDriver.init(args[1], args[2], Integer.parseInt(args[3]));
+			  System.out.println(args);
+			  FriendRecomendationDriver.init(args[1], args[2], Integer.parseInt(args[3]));
 		  } else {
 			  System.err.println("Usage: init <inputDir> <outputDir> <#reducers>");
 		  }
 	  } else if (args[0].equals("iter")) {
 		  if (args.length != 5) {
-			  SocialRankDriver.iter(args[1], args[2], Integer.parseInt(args[3]));
+			  FriendRecomendationDriver.iter(args[1], args[2], Integer.parseInt(args[3]));
 		  } else {
 			  System.err.println("Usage: iter <inputDir> <outputDir> <#reducers>");
 		  }
 	  } else if (args[0].equals("diff")) {
 		  if (args.length != 6) {
-			  SocialRankDriver.diff(args[1], args[2], args[3], "GODTMP", Integer.parseInt(args[4]));
+			  FriendRecomendationDriver.diff(args[1], args[2], args[3], "GODTMP", Integer.parseInt(args[4]));
 		  } else {
 			  System.err.println("Usage: iter <inputDir> <outputDir> <#reducers>");
 		  }
 	  } else if (args[0].equals("finish")) {
 		  if (args.length != 5) {
-			  SocialRankDriver.finish(args[1], args[2], Integer.parseInt(args[3]));
+			  FriendRecomendationDriver.finish(args[1], args[2], Integer.parseInt(args[3]));
 		  } else {
 			  System.err.println("Usage: finish <inputDir> <outputDir> <#reducers>");
 		  }
@@ -90,10 +82,10 @@ public class FriendRecomendationDriver
 	  // Need node, rank, people they point to
 	  
 	  // Delete output Dir if exists
-	  SocialRankDriver.deleteDirectory(outputDir);
+	  FriendRecomendationDriver.deleteDirectory(outputDir);
 	  
 	  Job job = new Job();
-	  job.setJarByClass(SocialRankDriver.class);
+	  job.setJarByClass(FriendRecomendationDriver.class);
 	    
 	  job.setMapperClass(InitFriendGraphMapper.class);
 	  job.setReducerClass(InitFriendGraphReducer.class);
@@ -117,17 +109,19 @@ public class FriendRecomendationDriver
   public static void iter(String inputDir, String outputDir, int numReducers) 
   	throws Exception
   {
+	  String intermediateDir = "InterimDir";
 	  // Perform a single round of SocialRank
 	  // Data in inputDir should be intermediate format
 	  // Output scores to outputDir
 	  // Make sure outputDir does not exist
-	  SocialRankDriver.deleteDirectory(outputDir);
+	  FriendRecomendationDriver.deleteDirectory(outputDir);
+	  FriendRecomendationDriver.deleteDirectory(intermediateDir);
 	  
 	  Job job = new Job();
-	  job.setJarByClass(SocialRankDriver.class);
+	  job.setJarByClass(FriendRecomendationDriver.class);
 	    
-	  job.setMapperClass(IterAdsorptionMapper.class);
-	  job.setReducerClass(IterAdsorptionReducer.class);
+	  job.setMapperClass(IterAggregateMapper.class);
+	  job.setReducerClass(IterAggregateReducer.class);
 	    
 	  job.setMapOutputKeyClass(Text.class);
 	  job.setMapOutputValueClass(Text.class);
@@ -138,6 +132,26 @@ public class FriendRecomendationDriver
 	  job.setNumReduceTasks(numReducers);
 	    
 	  FileInputFormat.addInputPath(job, new Path(inputDir));
+	  FileOutputFormat.setOutputPath(job, new Path(intermediateDir));
+	  
+	  // Take the intermediate results and combine them back into nodes
+	  job.waitForCompletion(true);
+	  
+	  job = new Job();
+	  job.setJarByClass(FriendRecomendationDriver.class);
+	    
+	  job.setMapperClass(IterCreateNodeMapper.class);
+	  job.setReducerClass(IterCreateNodeReducer.class);
+	    
+	  job.setMapOutputKeyClass(Text.class);
+	  job.setMapOutputValueClass(Text.class);
+	    
+	  job.setOutputKeyClass(Text.class);
+	  job.setOutputValueClass(Text.class);
+	  
+	  job.setNumReduceTasks(numReducers);
+	    
+	  FileInputFormat.addInputPath(job, new Path(intermediateDir));
 	  FileOutputFormat.setOutputPath(job, new Path(outputDir));
 	  
 	  // Run the job
@@ -151,15 +165,15 @@ public class FriendRecomendationDriver
 	  // Diff will always be positive (take absolute value)
 	  
 	  // Delete existing outputDir if exists
-	  SocialRankDriver.deleteDirectory(outputDir);
-	  SocialRankDriver.deleteDirectory(tempDir);
+	  FriendRecomendationDriver.deleteDirectory(outputDir);
+	  FriendRecomendationDriver.deleteDirectory(tempDir);
 	  
 	  // Job for collecting values
 	  Job job = new Job();
-	  job.setJarByClass(SocialRankDriver.class);
+	  job.setJarByClass(FriendRecomendationDriver.class);
 	    
 	  job.setMapperClass(diffMapper.class);
-	  job.setReducerClass(diffCombiner.class);
+	  job.setReducerClass(diffReducer.class);
 	    
 	  job.setMapOutputKeyClass(Text.class);
 	  job.setMapOutputValueClass(Text.class);
@@ -178,11 +192,11 @@ public class FriendRecomendationDriver
 	    
 	  // Find the new max
 	  job = new Job();
-	  job.setJarByClass(SocialRankDriver.class);
+	  job.setJarByClass(FriendRecomendationDriver.class);
 	    
 	  job.setMapperClass(maxDiffMapper.class);
-	  job.setCombinerClass(diffReducer.class);
-	  job.setReducerClass(diffReducer.class);
+//	  job.setCombinerClass(diffReducer.class);
+	  job.setReducerClass(maxDiffReducer.class);
 	    
 	  job.setMapOutputKeyClass(Text.class);
 	  job.setMapOutputValueClass(DoubleWritable.class);
@@ -201,7 +215,7 @@ public class FriendRecomendationDriver
 	  job.waitForCompletion(true);
 	  
 	  // Delete the temp dir
-	  SocialRankDriver.deleteDirectory(tempDir);
+	  FriendRecomendationDriver.deleteDirectory(tempDir);
   }
   
   // finish <inputDir> <outputDir> <#reducers>
@@ -209,18 +223,18 @@ public class FriendRecomendationDriver
 	  // convert intermediate data to output
 	  
 	  // Delete dir if it exists
-	  SocialRankDriver.deleteDirectory(outputDir);
+	  FriendRecomendationDriver.deleteDirectory(outputDir);
 	  
 	  Job job = new Job();
-	  job.setJarByClass(SocialRankDriver.class);
+	  job.setJarByClass(FriendRecomendationDriver.class);
 	    
 	  job.setMapperClass(finishMapper.class);
 	  job.setReducerClass(finishReducer.class);
 	    
-	  job.setMapOutputKeyClass(DoubleWritable.class);
+	  job.setMapOutputKeyClass(Text.class);
 	  job.setMapOutputValueClass(Text.class);
 	    
-	  job.setOutputKeyClass(DoubleWritable.class);
+	  job.setOutputKeyClass(Text.class);
 	  job.setOutputValueClass(Text.class);
 	  
 	  // Use to sort the values without own implementation
@@ -238,34 +252,36 @@ public class FriendRecomendationDriver
   {
 	  // Runs the entire algorithm
 	  // Hyperparameters
-	  double minDiff = 30; // 0.001; //30;
+	  double minDiff = 2; // 0.001; //30;
 	  int epochSize = 5;
+	  int totalEpochs = 20;
 	  
 	  // Initialize the data
-	  SocialRankDriver.init(inDir, intDir1, numRed);
+	  FriendRecomendationDriver.init(inDir, intDir1, numRed);
 	  
 	  // Dir 1 should always have most recent values
 	  do {
 		// Run iterations, multiple to not take on cost of diff as often
 		for (int i = 0; i < epochSize; i++) {
-			SocialRankDriver.iter(intDir1, intDir2, numRed);
+			FriendRecomendationDriver.iter(intDir1, intDir2, numRed);
 			String temp = intDir1;
 			intDir1 = intDir2;
 			intDir2 = temp;
 		}
-		SocialRankDriver.diff(intDir1, intDir2, diffDir, outDir, numRed);
+		totalEpochs -= epochSize;
+		FriendRecomendationDriver.diff(intDir1, intDir2, diffDir, outDir, numRed);
 		
 		// Swap directories so data is now in proper place for operations
 		String temp = intDir1;
 		intDir1 = intDir2;
 		intDir2 = temp;
-	  } while (SocialRankDriver.converged(diffDir, minDiff));
-	  SocialRankDriver.finish(intDir2, outDir, numRed);
+	  } while (!FriendRecomendationDriver.converged(diffDir, minDiff) && totalEpochs > 0);
+	  FriendRecomendationDriver.finish(intDir2, outDir, numRed);
   }
   
   // Checks if algorithm has reached convergence
   public static boolean converged(String dir, double diff) throws Exception {
-	  return SocialRankDriver.readDiffResult(dir) > diff;
+	  return FriendRecomendationDriver.readDiffResult(dir) < diff;
   }
 
   // Given an output folder, returns the first double from the first part-r-00000 file
