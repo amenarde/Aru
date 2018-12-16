@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Newsfeed</title>
+  <title><%= userData.firstName + ' ' + userData.lastName %></title>
   <link rel="stylesheet" type="text/css" href="../css/main.css">
   <link rel="stylesheet" type="text/css" href="../css/wall.css">
   <script src="../js/jquery-3.3.1.min.js"></script>
@@ -14,54 +14,61 @@
             <p class="profile-title"><%= userData.firstName + ' ' + userData.lastName %></p>
           <% } %>
           <div class="profile-title-bar"></div>
-          <% if (userData.username === user) { %>
-            <form class="wall-status-update" method="POST" action="/postStatusUpdate">
-              <input class="wall-status-input" type="text" id="wall-status-input" name="statusUpdate" placeholder="What's on your mind?">
-              <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
-          </form>
-          <% } else { %>
-            <form class="wall-status-update" method="POST" action="/newFriendPost">
-              <input class="wall-status-input" type="text" id="wall-status-input" name="content" placeholder="Finally tell them you love them..." name="statusUpdate">
-              <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
-              <input type="hidden" name="receiver" value= <%= userData.username %>/>
+          <% if (status === "confirmed" || userData.username === user) { %>
+            <% if (userData.username === user) { %>
+              <form class="wall-status-update" method="POST" action="/postStatusUpdate">
+                <input class="wall-status-input" type="text" id="wall-status-input" name="statusUpdate" placeholder="What's on your mind?">
+                <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
             </form>
-          <% } %>
-          <div class="profile-title-bar"></div>
-          <% for (var i=0; i < wallContent.length; i++) { %>
-            <% if (wallContent[i].type === "friendPost") { %>
-              <div class="wall-card">
-              <% if (userData.username === user) { %>
-                <div class="wall-user-name"> <span class="wall-clickable"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> posted on your wall.</div>
-              <% } else { %>
-                <div class="wall-user-name"> <span class="wall-clickable"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> posted on <%= userData.firstName %>'s wall.</div>
-              <% } %>
-              <div class="wall-card-info">
-                <div class="wall-status"><%= wallContent[i].content %></div>
-              </div>
-            </div>
-            <% } else if (wallContent[i].type === "statusUpdate") { %>
-            <div class="wall-card">
-              <% if (userData.username === user) { %>
-                <div class="wall-user-name">You updated your status.</div>
-                <div class="wall-card-info">
-                <div class="wall-status"><%= wallContent[i].content %></div>
-                </div>
-              <% } else { %>
-                <div class="wall-user-name"><%= userData.firstName %> updated their status.</div>
-                <div class="wall-card-info">
-                <div class="wall-status"><%= wallContent[i].content %></div>
-                </div>
-              <% } %>
-            </div>
-            <% } else if (wallContent[i].type === "profileUpdate") { %>
-            <% } else if (wallContent[i].type === "newFriendship") { %>
+            <% } else { %>
+              <form class="wall-status-update" method="POST" action="/newFriendPost">
+                <input class="wall-status-input" type="text" id="wall-status-input" name="content" placeholder="Finally tell them you love them..." name="statusUpdate">
+                <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
+                <input type="hidden" name="receiver" value= <%= userData.username %>/>
+              </form>
             <% } %>
-          <% } %>
-          <div class="wall-card">
-            <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
-            <div class="wall-card-info">
+            <div class="profile-title-bar"></div>
+            <% for (var i=0; i < wallContent.length; i++) { %>
+              <% if (wallContent[i].type === "friendPost") { %>
+                <div class="wall-card">
+                  <% if (userData.username === user) { %>
+                    <div class="wall-user-name"> <span class="wall-clickable"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> posted on your wall.</div>
+                  <% } else { %>
+                    <div class="wall-user-name"> <span class="wall-clickable"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> posted on <%= userData.firstName %>'s wall.</div>
+                  <% } %>
+                  <div class="wall-card-info">
+                    <div class="wall-status"><%= wallContent[i].content %></div>
+                  </div>
+                </div>
+              <% } else if (wallContent[i].type === "statusUpdate") { %>
+              <div class="wall-card">
+                <% if (userData.username === user) { %>
+                  <div class="wall-user-name">You updated your status.</div>
+                  <div class="wall-card-info">
+                  <div class="wall-status"><%= wallContent[i].content %></div>
+                  </div>
+                <% } else { %>
+                  <div class="wall-user-name"><%= userData.firstName %> updated their status.</div>
+                  <div class="wall-card-info">
+                  <div class="wall-status"><%= wallContent[i].content %></div>
+                  </div>
+                <% } %>
+              </div>
+              <% } else if (wallContent[i].type === "profileUpdate") { %>
+              <% } else if (wallContent[i].type === "newFriendship") { %>
+              <% } %>
+            <% } %>
+            <div class="wall-card">
+              <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
+              <div class="wall-card-info"></div>
             </div>
-          </div>
+          <% } else { %>
+              <div class="wall-friend-status">You're not friends with <%= userData.firstName %> yet. Send them a friend request!</div>
+              <form method="post" action="/issueFriendRequest">
+                <input type="submit" value="+ Add Friend" class="secondary-btn" id="add-friend-btn">
+                <input type="hidden" name="friender" value= <%=  userData.username %>/>
+              </form>
+          <% } %>
         </div>
         <div class="parallax__layer--back account-info">
           <form class="wall-edit-update" method="POST" action="/updateInfo">
@@ -82,6 +89,15 @@
           </form>
         </div>
     </div>
+    <div class="navigation">
+          <div class="nav-icon"></div>
+          <div class="nav-menu">
+            <a class="nav-selection" href=<%="/user/" + user%>>My Profile</a><br>
+            <a class="nav-selection" href="/newsfeed">Newsfeed</a><br>
+            <a class="nav-selection" href="/chatroom">Chatroom</a><br>
+            <a class="nav-selection" href="/visualizer">Visualizer</a><br>
+          </div>
+        </div>
   </body>
   <script>
     $('#wall-edit-info-btn').click(function() {

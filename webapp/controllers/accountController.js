@@ -132,7 +132,7 @@ function rejectFriendRequest(req, res) {
 // Tested - works (for hardcoded values of user and user2)
 function issueFriendRequest(req, res) {
   let user = req.session.account;
-  let user2 = req.body.friender;
+  let user2 = req.body.friender.slice(0, -1);
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
     res.send({friends: friends, error: err});
   });

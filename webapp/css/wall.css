@@ -111,6 +111,14 @@
   transition: all .1s ease-in-out;
 }
 
+#add-friend-btn {
+  width: 26%;
+  min-width: 80px;
+  margin-top: 15px;
+  margin: auto;
+}
+
+
 .wall-card {
   margin-bottom: 40px;
 }
@@ -159,6 +167,13 @@
 
 .wall-clickable:hover {
   text-decoration: underline;
+}
+
+.wall-friend-status {
+  margin: auto;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 .account-info {

@@ -104,20 +104,32 @@ function getAccountInformation(req, res) {
             birthday: user.attrs.birthday,
           }
           let timestamp = req.body.timestamp;
-          getWallContent(username, timestamp, function(feed, err) {
+          FriendshipDB.checkFriendship(req.session.account, username, function(status, err) {
             if (err) {
                 res.send({error: err});
             } else {
-                console.log("feed is: " + JSON.stringify(feed));
-                constructFeedFromIDs(feed, function(wallContent, err) {
-                    if (err) {
-                        res.send({error: err});
-                    } else {
-                        res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: wallContent});
-                    }
-                });
+                console.log("STATUS IS: " + status);
+                if (status === "confirmed" || username === req.session.account) {
+                    getWallContent(username, timestamp, function(feed, err) {
+                        if (err) {
+                            res.send({error: err});
+                        } else {
+                            console.log("feed is: " + JSON.stringify(feed));
+                            constructFeedFromIDs(feed, function(wallContent, err) {
+                                if (err) {
+                                    res.send({error: err});
+                                } else {
+                                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: wallContent, status: "confirmed"});
+                                }
+                            });
+                        }
+                      });
+                } else {
+                    console.log("not friends!!");
+                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: "pending"})
+                }
             }
-          });
+          })
       } else {
           res.send({error: "No user found for " + username});
       }

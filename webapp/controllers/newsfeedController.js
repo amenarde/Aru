@@ -9,7 +9,7 @@ var open = function(req, res) {
         res.render('main.ejs', {error: "Sorry an error has occurred."});
       } else {
         console.log("feed is: " + JSON.stringify(feed[0]));
-        res.render('newsfeed.ejs', {error: null, feed: feed});
+        res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account});
       }
     })
   }
