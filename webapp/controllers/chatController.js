@@ -70,6 +70,17 @@ function postToChat(req, res) {
 	});
 }
 
+function getChatUsersByUser(req, res) {
+	if (!req.session.account) {
+		res.render('main.ejs', {error: "You must be logged in to see that page."});
+		return;
+	}
+
+	chatDB.getChatUsersByUser(req.session.account, function(data, err) {
+		return data;
+	});
+}
+
 function addUser(chatID, userID) {
 	// If was a 2 person chat, make a new chat
 }
@@ -126,7 +137,8 @@ var routes = {
 	fetchChat: fetchChat,
 	postMessage: postToChat,
 	open: open,
-	socket: socketFunc
+	socket: socketFunc,
+	getChatUsersByUser: getChatUsersByUser,
   };
   
   module.exports = routes;

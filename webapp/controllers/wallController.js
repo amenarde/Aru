@@ -3,7 +3,7 @@ var FriendshipDB = require("../models/friendsDB.js");
 var db = require('../models/userDB.js');
 var Heap = require('heap');
 
-// Functions for Postes
+// Functions for Posts
 function newStatusUpdate(req, res) {
     createPost(req.session.account, req.body.statusUpdate, "statusUpdate", req.session.account, function(success, err) {
         if (err) {
@@ -47,6 +47,8 @@ function createPost(poster, content, type, receiver, callback) {
 // Needs sID, wall
 function deletePost(req, res) {
     // Make sure person deleting has permisions (so make sure they made the post)
+    let username = req.session.account;
+    let sID = req.body.sID;
 
     // Remove the Post
     PostDB.delete(sID, wall, callback);
@@ -54,8 +56,13 @@ function deletePost(req, res) {
 
 // Needs sID, poster, comment,
 function addComment(req, res) {
+    let username = req.session.account;
+    let content = req.body.content;
+    let pID = req.body.pID;
     // Make sure user is friends with the poster?
+    PostDB.addComment(pID, username, content, function(comment, err) {
 
+    });
 }
 
 // Needs sID, username
@@ -137,12 +144,12 @@ function constructFromTime(username, timestamp, callback) {
     // Put all values in heap
     let postsHeap = new Heap(function(a, b) {
         // Custom comparator for entires
-        console.log("a " + JSON.stringify(a));
-        console.log("b " + JSON.stringify(b));
         if (new Date(a.createdAt) > new Date(b.createdAt)) {
-            return 1;
+            return -1
+        } else if (new Date(a.createdAt) === new Date(b.createdAt)) {
+            return 0
         } else {
-            return 0;
+            return 1;
         }
     });
     // Get entries for each friend
@@ -180,9 +187,11 @@ function constructFeedFromIDs(feedIDs, callback) {
     postData = [];
     for (let i = 0; i < feedIDs.length; i++) {
         if (feedIDs[i] != null) {
-            postData.push({pID: feedIDs[i].pID, receiver: feedIDs[i].username});
+            postData.push({pID: feedIDs[i].pID, receiver: feedIDs[i].username, index: i});
         }
     }
+
+    console.log("postData is: " + postData);
     // Find the posts, comments and return them
     PostDB.getPosts(postData, function(feed, error) {
         callback(feed, error);

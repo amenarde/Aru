@@ -101,8 +101,6 @@ function acceptFriendRequest(req, res) {
       } else if (status === "incoming") {
         // Should check if there is pending request
         FriendshipDB.acceptRequest(user, user2, function(friendship, err) {
-          console.log(err);
-          console.log(friendship);
           if (err) {
             res.send({error: err});
           } else {
@@ -136,7 +134,6 @@ function issueFriendRequest(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
-    console.log("Friends: " + friends);
     res.send({friends: friends, error: err});
   });
 }
@@ -145,15 +142,14 @@ function removeFriend(req, res) {
   let user = req.session.account;
   let user2 = req.body.friender;
   FriendshipDB.removeFriend(user, user2, function(friends, err) {
-    console.log("friend removed - " + err);
     res.send({error: err});
   });
 }
 
 function getPendingRequest(req, res) {
   let user = req.session.account;
-  FriendshipDB.getPending(user, function(pending, err) {
-    res.send({error: err, pending: pending});
+  FriendshipDB.getIncomingRequest(user, function(incoming, err) {
+    res.send({error: err, friendRequests: incoming});
   });
 }
 

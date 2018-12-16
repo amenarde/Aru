@@ -15,7 +15,6 @@
           <% } %>
           <div class="profile-title-bar"></div>
           <% if (userData.username === user) { %>
-            <p>My Update</p>
             <form class="wall-status-update" method="POST" action="/postStatusUpdate">
               <input class="wall-status-input" type="text" id="wall-status-input" name="statusUpdate" placeholder="What's on your mind?">
               <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
@@ -31,17 +30,28 @@
           <% for (var i=0; i < wallContent.length; i++) { %>
             <% if (wallContent[i].type === "friendPost") { %>
               <div class="wall-card">
-              <div class="wall-user-name"> <span class="wall-clickable"><%= wallContent[i].username %></span> posted on <%= userData.firstName %>'s wall.</div>
+              <% if (userData.username === user) { %>
+                <div class="wall-user-name"> <span class="wall-clickable"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> posted on your wall.</div>
+              <% } else { %>
+                <div class="wall-user-name"> <span class="wall-clickable"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> posted on <%= userData.firstName %>'s wall.</div>
+              <% } %>
               <div class="wall-card-info">
                 <div class="wall-status"><%= wallContent[i].content %></div>
               </div>
             </div>
             <% } else if (wallContent[i].type === "statusUpdate") { %>
             <div class="wall-card">
-              <div class="wall-user-name"> <span class="wall-clickable"><%= userData.firstName %></span> updated their status.</div>
-              <div class="wall-card-info">
+              <% if (userData.username === user) { %>
+                <div class="wall-user-name">You updated your status.</div>
+                <div class="wall-card-info">
                 <div class="wall-status"><%= wallContent[i].content %></div>
-              </div>
+                </div>
+              <% } else { %>
+                <div class="wall-user-name"><%= userData.firstName %> updated their status.</div>
+                <div class="wall-card-info">
+                <div class="wall-status"><%= wallContent[i].content %></div>
+                </div>
+              <% } %>
             </div>
             <% } else if (wallContent[i].type === "profileUpdate") { %>
             <% } else if (wallContent[i].type === "newFriendship") { %>
