@@ -4,7 +4,14 @@ var FriendshipDB = require('../models/friendsDB.js');
 
 var open = function(req, res) {
   if (req.session.account) {
-    res.render('newsfeed.ejs', {error: ""});
+    getFeedFor(req, res, function(feed, err) {
+      if (err) {
+        res.render('main.ejs', {error: "Sorry an error has occurred."});
+      } else {
+        console.log("feed is: " + JSON.stringify(feed[0]));
+        res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account});
+      }
+    })
   }
   else {
     res.render('main.ejs', {error: "You must be logged in to see that page."});
@@ -14,10 +21,9 @@ var open = function(req, res) {
 //used in initial News Feed population and older post loading
 //e.g. give me most recent 0-10, give me most recent pageOffset + updateOffset
 var PAGE_SIZE = 10;
-var getFeedFor = function(req, res) {
+var getFeedFor = function(req, res, callback) {
     // Get cached values of friends
     let username = req.session.account;
-    username = "ptaggs";
     if (!username) {
         res.render('main.ejs', {error: "You must be logged in to see that page."})
     } else {
@@ -36,7 +42,7 @@ var getFeedFor = function(req, res) {
                         res.send({error: err});
                     } else {
                         constructFeedFromIDs(feedIDs, function(feed, err) {
-                            res.send({feed: feed, error: err});
+                            callback(feed, err);
                         });
                     }
                 });
@@ -174,22 +180,10 @@ function getFriends(username, callback) {
     });
 }
 
-var postStatusUpdate = function(req, res) {
-  PostsDB.createposts(req.session.account, req.body.statusUpdate, req.session.account, "statusUpdate", function(data, err) {
-    if (err) {
-        res.send({error: err});
-    } else {
-        // Send back the data?
-        res.send(data);
-    }
-  });
-}
-
 var routes = {
   open: open,
   getFeedFor: getFeedFor,
   getFeedSince: getFeedSince,
-  postStatusUpdate: postStatusUpdate,
 };
 
 module.exports = routes;

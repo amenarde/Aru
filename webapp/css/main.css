@@ -7,6 +7,11 @@ html {
   overflow-y: hidden;
 }
 
+a {
+  text-decoration: none;
+  color:#6D6D6D;
+}
+
 #background {
   background-image: linear-gradient(#FCF9F4, #EFEFEF);
   height: 100%;
@@ -14,7 +19,7 @@ html {
   position: absolute;
   top: 0px;
   left: 0px;
-  font-family: 'Futura';
+  font-family: 'Futura'f;
   overflow-y: scroll;
   scroll: touch;
 }
@@ -140,4 +145,52 @@ input:hover {
   position: relative;
 }
 
+.navigation {
+  display: block;
+  position: fixed;
+  left: -150px;
+  height: 100%;
+  width: 200px;
+  top: 45%;
+  transition: all .2s ease-in-out;
+}
+
+.nav-icon {
+  height: 20px;
+  width: 20px;
+  background-color: #F1A687;
+  margin-bottom: 75px;
+  border-radius: 50%;
+  position: absolute;
+  right: 0px;
+}
+
+.navigation:hover {
+  left: -50px;
+}
+
+.nav-menu {
+  position: absolute;
+  right: 50px;
+  top: -30px;
+  text-align: left;
+  font-size: 10px;
+  color: #6D6D6D;
+  font-family: 'Futura';
+  line-height: 35px;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+}
+
+.nav-selection {
+  margin-bottom: 4px;
+}
+
+a:visited{
+  border:none;
+  outline:none;
+  text-decoration:none;
+  color:#6D6D6D;
+  -webkit-tap-highlight-color: white;
+}
 

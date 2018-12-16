@@ -50,7 +50,7 @@ var createAccount = function(req, res) {
       res.render('main.ejs', {error: err});
     } else if (data) {
     	req.session.account = data.username;
-      res.render('newsfeed.ejs');
+      res.redirect('/newsfeed');
     }
   });
 };
@@ -76,7 +76,7 @@ var verifyLogin = function(req, res) {
     } else if (data) {
       // Logged in correctly
     	req.session.account = data;
-      res.render('newsfeed.ejs');
+      res.redirect('/newsfeed');
     }
   });
 };
@@ -87,7 +87,8 @@ var logout = function(req, res) {
 };
 
 function acceptFriendRequest(req, res) {
-  let user = req.session.account; 
+
+  let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender;
   // user2 is the person who initia
@@ -135,9 +136,9 @@ function rejectFriendRequest(req, res) {
 function issueFriendRequest(req, res) {
   let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
-  let user2 = req.body.friender;
+  let user2 = req.body.friender.slice(0, -1);
   FriendshipDB.friendRequest(user, user2, function(friends, err) {
-    res.send({friends: friends, error: err});    
+    res.send({friends: friends, error: err});
   });
 }
 
@@ -167,11 +168,47 @@ function getFriends(req, res) {
   });
 }
 
+function updateInfo(req, res) {
+  let newFirst = req.body.firstName;
+  let lastName = req.body.lastName;
+  let birthday = req.body.birthday;
+  let affiliation = req.body.affiliation;
+
+  userData = {
+    username: req.session.account,
+  };
+
+  if (newFirst != "") {
+    userData['firstName'] = newFirst;
+  }
+  if (lastName != "") {
+    userData['lastName'] = lastName;
+  }
+  if (birthday != "") {
+    userData['birthday'] = birthday;
+  }
+  if (affiliation != "") {
+    userData['affiliation'] = affiliation;
+  }
+
+  console.log("userData is: " + JSON.stringify(userData));
+
+  db.updateUser(userData, function(user, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      res.redirect('back');
+    }
+  })
+}
+
 // Tested with hardcoded values worked
 function updateFirstName(req, res) {
   let username = req.session.account;
+
   if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let newFirst = req.body.firstName;
+
   db.updateFirstName(username, newFirst, function(success, err) {
     console.log("Update first name: " + success);
     if (err) {
@@ -187,8 +224,10 @@ function updateFirstName(req, res) {
 
 function updateLastName(req, res) {
   let username = req.session.account;
+
   if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let lastName = req.body.lastName;
+
   db.updateLastName(username, lastName, function(success, err) {
     if (err) {
       res.send({error: err});
@@ -202,8 +241,10 @@ function updateLastName(req, res) {
 
 function updateBirthday(req, res) {
   let username = req.session.account;
+
   if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let birthday = req.body.birthday;
+
   db.updateLastName(username, birthday, function(success, err) {
     if (err) {
       res.send({error: err});
@@ -218,9 +259,11 @@ function updateBirthday(req, res) {
 // Double check this code
 function updateAffiliation(req, res) {
   let username = req.session.account;
+
   if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
-  let affiliation = req.body.birthday;
-  db.updateLastName(affiliation, birthday, function(success, err) {
+  let affiliation = req.body.affiliation;
+
+  db.updateLastName(username, affiliation, function(success, err) {
     if (err) {
       res.send({error: err});
     } else {
@@ -240,13 +283,13 @@ function aggregateProfileUpdate(userData, callback) {
           if (!err) {
             statusUpdates.push(update);
           }
-          completed(err); 
+          completed(err);
         });
-        
+
       }, function (err) {
         callback(statusUpdates, err);
       });
-        
+
     }
 }
 }
@@ -254,7 +297,7 @@ function aggregateProfileUpdate(userData, callback) {
 function profileUpdate(username, attribute, value, callback) {
   // Create a post about it
   createPost(username, attribute + " to " + value, "profileUpdate", username, function(success, err) {
-    callback(success, err);  
+    callback(success, err);
   });
 }
 function newFriendship(username, user2, callback) {
@@ -269,7 +312,7 @@ function newFriendship(username, user2, callback) {
             console.log("Friendship status update made for " + username + " but not for " + user2);
           }
           callback(success, err);
-        })  
+        })
       }
     });
 }
@@ -282,31 +325,6 @@ function createPost(poster, content, type, receiver, callback) {
   PostDB.createposts(poster, content, type, receiver, callback);
 }
 
-// Tested - works
-function getAccountInformation(req, res) {
-  let username = req.session.account;
-  if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
-  db.get(username, function(user, err) {
-    if (err) {
-      res.send({error: err});
-    } else {
-      // Remove password from the object
-      if (user) {
-        let userData = {
-          username: user.attrs.username,
-          firstName: user.attrs.firstName,
-          lastName: user.attrs.lastName,
-          affiliation: user.attrs.affiliation,
-          birthday: user.attrs.birthday,
-        }
-        res.send(userData);
-      } else {
-        res.send({error: username + " does not exist"});
-      }
-    }
-  })
-}
-
 var routes = {
   loginOrSignup: getLogin,
   verify: verifyLogin,
@@ -317,11 +335,11 @@ var routes = {
   issueFriendRequest: issueFriendRequest,
   getFriends: getFriends,
   getFriendRequests: getPendingRequest,
+  updateInfo: updateInfo,
   updateAffiliation: updateAffiliation,
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
-  openProfile: getAccountInformation,
   removeFriend: removeFriend,
 };
 

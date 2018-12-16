@@ -83,7 +83,7 @@ function getCommentsForPost(pID, callback) {
         } else {
             async.each(comments.Items, function(comment, completed) {
                 commentList.push(comment.attrs);
-                completed(null); 
+                completed(null);
             }, function (err) {
                 callback(commentList, null);
             });
@@ -135,7 +135,7 @@ function collectPostData(posts, callback) {
     // This isn't async?
     async.each(posts.Items, function(post, completed) {
         postList.push(post.attrs);
-        completed(null); 
+        completed(null);
     }, function (err) {
         callback(postList, null);
     });
@@ -195,7 +195,7 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
             });
         }
     }
-    
+
 }
 
 function fetchSinceTimeFromUser(username, timestamp, X, callback) {
