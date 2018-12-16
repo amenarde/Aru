@@ -17,7 +17,7 @@ function newFriendPost(req, res) {
     // Make sure friends with person
     let poster = req.session.account;
     let receiver = req.body.receiver.slice(0, -1);
-    FriendshipDB.checkFriends(poster, receiver, function(result, err) {
+    FriendshipDB.checkFriendship(poster, receiver, function(result, err) {
         if (err) {
             res.send(null, err);
         } else {
@@ -59,7 +59,8 @@ function addComment(req, res) {
     let username = req.session.account;
     if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
     let content = req.body.content;
-    let pID = req.body.pID;
+    let pID = req.body.pID.slice(0, -1);
+    console.log("content is: " + content);
     // Make sure user is friends with the poster?
     PostDB.addComment(pID, username, content, function(comment, err) {
 

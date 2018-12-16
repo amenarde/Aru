@@ -74,6 +74,11 @@
   cursor: pointer;
 }
 
+a.newsfeed-clickable {
+  color: #8F6363;
+  cursor: pointer;
+}
+
 .newsfeed-clickable:hover {
   text-decoration: underline;
 }
@@ -81,7 +86,7 @@
 .newsfeed-status {
   position: relative;
   left: 15px;
-  margin-bottom: 2px;
+  margin-bottom: 15px;
   font-size: 14px;
   width: 90%;
 }
@@ -103,10 +108,15 @@
 }
 
 .newsfeed-comment {
-  width: 120px;
-  height: 20px;
+  width: 80px;
+  height: 30px;
   font-size: 10px;
   text-align: center;
+  /* margin-left: 5px; */
+  position: relative;
+  float: left;
+  left: 10px;
+  top: 5px;
 }
 
 button {
@@ -174,4 +184,44 @@ img {
 .newsfeed-friend-bar {
   border-bottom: 1px solid #AAAAAA;
   margin-bottom: 30px;
+}
+
+.newsfeed-comment-card {
+  position: relative;
+  left: 15px;
+  margin-bottom: 2px;
+  font-size: 10px;
+  width: 90%;
+  background-color: white;
+  border-radius: 15px;
+}
+
+.newsfeed-comment-text {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.newsfeed-comment-user {
+  font-size: 10px;
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: 5px;
+}
+
+.newsfeed-add-comment {
+  position: relative;
+  margin-bottom: 2px;
+  font-size: 14px;
+  width: 90%;
+  top: 0px;
+  left: 15px;
+  margin-left: 0px;
+}
+
+.newsfeed-comment-input {
+  width: 80%;
+  margin-left: 0px;
+  float: left;
+  border-radius: 15px;
 }

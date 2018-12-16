@@ -58,7 +58,7 @@ app.get('/getFeedFor', newsfeedController.getFeedFor);
 app.get('/chat', chatController.open);
 app.post('/postStatusUpdate', wallController.newStatusUpdate);
 app.post('/newFriendPost', wallController.newFriendPost);
-app.post('/comment', wallController.addComment);
+app.post('/addComment', wallController.addComment);
 
 // Friend request routes
 app.get('/updateFirstName', accountController.updateFirstName);
