@@ -83,8 +83,15 @@ var getFeedSince = function(req, res) {
                 res.send({error: err});
             } else {
                 let timestamp = req.body.timestamp;
-                constructFromRecent(timestamp, function(feed, err) {
-                    res.send({feed: feed, error: err});
+                friends.push(username);
+                constructFromRecent(friends, timestamp, function(feedIDs, err) {
+                    if (err) {
+                      res.send({error: err});
+                    } else {
+                      constructFeedFromIDs(feedIDs, function(feed, err) {
+                            res.send({feed: feed, err: err});
+                        });
+                    }
                 });
             }
         });

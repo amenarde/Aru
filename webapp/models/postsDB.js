@@ -54,6 +54,7 @@ function deleteposts(timestamp, username, callback) {
 
 function addComment(pID, username, comment, callback) {
     schemas.PostComments.create({pID: pID, username: username, content: comment, likes: 0}, function(err, posts) {
+        console.log("pID is: " + pID);
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);

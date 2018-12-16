@@ -52,7 +52,7 @@ app.get('/user/:username', wallController.openProfile);
 // Newsfeed routes
 app.get('/newsfeed', newsfeedController.open);
 app.get('/getFeedFor', newsfeedController.getFeedFor);
-// app.get('/getFeedSince', newsfeedController.getFeedSince);
+app.post('/getFeedSince', newsfeedController.getFeedSince);
 
 // Post Routes
 app.get('/chat', chatController.open);

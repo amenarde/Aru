@@ -46,6 +46,7 @@
 .newsfeed-card {
   display: flex;
   margin-bottom: 40px;
+  transition: all .2s ease-in-out;
 }
 
 .newsfeed-prof-pic {
@@ -155,7 +156,7 @@ img {
 }
 
 #newsfeed-status-btn {
-  width: 100%;
+  width: 102%;
 }
 
 .friend-accept-btn {
@@ -224,4 +225,5 @@ img {
   margin-left: 0px;
   float: left;
   border-radius: 15px;
+  margin-bottom: 15px;
 }
