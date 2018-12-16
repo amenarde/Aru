@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>Chat</title>
-  <link rel="stylesheet" type="text/css" href="css/main.css">
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/chat.css">
 </head>
 
 <script type="text/javascript">
@@ -14,12 +14,29 @@
 
     // Find your chats and populate
     window.onload = function () {
-        $.post( "/getchats", function(result) {
-            if(result.error) {
-                alert(result.error);
+        $.post( "/getchats", null, function(results) {
+            if(results.error) {
+                alert(results.error);
             }
             else{
-                // TODO
+                results.forEach(function(result) {
+                    var users = "";
+                    result.users.forEach(function(user) {
+                        users += (user + " /  ");
+                    });
+
+                    div = document.createElement('div');
+                    $(div).addClass("newchat-cards")
+                        .html(users)
+                        .appendTo($("#activeChatList")) //main div
+                        .click(function (event) {
+                            currentChat = event.target.id;
+                            socket.emit('join room', currentChat);
+                            buildChat();
+                        })
+                        .attr("id",result.chat);
+                });
+
             }
         });
     }
@@ -42,32 +59,62 @@
     
     var buildChat = function() {
 
+        document.getElementById('activeChatList').style.display = "none";
         document.getElementById('createChat').style.display = "none";
         document.getElementById('chatWindow').style.display = "block";
         document.getElementById('chat').style.display = "block";
+        document.getElementById('addUser').style.display = "block";
+        document.getElementById('removeUser').style.display = "block";
+
+        var chatWindow = document.getElementById('chatWindow');
+
+        var chatTitle = document.getElementById('chatTitle');
 
         $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
             if(result.error) {
                 alert(result.error);
             }
             else{
+
+                chatTitle.innerHTML = result.chatTitle;
+
                 var chats = result.chats.Items;
-                var table = document.getElementById('chatWindow');
 
                 chats.forEach(chat => {
-                    var row = table.insertRow(0);
-                    row.insertCell(0).innerHTML = chat.username;
-                    row.insertCell(1).innerHTML = chat.data;
+                    div = document.createElement('div');
+                    $(div).addClass("newchat-cards")
+                        .html("("+chat.username+") "+chat.data)
+                        .appendTo($("#chatWindow")) //main div
                 });
             }
         });
     }
 
     var addUser = function() {
+        var data = {"username": $('input[name="addusername"]').val(), "chatID": currentChat};
 
+        $.post( "/adduser", data, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                if (result.chatID === currentChat) {
+                    div = document.createElement('div');
+                    $(div).addClass("newchat-cards")
+                        .html(data.username+" was added to this chat")
+                        .appendTo($("#chatWindow")) //main div
+                }
+                else {
+                    var chatWindow = document.getElementById('chatWindow');
+                    chatWindow.innerHTML = '';
+                    currentChat = result.chatID;
+                    buildChat();
+                }
+            }
+        });
     }
 
-    var removeUser = function() {
+    var leaveChat = function() {
 
     }
 
@@ -79,10 +126,10 @@
     }   
 
     const addChatMessage = (data) => {
-        var table = document.getElementById('chatWindow');
-        var row = table.insertRow(0);
-        row.insertCell(0).innerHTML = data.username;
-        row.insertCell(1).innerHTML = data.message;
+        div = document.createElement('div');
+        $(div).addClass("newchat-cards")
+            .html("("+data.username+") "+data.message)
+            .appendTo($("#chatWindow")) //main div
     }
 
       // Whenever the server emits 'new message', update the chat body
@@ -94,18 +141,13 @@
 </script>
 
 <body>
+    <p id="activeChatList">Active Chats<br></p>
 
-    <p> Your chats </p>
-    <p id="activeChatList"> </p>
+    <p id="chatTitle"></p>
 
-    <title id="chatTitle"></title>
+    <p id="chatWindow">
 
-    <table style="display:none" id="chatWindow">
-            <tr>
-              <th>username</th>
-              <th>message</th>
-            </tr>
-    </table>
+    </p>
 
     <form method="post" action="javascript:createChat();" id="createChat">
         Who would you like to chat? <input type="text" name="username" placeholder="username" required="required">
@@ -126,4 +168,4 @@
             Who would you like to remove from the chat? <input type="text" name="removeusername" placeholder="username" required="required">
             <input type="submit" value="Remove user">
     </form>
-</body>>
+</body>

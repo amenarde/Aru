@@ -137,6 +137,7 @@ var Chat2User = vogels.define('Chat2User', {
   schema : {
     chatID: vogels.types.uuid(),
     username: Joi.string(),
+    type: Joi.string()
   },
 });
 exports.Chat2User = Chat2User;
@@ -148,6 +149,7 @@ var User2Chat = vogels.define('User2Chat', {
   schema : {
     chatID: vogels.types.uuid(),
     username: Joi.string(),
+    type: Joi.string()
   }
 });
 exports.User2Chat = User2Chat;
