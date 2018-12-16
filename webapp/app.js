@@ -33,6 +33,8 @@ app.post('/createchat', chatController.createChat);
 app.post('/fetchchat', chatController.fetchChat);
 app.post('/postmessage', chatController.postMessage);
 app.post('/getchats', chatController.getChatUsersByUser);
+app.post('/adduser', chatController.addUser);
+app.post('/leavechat', chatController.leaveChat);
 
 // Account routes
 app.get('/logout', accountController.logout);

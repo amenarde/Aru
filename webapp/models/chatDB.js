@@ -36,9 +36,16 @@ function createChat(users, callback) {
     
                 chatID = null;
                 usernameToSkip = "";
+                type = null;
+                if (users.length === 2) {
+                    type = "dm";
+                }
+                else {
+                    type = "group";
+                }
                 // Since we didn't find a chat, we make a new one
                 // First we tell the chat about the users, putting the person in defines the chatid
-                Schema.Chat2User.create({username: users[0]}, function(err, chat) {
+                Schema.Chat2User.create({username: users[0], type: type}, function(err, chat) {
                     // Save the newfound chat
                     chatID = chat.get('chatID');
                     usernameToSkip = chat.get('username')
@@ -46,14 +53,14 @@ function createChat(users, callback) {
                     // Fill out the Chat tables
                     async.each(users, function(username, completed) {
                         if (username != usernameToSkip) {
-                            Schema.Chat2User.create({username: username, chatID: chatID}, function(err, chat) {
-                                Schema.User2Chat.create({username: username, chatID: chatID}, function(err, chat) {
+                            Schema.Chat2User.create({username: username, chatID: chatID, type: type}, function(err, chat) {
+                                Schema.User2Chat.create({username: username, chatID: chatID, type: type}, function(err, chat) {
                                     completed(null);
                                 });
                             });
                         }
                         else {
-                            Schema.User2Chat.create({username: username, chatID: chatID}, function(err, chat) {
+                            Schema.User2Chat.create({username: username, chatID: chatID, type: type}, function(err, chat) {
                                 completed(null);
                             });
                         }
@@ -73,7 +80,8 @@ function getChatUsersByUser(username, callback) {
     getChatsByUser(username, function(data, err) {
         async.each(data, function(chatID, completed) {
             getUsersByChat(chatID, function(usersInChat, err) {
-                chats.push(usersInChat);
+                var info = {chat: chatID, users: usersInChat}
+                chats.push(info);
                 completed(null);
             });
         }, function (err) {
@@ -124,10 +132,22 @@ function addUser(chatID, username, callback) {
             callback(null, "User already part of chat");
         }
 
-        Schema.Chat2User.create({chatID: chatID, username: username}, function(err, chat) {
-            Schema.User2Chat.create({chatID: chatID, username: username}, function(err, chat) {
-                callback(true, null);
-            });
+        getChatType(chatID, function(data, err) {
+            if (data === 'dm') {
+                getUsersByChat(chatID, function(users, err) {
+                    users.push(username);
+                    createChat(users, function(chatID, err) {
+                        callback(chatID, null);
+                    });
+                });
+            }
+            else if (data === 'group') {
+                Schema.Chat2User.create({chatID: chatID, username: username}, function(err, chat) {
+                    Schema.User2Chat.create({chatID: chatID, username: username}, function(err, chat) {
+                        callback(chatID, null);
+                    });
+                });
+            }
         });
     });
 }
@@ -147,6 +167,18 @@ function removeUser(chatID, userID) {
                 callback(true, null);
             });
         });
+    });
+}
+
+function getChatType(chatID, callback) {
+    Schema.Chat2User.query(chatID).limit(1).exec(function(err, data){
+
+            if (data.Count === 0) {
+                callback(null, "Chat does not exist");
+                return;
+            }
+
+           callback(data.Items[0].attrs.type, null);
     });
 }
 
@@ -197,7 +229,10 @@ function userInChat(username, chatID, callback) {
         if (data != null) {
             callback(true, null);
         }
-    })
+        else {
+            callback(false, null);
+        }
+    });
 }
 
 var database = {
@@ -208,7 +243,9 @@ var database = {
     removeUser: removeUser,
     fetchChat: fetchChat,
     userInChat: userInChat,
-    getChatUsersByUser: getChatUsersByUser
+    getChatUsersByUser: getChatUsersByUser,
+    getChatType: getChatType,
+    getUsersByChat: getUsersByChat
   };
 
   module.exports = database;
