@@ -11,12 +11,24 @@
   color: #6D6D6D;
 }
 
+#newsfeed-background {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  font-family: 'Futura';
+  overflow-y: scroll;
+  scroll: touch;
+  color: #6D6D6D;
+}
+
 .modal-content {
   display: block;
   position: relative;
   top: 20px;
-  left: 7%;
-  width: 86%;
+  width: 80%;
+  max-width: 600px;
+  margin: auto;
 }
 
 .newsfeed-title {
@@ -69,7 +81,7 @@
 .newsfeed-status {
   position: relative;
   left: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 2px;
   font-size: 14px;
   width: 90%;
 }
@@ -85,6 +97,13 @@
 
 .newsfeed-like {
   width: 60px;
+  height: 20px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.newsfeed-comment {
+  width: 120px;
   height: 20px;
   font-size: 10px;
   text-align: center;

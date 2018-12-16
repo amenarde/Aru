@@ -103,7 +103,7 @@ function updateUser(userData, callback) {
     if (err) {
       console.log("USER_DB) Update first name - " + err)
     } else {
-      console.log('USER_DB) Update first name to ' + name + ' for:', user.get('username'));
+      console.log('USER_DB) Updated user info');
     }
     callback(user, err);
   });
@@ -218,7 +218,7 @@ function verifyLogin(username, password, callback) {
     }
     else if (user === null) {
       callback(null, "User does not exist")
-    } 
+    }
     else {
       bcrypt.compare(password, user.get('password'), function(err, res) {
         if (err) {
@@ -230,7 +230,7 @@ function verifyLogin(username, password, callback) {
         } else {
          // Passwords don't match
          callback(null, "Invalid password");
-        } 
+        }
       });
     }
   });

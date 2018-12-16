@@ -4,7 +4,7 @@
   <title>Newsfeed</title>
   <link rel="stylesheet" type="text/css" href="../css/main.css">
   <link rel="stylesheet" type="text/css" href="../css/wall.css">
-  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="../js/jquery-3.3.1.min.js"></script>
 </head>
 <body>
     <div id="wall-background" class="parallax">
@@ -64,15 +64,45 @@
           </div>
         </div>
         <div class="parallax__layer--back account-info">
-          <p class="account-info-title">Birthday</p>
-          <p class="account-info-content"><%= userData.birthday %></p>
-          <p class="account-info-title">Affiliation</p>
-          <p class="account-info-content"><%= userData.affiliation %></p>
-          <p class="account-info-title">Username</p>
-          <p class="account-info-content"><%= userData.username %></p>
-          <p class="account-info-title">Interests</p>
-          <p class="account-info-content"><%= userData.interests %></p>
+          <form class="wall-edit-update" method="POST" action="/updateInfo">
+            <p class="account-info-title">First Name</p>
+            <input name="firstName" type="text" placeholder= <%= userData.firstName %> id="firstname-input" class="account-info-content" disabled>
+            <p class="account-info-title">Last Name</p>
+            <input name="lastName" type="text" placeholder= <%= userData.lastName %> id="lastname-input" class="account-info-content" disabled>
+            <p class="account-info-title">Birthday</p>
+            <input name="birthday" type="text" placeholder= <%= userData.birthday %> id="birthday-input" class="account-info-content" disabled>
+            <p class="account-info-title">Affiliation</p>
+            <input name="affiliation" type="text" placeholder= <%= userData.affiliation %> id="affiliation-input" class="account-info-content" disabled>
+            <p class="account-info-title">Interests</p>
+            <input type="text" placeholder= <%= userData.interests %> id="interests-input" class="account-info-content" disabled>
+            <% if (userData.username === user) { %>
+                <input type="button" value="edit" class="secondary-btn" id="wall-edit-info-btn">
+                <input type="submit" value="save" class="secondary-btn wall-hidden" id="wall-save-info-btn">
+            <% } %>
+          </form>
         </div>
     </div>
   </body>
+  <script>
+    $('#wall-edit-info-btn').click(function() {
+      console.log("clicked");
+      $('#wall-edit-info-btn').attr("disabled", "disabled");
+      $('#wall-edit-info-btn').addClass("btn-disabled");
+      $('#wall-save-info-btn').removeClass('wall-hidden');
+      $('#wall-save-info-btn').addClass('wall-shown');
+
+      $('#birthday-input').addClass('account-info-content-active');
+      $('#birthday-input').prop("disabled", false);
+      $('#firstname-input').addClass('account-info-content-active');
+      $('#firstname-input').prop("disabled", false);
+      $('#lastname-input').addClass('account-info-content-active');
+      $('#lastname-input').prop("disabled", false);
+      $('#affiliation-input').addClass('account-info-content-active');
+      $('#affiliation-input').prop("disabled", false);
+      $('#interests-input').addClass('account-info-content-active');
+      $('#interests-input').prop("disabled", false);
+    })
+
+
+  </script>
 </html>

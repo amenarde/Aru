@@ -96,6 +96,21 @@
   float: left;
 }
 
+#wall-edit-info-btn {
+  width: 12%;
+  min-width: 35px;
+  float: left;
+  transition: all .1s ease-in-out;
+}
+
+#wall-save-info-btn {
+  width: 12%;
+  min-width: 35px;
+  float: left;
+  margin-left: 5px;
+  transition: all .1s ease-in-out;
+}
+
 .wall-card {
   margin-bottom: 40px;
 }
@@ -148,10 +163,11 @@
 
 .account-info {
   position: fixed;
-  right: -42%;
+  right: -30%;
   top: 20%;
   width: 25%;
   letter-spacing: 0.1rem;
+  margin: none;
 }
 
 .account-info-title {
@@ -160,7 +176,27 @@
 
 .account-info-content {
   font-size: 12px;
-  font-weight: bold;
+  background-color: white;
+  color: #6D6D6D;
+}
+
+.account-info-content:hover {
+  background-color: white;
+}
+
+.account-info-content-active {
+  color: white;
+  background-color: #D3D2D2;
+}
+
+.account-info-content-active::placeholder {
+  color: white;
+  background-color: #D3D2D2;
+}
+
+.account-info-content-active:hover {
+  color: white;
+  background-color: #D3D2D2;
 }
 
 .parallax {
@@ -175,6 +211,18 @@
   transform: translateZ(-1px) scale(2);
 }
 
-a {
-  text-decoration: none
+.wall-hidden {
+  opacity: 0;
+}
+
+.wall-shown {
+  opacity: 1;
+}
+
+.btn-disabled {
+  background-color: #BABABA;
+}
+
+.btn-disabled:hover {
+  color: #6D6D6D;
 }

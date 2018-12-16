@@ -161,10 +161,43 @@ function getFriends(req, res) {
   });
 }
 
+function updateInfo(req, res) {
+  let newFirst = req.body.firstName;
+  let lastName = req.body.lastName;
+  let birthday = req.body.birthday;
+  let affiliation = req.body.affiliation;
+
+  userData = {
+    username: req.session.account,
+  };
+
+  if (newFirst != "") {
+    userData['firstName'] = newFirst;
+  }
+  if (lastName != "") {
+    userData['lastName'] = lastName;
+  }
+  if (birthday != "") {
+    userData['birthday'] = birthday;
+  }
+  if (affiliation != "") {
+    userData['affiliation'] = affiliation;
+  }
+
+  console.log("userData is: " + JSON.stringify(userData));
+
+  db.updateUser(userData, function(user, err) {
+    if (err) {
+      res.send({error: err});
+    } else {
+      res.redirect('back');
+    }
+  })
+}
+
 // Tested with hardcoded values worked
 function updateFirstName(req, res) {
   let username = req.session.account;
-  let newFirst = req.body.firstName;
   db.updateFirstName(username, newFirst, function(success, err) {
     console.log("Update first name: " + success);
     if (err) {
@@ -180,7 +213,6 @@ function updateFirstName(req, res) {
 
 function updateLastName(req, res) {
   let username = req.session.account;
-  let lastName = req.body.lastName;
   db.updateLastName(username, lastName, function(success, err) {
     if (err) {
       res.send({error: err});
@@ -194,7 +226,6 @@ function updateLastName(req, res) {
 
 function updateBirthday(req, res) {
   let username = req.session.account;
-  let birthday = req.body.birthday;
   db.updateLastName(username, birthday, function(success, err) {
     if (err) {
       res.send({error: err});
@@ -209,7 +240,6 @@ function updateBirthday(req, res) {
 // Double check this code
 function updateAffiliation(req, res) {
   let username = req.session.account;
-  let affiliation = req.body.birthday;
   db.updateLastName(affiliation, birthday, function(success, err) {
     if (err) {
       res.send({error: err});
@@ -262,6 +292,7 @@ var routes = {
   issueFriendRequest: issueFriendRequest,
   getFriends: getFriends,
   getFriendRequests: getPendingRequest,
+  updateInfo: updateInfo,
   updateAffiliation: updateAffiliation,
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,

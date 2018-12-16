@@ -38,6 +38,7 @@ app.post('/getchats', chatController.getChatUsersByUser);
 app.get('/logout', accountController.logout);
 app.post('/verify', accountController.verify);
 app.post('/create', accountController.create);
+app.post('/updateInfo', accountController.updateInfo);
 app.post('/updateLastName', accountController.updateLastName);
 app.post('/updateFirstName', accountController.updateFirstName);
 app.post('/updateBirthday', accountController.updateBirthday);

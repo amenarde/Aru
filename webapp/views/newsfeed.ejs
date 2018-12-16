@@ -8,8 +8,7 @@
   <script src="js/newsfeed.js"></script>
 </head>
 <body>
-    <div id="background">
-      <div class="modal" id="newsfeed">
+    <div id="newsfeed-background">
         <div class="modal-content">
           <p class="newsfeed-title">NEWSFEED</p>
           <div class="newsfeed-title-bar">
@@ -19,6 +18,32 @@
             <input type="submit" value="SHARE" class="secondary-btn" id="newsfeed-status-btn">
           </form>
 
+
+          <% for (var i=0; i < feed.length; i++) { %>
+            <% if (feed[i].type === "friendPost") { %>
+              <div class="newsfeed-card">
+                <div class="newsfeed-prof-pic">
+                </div>
+                <div class="newsfeed-card-info">
+                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> posted on <%= feed[i].receiver %>'s wall.</div>
+                  <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <button type="button" class="newsfeed-comment">COMMENT</button>
+                </div>
+              </div>
+            <% } else if (feed[i].type === "statusUpdate") { %>
+              <div class="newsfeed-card">
+                <div class="newsfeed-prof-pic">
+                </div>
+                <div class="newsfeed-card-info">
+                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated their status.</div>
+                  <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <button type="button" class="newsfeed-comment">COMMENT</button>
+                </div>
+              </div>
+            <% } else if (feed[i].type === "profileUpdate") { %>
+            <% } else if (feed[i].type === "newFriendship") { %>
+            <% } %>
+          <% } %>
           <div class="newsfeed-card">
             <div class="newsfeed-prof-pic">
             </div>
@@ -46,7 +71,6 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
   </body>
   <script>
