@@ -147,18 +147,19 @@ function addUser(chatID, username, callback) {
     });
 }
 
-function removeUser(chatID, userID) {
+function removeUser(chatID, username, callback) {
     getUsersByChat(chatID, function(users, err) {
         if (users === null) {
             callback(null, "Chat does not exist");
         }
 
-        if (users.includes(username)) {
-            callback(null, "User already part of chat");
+        if (!users.includes(username)) {
+            callback(null, "User not part of chat");
         }
 
-        Schema.Chat2User.create({chatID: chatID, username: username}, function(err, chat) {
-            Schema.User2Chat.create({chatID: chatID, username: username}, function(err, chat) {
+        // Destroy model using hash and range key
+        Schema.Chat2User.destroy(chatID, username, function (err) {
+            Schema.User2Chat.destroy(username, chatID, function(err) {
                 callback(true, null);
             });
         });

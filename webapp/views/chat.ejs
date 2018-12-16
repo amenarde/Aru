@@ -72,7 +72,6 @@
         document.getElementById('chatWindow').style.display = "block";
         document.getElementById('chat').style.display = "block";
         document.getElementById('addUser').style.display = "block";
-        document.getElementById('removeUser').style.display = "block";
 
         var chatWindow = document.getElementById('chatWindow');
 
@@ -83,6 +82,13 @@
                 alert(result.error);
             }
             else{
+
+                if (result.type === 'dm') {
+                    document.getElementById('leave').style.display = "none";
+                }
+                else if (result.type === 'group') {
+                    document.getElementById('leave').style.display = "block";
+                }
 
                 chatTitle.innerHTML = result.chatTitle;
 
@@ -101,30 +107,12 @@
     var addUser = function() {
         var data = {"username": $('input[name="addusername"]').val(), "chatID": currentChat};
 
-        $.post( "/adduser", data, function(result) {
-            if(result.error) {
-                alert(result.error);
-            }
-            else{
-                if (result.chatID === currentChat) {
-                    div = document.createElement('div');
-                    $(div).addClass("newchat-cards")
-                        .html(data.username+" was added to this chat")
-                        .appendTo($("#chatWindow")) //main div
-                }
-                else {
-                    var chatWindow = document.getElementById('chatWindow');
-                    chatWindow.innerHTML = '';
-                    currentChat = result.chatID;
-                    socket.emit('join room', currentChat);
-                    buildChat();
-                }
-            }
-        });
+        socket.emit('add user', data);
     }
 
     var leaveChat = function() {
-
+        var data = {"chatID": currentChat};
+        socket.emit('leave', data);
     }
 
     var chat = function() {
@@ -141,9 +129,54 @@
             .appendTo($("#chatWindow")) //main div
     }
 
+    socket.on('remove user', (data) => {
+        div = document.createElement('div');
+        $(div).addClass("newchat-cards")
+            .html(data.leavingUser + " left this chat")
+            .appendTo($("#chatWindow")) //main div
+
+        $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                chatTitle.innerHTML = result.chatTitle;
+            }});
+    });
+
+    socket.on('leave', (data) => {
+        window.location.href = "/chat";
+    });
+
       // Whenever the server emits 'new message', update the chat body
     socket.on('new message', (data) => {
         addChatMessage(data);
+    });
+
+          // Whenever the server emits 'new message', update the chat body
+    socket.on('add user', (data) => {
+        document.getElementById('leave').style.display = "block";
+        if (data.chatID === currentChat) {
+                    div = document.createElement('div');
+                    $(div).addClass("newchat-cards")
+                        .html(data.askingUser+" added " + data.userToAdd + " to this chat")
+                        .appendTo($("#chatWindow")) //main div
+
+                    $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
+                        if(result.error) {
+                            alert(result.error);
+                        }
+                        else{
+                            chatTitle.innerHTML = result.chatTitle;
+                        }});
+                }
+                else {
+                    var chatWindow = document.getElementById('chatWindow');
+                    chatWindow.innerHTML = '';
+                    currentChat = data.chatID;
+                    socket.emit('join room', currentChat);
+                    buildChat();
+                }
     });
 	
 
@@ -173,8 +206,13 @@
         <input type="submit" value="Add user">
     </form>
 
-    <form style="display:none" id="removeUser" action="javascript:removeUser();">
-            Who would you like to remove from the chat? <input type="text" name="removeusername" placeholder="username" required="required">
-            <input type="submit" value="Remove user">
+    <form style="display:none" id="leave" action="javascript:leaveChat();">
+            <input type="submit" value="Leave Chat">
     </form>
+
+    <form style="display:none" id="leave" action="javascript:leaveChat();">
+            <input type="submit" value="Leave Chat">
+    </form>
+
+    <a href="/chat">Back to chats</a>
 </body>
