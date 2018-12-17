@@ -371,13 +371,13 @@ function createPost(poster, content, type, receiver, callback) {
   PostDB.createposts(poster, content, type, receiver, callback);
 }
 
-function getRecommendedFriends(req, res) {
+function getRecommendedFriends(req, res, callback) {
   let username = req.session.account;
   if (!username) {
     res.render('main.ejs', {error: "You must be logged in to perform that action."});
   }
   FriendshipDB.getRecommendedFriends(username, function(recommended, err) {
-    res.send({error: err, recommended: recommended});
+    callback(recommended, err);
   })
 }
 

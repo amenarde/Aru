@@ -123,13 +123,13 @@
           <% } %>
           <p>PEOPLE YOU MAY KNOW</p>
           <div class="newsfeed-friend-bar"></div>
-          <% if (friendRequests.length === 0) { %>
+          <% if (recommended.length === 0) { %>
             <p>No one right now.</p>
           <% } %>
-          <% for (var i = 0; i < friendRequests.length; i++) { %>
-            <form class="newsfeed-friend-request" method="POST" action="/acceptFriendRequest">
-              <input type="hidden" name="friender" value= <%= friendRequests[i] %>/>
-              <p><%= friendRequests[i] %></p>
+          <% for (var i = 0; i < recommended.length; i++) { %>
+            <form class="newsfeed-friend-request" method="POST" action="/issueFriendRequest">
+              <input type="hidden" name="friender" value= <%= recommended[i].friend %>/>
+              <p><%= recommended[i].friend %></p>
               <input type="submit" value="+ ADD FRIEND" class="secondary-btn friend-accept-btn">
             </form>
           <% } %>

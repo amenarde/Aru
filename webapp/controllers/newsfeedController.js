@@ -17,7 +17,17 @@ var open = function(req, res) {
             res.render('main.ejs', {error: err});
           } else {
             console.log("incoming requests: " + friendRequests);
-            res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests});
+            accountController.getRecommendedFriends(req, res, function(recommended, err) {
+              console.log("returned from recommended");
+              if (err) {
+                console.log("ERROR!");
+                res.render('main.ejs', {error: err});
+              } else {
+                console.log("RECOMMENDED!!!!");
+                console.log("friend recommendations: " + JSON.stringify(recommended));
+                res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests, recommended: recommended});
+              }
+            })
           }
         });
       }

@@ -185,7 +185,7 @@ function deleteFriend(user1, user2, callback) {
 
 function getRecommendedFriends(username, callback) {
     console.log("Querying for recommended friends of: " + username);
-    schemas.RecommendedFriends.query(user)
+    schemas.RecommendedFriends.query(username)
     .loadAll()
     .exec(function(err, recommended) {
         if (err) {
@@ -196,6 +196,7 @@ function getRecommendedFriends(username, callback) {
                 friendNames.push({friend: friend.attrs.user2, strength: friend.attrs.strength});
                 completed(null);
             }, function (err) {
+                console.log("friendnames: " + friendNames);
                 callback(friendNames, null);
             });
         }
