@@ -190,14 +190,18 @@
         }
 
         $.post('/getCommentsSince', { pIDs: pIDs, timestamp : mostRecentComment}, function(comments) {
-          console.log("got new comments");
-          console.log(comments);
-          console.log("with pIDs: " + pIDs);
-          console.log("checking from timestamp: " + mostRecentComment);
-
-          if (comments.commentList.length > 0) {
-            console.log(comments.commentList[0]);
-            mostRecentComment = comments.commentList[0].createdAt;
+          console.log("comments: " + JSON.stringify(comments));
+          for (var i = 0; i < comments.commentList.length; i++) {
+            for (var j = 0; j < comments.commentList[i].comments.length; j++) {
+              var newComment =
+                  '<div class="newsfeed-comment-card">' +
+                  '<div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href="/user/' +
+                  comments.commentList[i].comments[j].username +
+                  '">' + comments.commentList[i].comments[j].username + '</a></span>' +
+                  comments.commentList[i].comments[j].content + '</div></div>';
+              $('#' + comments.commentList[i].comments[j].pID).prepend(newComment);
+              mostRecentComment = comments.commentList[i].comments[j].createdAt;
+            }
           }
         })
       });

@@ -262,7 +262,7 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
 function fetchCommentsSinceTime(pID, timestamp, callback) {
     var commentList = [];
     schemas.PostComments.query(pID)
-    .where('createdAt').gt(timestamp).descending.loadAll()
+    .where('createdAt').gt(timestamp).descending().loadAll()
     .exec(function(err, comments) {
         if (err) {
             callback(null, err);
