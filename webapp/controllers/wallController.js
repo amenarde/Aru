@@ -84,7 +84,6 @@ function addComment(req, res) {
     if (!username) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
     let content = req.body.content;
     let pID = req.body.pID.slice(0, -1);
-    console.log("content is: " + content);
     // Make sure user is friends with the poster?
     PostDB.addComment(pID, username, content, function(comment, err) {
         res.redirect('back');

@@ -31,6 +31,7 @@
                 <div class="newsfeed-card-info">
                   <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> posted on <%= feed[i].receiver %>'s wall.</div>
                   <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <div class="comment-wrapper" id=<%= feed[i].pID %>>
                   <% for (var j = 0; j < feed[i].comments.length; j++) { %>
                     <div class="newsfeed-comment-card">
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
@@ -41,6 +42,7 @@
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
+                  </div>
                 </div>
               </div>
             <% } else if (feed[i].type === "statusUpdate") { %>
@@ -49,6 +51,7 @@
                 <div class="newsfeed-card-info">
                   <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated their status.</div>
                   <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <div class="comment-wrapper" id=<%= feed[i].pID %>>
                   <% for (var j = 0; j < feed[i].comments.length; j++) { %>
                     <div class="newsfeed-comment-card">
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
@@ -59,6 +62,7 @@
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
+                  </div>
                 </div>
               </div>
             <% } else if (feed[i].type === "profileUpdate") { %>
@@ -67,6 +71,7 @@
                 <div class="newsfeed-card-info">
                   <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated their <%= feed[i].content %>.</div>
                   <div class="newsfeed-status"></div>
+                  <div class="comment-wrapper" id=<%= feed[i].pID %>>
                   <% for (var j = 0; j < feed[i].comments.length; j++) { %>
                     <div class="newsfeed-comment-card">
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
@@ -77,6 +82,7 @@
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
+                  </div>
                 </div>
               </div>
             <% } else if (feed[i].type === "newFriendship") { %>
@@ -86,6 +92,7 @@
                 <div class="newsfeed-card-info">
                   <div class="newsfeed-user-name"><%= feed[i].content %></div>
                   <div class="newsfeed-status">&#x2665;</div>
+                  <div class="comment-wrapper" id=<%= feed[i].pID %>>
                   <% for (var j = 0; j < feed[i].comments.length; j++) { %>
                     <div class="newsfeed-comment-card">
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
@@ -96,6 +103,7 @@
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
+                  </div>
                 </div>
               </div>
             <% } %>
@@ -140,11 +148,18 @@
   </body>
   <script>
     var mostRecent = null;
+    var mostRecentComment = null;
+    var pIDs = [];
 
     $(document).ready(function() {
       setTimeout(refresh, 2000);
-      console.log(new Date());
       mostRecent = new Date().toISOString();
+      mostRecentComment = new Date().toISOString();
+
+      var initialPosts = $('.comment-wrapper');
+      for (var i = 0; i < initialPosts.length; i++) {
+        pIDs.push(initialPosts[i].id);
+      }
     });
 
     var refresh = function() {
@@ -154,8 +169,6 @@
 
     var updateFeed = function() {
       $.post('/getFeedSince', { timestamp: mostRecent }, function(data) {
-        console.log('updated');
-        console.log(data.feed);
         var newPosts = '';
         for (var i = 0; i < data.feed.length; i++) {
           if (data.feed[i].type === 'statusUpdate') {
@@ -167,14 +180,30 @@
           } else if (data.feed[i].type === 'profileUpdate') {
             newPosts += addProfileUpdate(data.feed[i].username, data.feed[i].content, data.feed[i].pID);
           }
-
-          $( "#newsfeed-container" ).prepend(newPosts);
+          pIDs.push(data.feed[i].pID);
+          console.log("new pIDs array: " + pIDs);
         }
+        $( "#newsfeed-container" ).prepend(newPosts);
 
         if (data.feed.length > 0) {
-          console.log(data.feed[0]);
           mostRecent = data.feed[0].createdAt;
         }
+
+        $.post('/getCommentsSince', { pIDs: pIDs, timestamp : mostRecentComment}, function(comments) {
+          console.log("comments: " + JSON.stringify(comments));
+          for (var i = 0; i < comments.commentList.length; i++) {
+            for (var j = 0; j < comments.commentList[i].comments.length; j++) {
+              var newComment =
+                  '<div class="newsfeed-comment-card">' +
+                  '<div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href="/user/' +
+                  comments.commentList[i].comments[j].username +
+                  '">' + comments.commentList[i].comments[j].username + '</a></span>' +
+                  comments.commentList[i].comments[j].content + '</div></div>';
+              $('#' + comments.commentList[i].comments[j].pID).prepend(newComment);
+              mostRecentComment = comments.commentList[i].comments[j].createdAt;
+            }
+          }
+        })
       });
     }
 
@@ -220,7 +249,9 @@
             '<div class="newsfeed-card-info">' +
               '<div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href="/user/' + username + '">' + username + "</a></span> posted on " + receiver + "'s wall.</div>" +
                 '<div class="newsfeed-status">' +
-                content + '</div>' + comments +
+                content + '</div>' +
+                '<div class="comment-wrapper" id=' + pID + '>' + comments +
+              '</div>' +
               '</div>' +
             '</div>'
       return post;
@@ -241,7 +272,9 @@
           '<div class="newsfeed-card-info">' +
             '<div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=/user/' + username + '>' + username + "</a></span> updated their status.</div>" +
               '<div class="newsfeed-status">' +
-              content + '</div>' + comments +
+              content + '</div>' +
+              '<div class="comment-wrapper" id=' + pID + '>' + comments +
+              '</div>' +
             '</div>' +
           '</div>'
       return post;
@@ -261,7 +294,9 @@
         '<div class="newsfeed-card">' +
           '<div class="newsfeed-prof-pic"></div>' +
             '<div class="newsfeed-card-info">' +
-              '<div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=/user/' + username + '>' + username + '</a></span> updated their ' + content + '</div>' + comments +
+              '<div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=/user/' + username + '>' + username + '</a></span> updated their ' + content + '</div>' +
+                '<div class="comment-wrapper" id=' + pID + '>' + comments +
+                '</div>' +
               '</div>' +
             '</div>'
       return post;
@@ -283,7 +318,9 @@
               '<div class="newsfeed-user-name">' +
                 content +
               '</div>' +
-            '<div class="newsfeed-status">&#x2665;</div>' + comments +
+            '<div class="newsfeed-status">&#x2665;</div>' +
+            '<div class="comment-wrapper" id=' + pID + '>' + comments +
+            '</div>' +
           '</div>' +
         '</div>';
       return post;
