@@ -2,7 +2,6 @@ var userDB = require('../models/userDB.js');
 
 function search(req, res) {
     var prefix = req.body.prefix;
-
     userDB.getUsersByPrefix(prefix, function(results, error) {
         res.send(results);
     });
@@ -12,5 +11,5 @@ function search(req, res) {
 var routes = {
     search: search
   };
-  
+
   module.exports = routes;

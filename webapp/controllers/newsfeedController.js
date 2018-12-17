@@ -16,7 +16,14 @@ var open = function(req, res) {
           if (err) {
             res.render('main.ejs', {error: err});
           } else {
-            res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests});
+
+            accountController.getRecommendedFriends(req, res, function(recommended, err) {
+              if (err) {
+                res.render('main.ejs', {error: err});
+              } else {
+                res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests, recommended: recommended});
+              }
+            })
           }
         });
       }

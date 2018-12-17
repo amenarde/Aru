@@ -55,9 +55,8 @@ var createAccount = function(req, res) {
     } else if (data) {
       if (interest.length > 0) {
         db.addInterest(username, interest, function(data, err){
-          console.log("adding interestasdf")
           if (err) {
-            console.log("ERROR");
+            console.log("There was an error adding an interest.");
           } else {
             req.session.account = data.attrs.username;
             res.redirect('/newsfeed');
@@ -173,10 +172,7 @@ function getPendingRequest(req, res, callback) {
   let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   FriendshipDB.getIncomingRequest(user, function(incoming, err) {
-    console.log("INCOMING IS: " + incoming);
-    console.log("ERR IS: " + err);
     if (err) {
-      console.log("IN ERROR");
       callback({err: "Sorry, an error has occurred while getting friend requests.", friendRequests: null});
     } else {
       callback(null, incoming);
@@ -199,7 +195,7 @@ function updateInfo(req, res) {
   let birthday = req.body.birthday;
   let originalBirthday = req.body.originalBirthday.slice(0, -1);
   let affiliation = req.body.affiliation;
-
+  console.log("req.body: " + JSON.stringify(req.body));
   userData = {
     username: req.session.account,
   };
@@ -211,16 +207,11 @@ function updateInfo(req, res) {
     userData['lastName'] = lastName;
   }
   if (birthday != originalBirthday) {
-    userData['birthday'] = birthday;
+    userData['birthday'] = "" + birthday;
   }
   if (affiliation != "") {
     userData['affiliation'] = affiliation;
   }
-
-  console.log("original birthday: " + originalBirthday);
-  console.log("new birthday: " + birthday);
-
-  console.log("userData is: " + JSON.stringify(userData));
 
   db.updateUser(userData, function(user, err) {
     if (err) {
@@ -312,6 +303,7 @@ function updateAffiliation(req, res) {
 function aggregateProfileUpdate(userData, callback) {
   let statusUpdates = [];
   let errors = [];
+  console.log("userData is: " + JSON.stringify(userData));
 
   async.each(Object.keys(userData), function(key, completed) {
     if (key === "username" || key === "updatedAt") {
@@ -333,11 +325,14 @@ function aggregateProfileUpdate(userData, callback) {
 
 function profileUpdate(username, attribute, value, callback) {
   var property = attribute;
+  var val = value;
 
   if (attribute === "firstName") {
     property = "first name";
   } else if (attribute === "lastName") {
     property = "last name";
+  } else if (attribute === "birthday") {
+    console.log("BIRTHDAY is: " + value);
   }
   // Create a post about it
   createPost(username, property + " to " + value, "profileUpdate", username, function(success, err) {
@@ -371,13 +366,13 @@ function createPost(poster, content, type, receiver, callback) {
   PostDB.createposts(poster, content, type, receiver, callback);
 }
 
-function getRecommendedFriends(req, res) {
+function getRecommendedFriends(req, res, callback) {
   let username = req.session.account;
   if (!username) {
     res.render('main.ejs', {error: "You must be logged in to perform that action."});
   }
   FriendshipDB.getRecommendedFriends(username, function(recommended, err) {
-    res.send({error: err, recommended: recommended});
+    callback(recommended, err);
   })
 }
 

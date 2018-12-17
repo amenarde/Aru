@@ -189,7 +189,7 @@ function deleteFriend(user1, user2, callback) {
 
 function getRecommendedFriends(username, callback) {
     console.log("Querying for recommended friends of: " + username);
-    schemas.RecommendedFriends.query(user)
+    schemas.RecommendedFriends.query(username)
     .loadAll()
     .exec(function(err, recommended) {
         if (err) {
