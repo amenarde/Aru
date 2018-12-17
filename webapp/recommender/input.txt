@@ -1,15 +1,8 @@
-Penn rzajac
-rzajac Penn
-Penn aringis
-aringis Penn
-Penn amenarde
-amenarde Penn
-Penny ptaggs
-ptaggs Penny
-CIS tyue
-tyue CIS
-Penn relisher
-relisher Penn
+Birthday_Fun	relisher 0.2
+Birthday_Fun	rzajac 0.2
+dance	tyue 0.2
+Horses	aringis 0.2
+yoga	amenarde 0.2
 arelisher	ptaggs 1
 rzajac	relisher 1
 rzajac	tyue 1
@@ -22,13 +15,20 @@ tyue	amenarde 1
 tyue	ptaggs 1
 tyue	rzajac 1
 relisher	rzajac 1
+Penn	rzajac
+rzajac	Penn
+Penn	aringis
+aringis	Penn
+Graduated	amenarde
+amenarde	Graduated
+Penny	ptaggs
+ptaggs	Penny
+CIS	tyue
+tyue	CIS
+Penn	relisher
+relisher	Penn
 rzajac	Birthday_Fun 0.2
 aringis	Horses 0.2
 amenarde	yoga 0.2
 tyue	dance 0.2
 relisher	Birthday_Fun 0.2
-Birthday_Fun	relisher 0.2
-Birthday_Fun	rzajac 0.2
-dance	tyue 0.2
-Horses	aringis 0.2
-yoga	amenarde 0.2
