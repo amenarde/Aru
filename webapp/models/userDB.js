@@ -254,7 +254,7 @@ function verifyLogin(username, password, callback) {
   });
 }
 
-function addInsterest(username, interest, callback) {
+function addInterest(username, interest, callback) {
   schemas.User2Interests.create({username: username, interest:interest}, {overwrite: false}, function(err, u2i) {
     if (err) {
       callback(null, err);
@@ -343,7 +343,7 @@ var database = {
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
-  addInsterest: addInsterest,
+  addInsterest: addInterest,
   removeInterest: removeInterest,
   getUsersByPrefix: getUsersByPrefix,
 };

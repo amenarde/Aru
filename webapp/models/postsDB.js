@@ -12,8 +12,7 @@ function create(poster, content, type, receiver, callback) {
             // Add the posts to a wall
             schemas.Wall.create({pID: posts.get("pID"), username: receiver, createdAt: posts.get("createdAt")}, function(err2, wall) {
                 if (err2) {
-                    // Repeal the posts
-                    res.send({error: err2});
+                    // Repeal the postsW
                     schemas.Posts.delete(posts.get("pID"), function(err3, posts) {
                         if (err3) {
                             console.log(dbName + ") " + err2 + "\n" + err3);
@@ -25,6 +24,7 @@ function create(poster, content, type, receiver, callback) {
                     });
                 } else {
                     console.log("GIND ME");
+                    console.log("WallDB) Created wall entry: Username: " + wall.attrs.username + " - pID:" + wall.attrs.pID);
                     console.log(dbName + ") created posts " + posts.get("pID"));
                     callback(posts, null);
                 }
@@ -33,9 +33,9 @@ function create(poster, content, type, receiver, callback) {
     });
 }
 
-function deleteposts(timestamp, username, callback) {
+function deleteposts(pID, username, callback) {
     // Remove the posts from wall
-    schemas.Wall.delete({username: username, createdAt: timestamp}, function(err, wall) {
+    schemas.Wall.delete({username: username, pID: pID}, function(err, wall) {
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);
@@ -177,7 +177,7 @@ function collectPostData(posts, callback) {
 function fetchFromTimeFromUser(username, timestamp, X, callback) {
     if (timestamp) {
         if (X >= 0) {
-            schemas.Wall.query(username)
+            schemas.Wall.query(username).usingIndex('userIndex')
             .where('createdAt').lt(timestamp)
             .descending()
             .limit(X)
@@ -190,7 +190,7 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
                 }
             });
         } else {
-            schemas.Wall.query(username)
+            schemas.Wall.query(username).usingIndex('userIndex')
             .where('createdAt').lt(timestamp)
             .descending()
             .loadAll()
@@ -204,11 +204,13 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
         }
     } else {
         if (X >= 0) {
-            schemas.Wall.query(username)
+            schemas.Wall.query(username).usingIndex('userIndex')
             .limit(X)
             .descending()
             .loadAll()
             .exec(function(err, posts) {
+                console.log("Err: " + err);
+                console.log("Posts: " + posts);
                 if (err) {
                     callback(null, err);
                 } else {
@@ -216,7 +218,7 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
                 }
             });
         } else {
-            schemas.Wall.query(username)
+            schemas.Wall.query(username).usingIndex('userIndex')
             .descending()
             .loadAll()
             .exec(function(err, posts) {
@@ -232,7 +234,7 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
 
 function fetchSinceTimeFromUser(username, timestamp, X, callback) {
     if (X >= 0) {
-        schemas.Wall.query(username)
+        schemas.Wall.query(username).usingIndex('userIndex')
         .where('createdAt').gt(timestamp)
         .descending()
         .limit(X)
@@ -245,7 +247,7 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
             }
         });
     } else {
-        schemas.Wall.query(username)
+        schemas.Wall.query(username).usingIndex('userIndex')
         .where('createdAt').gt(timestamp)
         .descending()
         .loadAll()

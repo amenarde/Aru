@@ -82,21 +82,21 @@ var PostComments = vogels.define('PostComment', {
     content: Joi.string(),
     likes: Joi.number(),
   },
-  indexes : [{
-    hashKey : 'pID', rangeKey : 'createdAt', type : 'local', name : 'timeIndex'
-  }]
 });
 exports.PostComments = PostComments;
 
 var Wall = vogels.define('Wall', {
   hashKey : 'username',
-  rangeKey: 'createdAt',
+  rangeKey: 'pID',
 
   schema  : {
     username  : Joi.string(), // Receiver (who's wall its being posted to)
     createdAt : Joi.date(),
     pID : vogels.types.uuid(),
-  }
+  },
+  indexes : [{
+    hashKey : 'username', rangeKey : 'createdAt', type : 'local', name : 'userIndex'
+  }]
 });
 exports.Wall = Wall;
 
