@@ -165,7 +165,7 @@ img {
 .newsfeed-friend-requests {
   position: fixed;
   right: 13%;
-  top: 20%;
+  top: 35%;
   width: 25%;
   letter-spacing: 0.1rem;
   margin: 0px;
@@ -226,4 +226,8 @@ img {
   float: left;
   border-radius: 15px;
   margin-bottom: 15px;
+}
+
+.no-requests {
+  margin-bottom: 75px;
 }

@@ -20,7 +20,7 @@
               <form class="wall-status-update" method="POST" action="/postStatusUpdate">
                 <input class="wall-status-input" type="text" id="wall-status-input" name="statusUpdate" placeholder="What's on your mind?">
                 <input type="submit" value="SHARE" class="secondary-btn" id="wall-status-btn">
-            </form>
+              </form>
             <% } else { %>
               <form class="wall-status-update" method="POST" action="/newFriendPost">
                 <input class="wall-status-input" type="text" id="wall-status-input" name="content" placeholder="Finally tell them you love them..." name="statusUpdate">
@@ -86,6 +86,20 @@
                 <% } %>
               </div>
               <% } else if (wallContent[i].type === "profileUpdate") { %>
+                <div class="wall-user-name"><%= wallContent[i].username %> updated their <%= wallContent[i].content %>.</div>
+                  <div class="wall-card-info">
+                    <div class="wall-status"></div>
+                    <% for (var j = 0; j < wallContent[i].comments.length; j++) { %>
+                      <div class="wall-comment-card">
+                        <div class="wall-comment-text"><span class="wall-clickable wall-comment-user"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].comments[j].username %>><%= wallContent[i].comments[j].username %></a></span><%= wallContent[i].comments[j].content %></div>
+                      </div>
+                    <% } %>
+                    <form action="/addComment" method="POST" class="wall-add-comment">
+                      <input type="text" placeholder="Add comment..." name="content" class="wall-comment-input">
+                      <input type="hidden" name="pID" value= <%= wallContent[i].pID %>/>
+                      <button type="submit" class="wall-comment">COMMENT</button>
+                    </form>
+                  </div>
               <% } else if (wallContent[i].type === "newFriendship") { %>
                 <div class="wall-card">
                   <div class="wall-user-name"><%= wallContent[i].content %></div>
@@ -105,10 +119,6 @@
                 </div>
               <% } %>
             <% } %>
-            <div class="wall-card">
-              <div class="wall-user-name"> <span class="wall-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
-              <div class="wall-card-info"></div>
-            </div>
           <% } else if (status === "pending") { %>
               <div class="wall-friend-status">You've sent a friend request. Sit back and wait!</div>
           <% } else { %>
