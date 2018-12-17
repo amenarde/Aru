@@ -146,7 +146,7 @@ function decodeBirthday(birthdayNum) {
   var birthdayString = String(birthdayNum);
   // TODO Validate birthday?
   var birthday = birthdayString.slice(0, 4) + "/" + birthdayString.slice(4,6) + "/" + birthdayString.slice(6,8);
-  return new Date(birthday);
+  return birthday;
 }
 
 function updateBirthday(username, birthday, callback) {
