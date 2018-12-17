@@ -330,9 +330,8 @@ function profileUpdate(username, attribute, value, callback) {
     property = "first name";
   } else if (attribute === "lastName") {
     property = "last name";
-  } else if (attribute === "birthday") {
-    console.log("BIRTHDAY is: " + value);
   }
+
   // Create a post about it
   createPost(username, property + " to " + value, "profileUpdate", username, function(success, err) {
     callback(success, err);
