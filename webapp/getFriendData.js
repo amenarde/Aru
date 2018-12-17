@@ -74,8 +74,8 @@ var getData = function() {
                         var friendsFile = fs.createWriteStream("recommender/existingUsers.txt");
                         values.Items.forEach(function(v) {
                             friendsFile.write(v.attrs.username.replace(/ /g,"_") + "\n");
-                            file.write(v.attrs.affiliation.replace(/ /g,"_") + "\t" + v.attrs.username.replace(/ /g,"_") + "\n");
-                            file.write(v.attrs.username.replace(/ /g,"_") + "\t" + v.attrs.affiliation.replace(/ /g,"_") + "\n");
+                            file.write(v.attrs.affiliation.replace(/ /g,"_") + "\t" + v.attrs.username.replace(/ /g,"_") + " 0.5\n");
+                            file.write(v.attrs.username.replace(/ /g,"_") + "\t" + v.attrs.affiliation.replace(/ /g,"_") + " 0.5\n");
                         });
                     } else {
                         console.log("No Friendship data!");
