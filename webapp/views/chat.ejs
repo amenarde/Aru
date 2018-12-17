@@ -23,9 +23,13 @@
     // Find your chats and populate
     window.onload = function () {
 
+        // gets username, only for front end filtering so that user is not shown as available
         socket.emit('who am i', null);
 
+        // presents to friends, removed upon disconnect from socket by navigating away from page
         socket.emit('available to chat', null);
+
+        // Builds currently available chats
         $.post( "/getchats", null, function(results) {
             if(results.error) {
                 alert(results.error);
@@ -66,6 +70,7 @@
         });
     }
 
+    // Asks server to start a chat, changes page from discovery mode to chat mode
     var createChat = function() {
 	var data = {"username": $('input[name="username"]').val(), }
 
@@ -84,6 +89,7 @@
 
     var buildChat = function() {
 
+        // Switching from chat discovery to chat window
         document.getElementById('activeChatList').style.display = "none";
         document.getElementById('createChat').style.display = "none";
         document.getElementById('backtonewsfeed').style.display = "none";
@@ -99,6 +105,7 @@
 
         var chatTitle = document.getElementById('chatTitle');
 
+        // Get chat data for first time, rest comes from sockets
         $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
             if(result.error) {
                 alert(result.error);
@@ -144,6 +151,7 @@
         socket.emit('post message', data);
     }
 
+    // For building chat entry
     const addChatMessage = (data) => {
         div = document.createElement('div');
         $(div).addClass("newchat-cards")
@@ -155,6 +163,7 @@
         myusername = data.username;
     });
 
+    // Build list of available users
     socket.on('available', (data) => {
 
         document.getElementById('activeUserList').innerHTML = "";
@@ -188,6 +197,7 @@
         });
     });
 
+    // Upon leaving, current user gets leave socket message, all other people in chat get remove user
     socket.on('remove user', (data) => {
         div = document.createElement('div');
         $(div).addClass("newchat-cards")
@@ -212,7 +222,8 @@
         addChatMessage(data);
     });
 
-          // Whenever the server emits 'new message', update the chat body
+    // Upon adding a user, there are two cases, they are added to the current chat, or adding them turned the chat from
+    // a DM to a groupchat: the page checks whether the returned ID is new or not and behaves accordingly
     socket.on('add user', (data) => {
         document.getElementById('leave').style.display = "block";
         if (data.chatID === currentChat) {
