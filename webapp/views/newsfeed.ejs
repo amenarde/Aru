@@ -44,12 +44,13 @@
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
                     </div>
                   <% } %>
+                  </div>
                   <form action="/addComment" method="POST" class="newsfeed-add-comment">
                     <input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input">
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
-                  </div>
+
                 </div>
               </div>
             <% } else if (feed[i].type === "statusUpdate") { %>
@@ -64,12 +65,13 @@
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
                     </div>
                   <% } %>
+                  </div>
                   <form action="/addComment" method="POST" class="newsfeed-add-comment">
                     <input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input">
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
-                  </div>
+
                 </div>
               </div>
             <% } else if (feed[i].type === "profileUpdate") { %>
@@ -84,12 +86,13 @@
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
                     </div>
                   <% } %>
+                  </div>
                   <form action="/addComment" method="POST" class="newsfeed-add-comment">
                     <input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input">
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
-                  </div>
+
                 </div>
               </div>
             <% } else if (feed[i].type === "newFriendship") { %>
@@ -105,12 +108,13 @@
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
                     </div>
                   <% } %>
+                  </div>
                   <form action="/addComment" method="POST" class="newsfeed-add-comment">
                     <input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input">
                     <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
                     <button type="submit" class="newsfeed-comment">COMMENT</button>
                   </form>
-                  </div>
+
                 </div>
               </div>
             <% } %>
@@ -206,7 +210,7 @@
                   comments.commentList[i].comments[j].username +
                   '">' + comments.commentList[i].comments[j].username + '</a></span>' +
                   comments.commentList[i].comments[j].content + '</div></div>';
-              $('#' + comments.commentList[i].comments[j].pID).prepend(newComment);
+              $('#' + comments.commentList[i].comments[j].pID).append(newComment);
               mostRecentComment = comments.commentList[i].comments[j].createdAt;
             }
           }
