@@ -1,2 +1,8 @@
+arelisher	ptaggs
+rzajac	relisher
 rzajac	tyue
+ptaggs	arelisher
+ptaggs	tyue
+tyue	ptaggs
 tyue	rzajac
+relisher	rzajac
