@@ -13,6 +13,7 @@ function create(poster, content, type, receiver, callback) {
             schemas.Wall.create({pID: posts.get("pID"), username: receiver, createdAt: posts.get("createdAt")}, function(err2, wall) {
                 if (err2) {
                     // Repeal the posts
+                    res.send({error: err2});
                     schemas.Posts.delete(posts.get("pID"), function(err3, posts) {
                         if (err3) {
                             console.log(dbName + ") " + err2 + "\n" + err3);
@@ -152,7 +153,7 @@ function getPosts(postData, callback) {
                     }
                 });
 
-                
+
             }
         });
     }, function (err) {

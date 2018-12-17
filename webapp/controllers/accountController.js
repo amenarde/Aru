@@ -299,7 +299,7 @@ function aggregateProfileUpdate(userData, callback) {
   let errors = [];
   let count = Object.keys(userData).length;
   for (var property in userData) {
-    if (userData.hasOwnProperty(property) && property != "username") {
+    if (userData.hasOwnProperty(property) && property != "username" && property != "updatedAt") {
       profileUpdate(userData.username, property, userData[property], function(update, err) {
         if (!err) {
           statusUpdates.push(update);
@@ -316,6 +316,13 @@ function aggregateProfileUpdate(userData, callback) {
 }
 
 function profileUpdate(username, attribute, value, callback) {
+  var property = attribute;
+
+  if (attribute === "firstName") {
+    property = "first name"
+  } else if (attribute === "lastName") {
+    property = "last name";
+  }
   // Create a post about it
   createPost(username, attribute + " to " + value, "profileUpdate", username, function(success, err) {
     callback(success, err);

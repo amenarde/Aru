@@ -59,6 +59,23 @@
                 </div>
               </div>
             <% } else if (feed[i].type === "profileUpdate") { %>
+              <div class="newsfeed-card">
+                <div class="newsfeed-prof-pic"></div>
+                <div class="newsfeed-card-info">
+                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated <%= feed[i].content %>.</div>
+                  <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <% for (var j = 0; j < feed[i].comments.length; j++) { %>
+                    <div class="newsfeed-comment-card">
+                      <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
+                    </div>
+                  <% } %>
+                  <form action="/addComment" method="POST" class="newsfeed-add-comment">
+                    <input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input">
+                    <input type="hidden" name="pID" value= <%= feed[i].pID %>/>
+                    <button type="submit" class="newsfeed-comment">COMMENT</button>
+                  </form>
+                </div>
+              </div>
             <% } else if (feed[i].type === "newFriendship") { %>
               <div class="newsfeed-card">
                 <div class="newsfeed-prof-pic">
@@ -80,50 +97,6 @@
               </div>
             <% } %>
           <% } %>
-          </div>
-          <div class="newsfeed-card">
-            <div class="newsfeed-prof-pic">
-            </div>
-            <div class="newsfeed-card-info">
-              <div class="newsfeed-user-name"> <span class="newsfeed-clickable">Tiffany Yue</span> updated her status.</div>
-              <div class="newsfeed-status">Yesterday my friend kissed a boy. And she liked it! So much in fact, that she'll probably kiss the boy again.</div>
-              <button type="button" class="newsfeed-like">LIKE</button>
-              <div class="newsfeed-likes">25 likes</div>
-            </div>
-          </div>
-
-          <div class="newsfeed-card">
-            <div class="newsfeed-prof-pic">
-            </div>
-            <div class="newsfeed-card-info">
-              <div class="newsfeed-user-name"> <span class="newsfeed-clickable">Tiffany Yue</span> updated her status.</div>
-              <div class="newsfeed-status">Yesterday my friend kissed a boy. And she liked it! So much in fact, that she'll probably kiss the boy again.</div>
-              <div class="newsfeed-comment-card">
-                <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user">curlgurl</span>Wow!! Who was it?</div>
-              </div>
-              <form action="/addComment" method="POST" class="newsfeed-add-comment">
-                <input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input">
-                <button type="button" class="newsfeed-comment">COMMENT</button>
-              </form>
-            </div>
-          </div>
-
-          <div class="newsfeed-card">
-            <div class="newsfeed-prof-pic">
-            </div>
-            <div class="newsfeed-card-info">
-              <div class="newsfeed-user-name"> <span class="newsfeed-clickable">Antonio Menarde</span> is now friends with Patrick Taggart.</div>
-            </div>
-          </div>
-
-          <div class="newsfeed-card">
-            <div class="newsfeed-prof-pic">
-            </div>
-            <div class="newsfeed-card-info">
-              <div class="newsfeed-user-name"> <span class="newsfeed-clickable">Tiffany Yue</span> updated her affiliation to Bell Senior Society.</div>
-            </div>
-          </div>
-        </div>
         <div class="newsfeed-friend-requests">
           <p>FRIEND REQUESTS</p>
           <div class="newsfeed-friend-bar"></div>
