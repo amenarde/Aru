@@ -42,6 +42,9 @@ var createAccount = function(req, res) {
   if (!permissions) {
     permissions = 1;
   }
+
+  var interest = req.body.interest;
+
   if (ERROR_MSG != "") {
     res.render('main.ejs', {error: ERROR_MSG});
     return;
@@ -50,8 +53,20 @@ var createAccount = function(req, res) {
     if (err) {
       res.render('main.ejs', {error: err});
     } else if (data) {
-    	req.session.account = data.attrs.username;
-      res.redirect('/newsfeed');
+      if (interest.length > 0) {
+        db.addInterest(username, interest, function(data, err){
+          console.log("adding interestasdf")
+          if (err) {
+            console.log("ERROR");
+          } else {
+            req.session.account = data.attrs.username;
+            res.redirect('/newsfeed');
+          }
+        })
+      } else {
+        req.session.account = data.attrs.username;
+        res.redirect('/newsfeed');
+      }
     }
   });
 };

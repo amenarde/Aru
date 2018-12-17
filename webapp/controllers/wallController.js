@@ -49,7 +49,7 @@ function newFriendPost(req, res) {
                         //         res.redirect('back');
                         //     }
                         // });
-                    }                    
+                    }
                 });
             } else {
                 res.send({error: null, post: "You can't post to non-friends walls. Please don't hack our program :("});
@@ -149,7 +149,14 @@ function getAccountInformation(req, res) {
                                 if (err) {
                                     res.send({error: err});
                                 } else {
-                                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: wallContent, status: "confirmed"});
+                                    db.fetchInterests(username, function(interests, err) {
+                                        if (err) {
+                                            res.send({error: err});
+                                        } else {
+                                            res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, interests: interests, wallContent: wallContent, status: "confirmed"});
+                                        }
+                                    })
+
                                 }
                             });
                         }

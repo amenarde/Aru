@@ -140,7 +140,9 @@
             <p class="account-info-title">Affiliation</p>
             <input name="affiliation" type="text" placeholder= <%= userData.affiliation %> id="affiliation-input" class="account-info-content" disabled>
             <p class="account-info-title">Interests</p>
-            <input type="text" placeholder= <%= userData.interests %> id="interests-input" class="account-info-content" disabled>
+            <% for (var i = 0; i < interests["Items"].length; i++) { %>
+              <p class="wall-interest"><%= interests["Items"][i].attrs.interest %></p>
+            <% } %>
             <% if (userData.username === user) { %>
                 <input type="button" value="edit" class="secondary-btn" id="wall-edit-info-btn">
                 <input type="submit" value="save" class="secondary-btn wall-hidden" id="wall-save-info-btn">
