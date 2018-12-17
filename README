@@ -24,3 +24,23 @@ Did you copy any code from the Internet, or from classmates?
 Did you collaborate with anyone on this assignment?
   [ ] Yes
   [X] No (Not outside group of 3)
+
+Instructions to Run
+===
+1. Add DB info to config.json
+2. npm install from webapp/
+3. node buildtables.js to build the DB tables
+4. node app.js to run app
+5. Want to run in cloud? Must change socket address is chat.ejs from localhost to public IP of your hosted instance.
+
+Running hadoop
+===
+1. Get data from databases
+	a. Run command 'node getFriendData.js' from webapp/
+2. Run hadoop
+	a. Move the input.txt file to folder from which hadoop will run
+	b. Run the hadoop jar with the command: composite <inputDir> <outputDir> <interimDir1> <interimDir2> <diffDir> <numReducers>
+	c. Retrieve part-r-00000 from the hadoop output file and move it to recommender folder
+3. Upload data
+	a. Run command 'node uploadFriendData.js' from webapp/
+ 
