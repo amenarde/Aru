@@ -168,6 +168,24 @@ input:hover {
   right: 0px;
 }
 
+.vert-move {
+    -webkit-animation: mover 1s ease-in-out infinite  alternate;
+    animation: mover 1s ease-in-out infinite  alternate;
+}
+.vert-move {
+    -webkit-animation: mover 1s ease-in-out infinite  alternate;
+    animation: mover 1s ease-in-out infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+
 .navigation:hover {
   left: -50px;
 }

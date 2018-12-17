@@ -151,13 +151,17 @@ img {
 }
 
 #newsfeed-status-input {
-  width: 100%;
+  width: 75%;
   padding-left: 2%;
+  margin-right: 2%;
   margin-bottom: 10px;
+  float: left;
+  left: 2%;
 }
 
 #newsfeed-status-btn {
-  width: 102%;
+  width: 18%;
+  display: block;
 }
 
 .friend-accept-btn {
@@ -246,4 +250,13 @@ img {
   width: auto;
   font-size: 40px;
   margin-top: 20%;
+}
+
+#search-bar {
+  padding-left: 13px;
+  width: 94%;
+}
+
+.newsfeed-title {
+  text-align: center;
 }

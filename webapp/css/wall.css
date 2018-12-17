@@ -169,6 +169,11 @@
   cursor: pointer;
 }
 
+a.wall-clickable {
+  color: #8F6363;
+  cursor: pointer;
+}
+
 .wall-clickable:hover {
   text-decoration: underline;
 }

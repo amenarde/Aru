@@ -34,8 +34,8 @@ a {
     position:relative;
 }
 
-#left-container, 
-#right-container, 
+#left-container,
+#right-container,
 #center-container {
     height:600px;
     position:absolute;
@@ -61,6 +61,7 @@ a {
     left:200px;
     background-color:#1a1a1a;
     color:#ccc;
+    top: 10%;
 }
 
 .text {

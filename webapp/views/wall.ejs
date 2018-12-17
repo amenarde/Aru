@@ -86,7 +86,7 @@
                 <% } %>
               </div>
               <% } else if (wallContent[i].type === "profileUpdate") { %>
-                <div class="wall-user-name"><%= wallContent[i].username %> updated their <%= wallContent[i].content %>.</div>
+                <div class="wall-user-name"><span class="wall-clickable wall-comment-user"><a class="wall-clickable" href=<%= "/user/" + wallContent[i].username %>><%= wallContent[i].username %></a></span> updated their <%= wallContent[i].content %>.</div>
                   <div class="wall-card-info">
                     <div class="wall-status"></div>
                     <% for (var j = 0; j < wallContent[i].comments.length; j++) { %>
@@ -137,6 +137,7 @@
             <input name="lastName" type="text" placeholder= <%= userData.lastName %> id="lastname-input" class="account-info-content" disabled>
             <p class="account-info-title">Birthday</p>
             <input name="birthday" type="date" value= <%= userData.birthday %> id="birthday-input" class="account-info-content" disabled>
+            <input type="hidden" name="originalBirthday" value= <%= userData.birthday %>/>
             <p class="account-info-title">Affiliation</p>
             <input name="affiliation" type="text" placeholder= <%= userData.affiliation %> id="affiliation-input" class="account-info-content" disabled>
             <p class="account-info-title">Interests</p>
@@ -151,7 +152,7 @@
         </div>
     </div>
     <div class="navigation">
-          <div class="nav-icon"></div>
+          <div class="nav-icon vert-move"></div>
           <div class="nav-menu">
             <a class="nav-selection" href=<%="/user/" + user%>>My Profile</a><br>
             <a class="nav-selection" href="/newsfeed">Newsfeed</a><br>

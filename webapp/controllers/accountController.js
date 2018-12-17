@@ -197,6 +197,7 @@ function updateInfo(req, res) {
   let newFirst = req.body.firstName;
   let lastName = req.body.lastName;
   let birthday = req.body.birthday;
+  let originalBirthday = req.body.originalBirthday.slice(0, -1);
   let affiliation = req.body.affiliation;
 
   userData = {
@@ -209,12 +210,15 @@ function updateInfo(req, res) {
   if (lastName != "") {
     userData['lastName'] = lastName;
   }
-  if (birthday != "") {
+  if (birthday != originalBirthday) {
     userData['birthday'] = birthday;
   }
   if (affiliation != "") {
     userData['affiliation'] = affiliation;
   }
+
+  console.log("original birthday: " + originalBirthday);
+  console.log("new birthday: " + birthday);
 
   console.log("userData is: " + JSON.stringify(userData));
 
