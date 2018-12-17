@@ -67,7 +67,7 @@ var Posts = vogels.define('Post', {
     username  : Joi.string(), // Poster
     likes : Joi.number(),
     type: Joi.string(), // Encodes Status or Update for rendering
-  }
+  },
 });
 exports.Posts = Posts;
 

@@ -25,6 +25,10 @@ const fs = require('fs');
         schema.User2Interests.scan().loadAll().exec(callback);
     }
 
+    function dumpUsers(callback) {
+        schema.Users.scan().loadAll().exec(callback);
+    }
+
 
 
 // Get data
@@ -35,14 +39,17 @@ var getData = function() {
     // Affiliations2User
     // Interests2Users
     // Users2Interests
-    let actions = ["friends", "A2U", "U2I", "I2U"];
+    let actions = ["friends", "A2U", "U2I", "I2U", "USERS"];
     let filePath = './recommender/input.txt';
     fs.unlinkSync(filePath);
     var file = fs.createWriteStream(filePath);
     file.on('error', function(err) { /* error handling */ });
+
+    // Loop through each of the databases to pull from
     async.each(actions, function(action, completed) {
         switch(action) {
             case "friends":
+                // Dump friends database into a file, also upload all friends into an input file
                 dumpFriends(function(err, values) {
                     if (err) {
                         console.log("Could not pull friendships!\n" + err);
@@ -58,12 +65,30 @@ var getData = function() {
                     completed(err);
                 });
                 break;
+            case "USERS":
+                // Dump users database into a file
+                dumpUsers(function(err, values) {
+                    if (err) {
+                        console.log("Could not pull friendships!\n" + err);
+                    } else if (values) {
+                        var friendsFile = fs.createWriteStream("recommender/existingUsers.txt");
+                        values.Items.forEach(function(v) {
+                            friendsFile.write(v.attrs.username.replace(/ /g,"_") + "\n");
+                        });
+                    } else {
+                        console.log("No Friendship data!");
+                    }
+                    completed(err);
+                });
+                break;
             case "A2U":
+                // Dump affiliations and users into a file for input
                 dumpA2U(function(err, values) {
                     if (err) {
                         console.log("Could not pull affiliations!\n" + err);
                     } else if (values) {
                         values.Items.forEach(function(v) {
+                            // Duplicate so have edges in and out of the node (otherwise affiliations would collect all weight)
                             file.write(v.attrs.affiliation.replace(/ /g,"_") + "\t" + v.attrs.username.replace(/ /g,"_") + " 0.5\n");
                             file.write(v.attrs.username.replace(/ /g,"_") + "\t" + v.attrs.affiliation.replace(/ /g,"_") + " 0.5\n");
                         });
@@ -74,6 +99,7 @@ var getData = function() {
                 });
                 break;
             case "U2I":
+                // Dump interests per user into input file
                 dumpU2I(function(err, values) {
                     if (err) {
                         console.log("Could not pull users 2 interests!\n" + err);
@@ -88,6 +114,7 @@ var getData = function() {
                 });
                 break;
             case "I2U":
+                // Dump interests into an input file
                 dumpI2U(function(err, values) {
                     if (err) {
                         console.log("Could not pull interests 2 users!\n" + err);

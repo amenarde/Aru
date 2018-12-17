@@ -16,15 +16,11 @@ var open = function(req, res) {
           if (err) {
             res.render('main.ejs', {error: err});
           } else {
-            console.log("incoming requests: " + friendRequests);
+
             accountController.getRecommendedFriends(req, res, function(recommended, err) {
-              console.log("returned from recommended");
               if (err) {
-                console.log("ERROR!");
                 res.render('main.ejs', {error: err});
               } else {
-                console.log("RECOMMENDED!!!!");
-                console.log("friend recommendations: " + JSON.stringify(recommended));
                 res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests, recommended: recommended});
               }
             })
@@ -112,19 +108,17 @@ var getFeedSince = function(req, res) {
 
 var getCommentsSince = function(req, res) {
     let username = req.session.account;
-    let pIDs = req.body.pIDs; // TODO get pIDs from request somehow
-    let timestamp = req.body.timestamp; // TODO get timestamp from request somehow
+    let pIDs = req.body.pIDs;
+    let timestamp = req.body.timestamp;
     if (!username) {
         res.render('main.ejs', {error: "You must be logged in to see that page."});
     } else {
         let commentList = [];
         async.each(pIDs, function(pID, completed) {
-          console.log("checking for comment: " + pID);
             PostsDB.fetchCommentsSinceTime(pID, timestamp, function(comments, err) {
                 if (err) {
                     completed(err);
                 } else {
-                    console.log("found a new comment!: " + comments);
                     commentList.push({pID: pID, comments: comments});
                     completed(null);
                 }

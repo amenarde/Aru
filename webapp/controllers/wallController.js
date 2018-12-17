@@ -34,7 +34,6 @@ function newFriendPost(req, res) {
             res.send(null, err);
         } else {
             if (result) {
-                console.log("post created");
                 // Create the Post
                 createPost(req.session.account, req.body.content, "friendPost", receiver, function(success, err) {
                     if (err) {
@@ -126,8 +125,6 @@ function getAccountInformation(req, res) {
       res.send({error: err});
     } else {
       // Remove password from the object
-      console.log("Got user");
-      console.log(user);
       if (user) {
         let userData = {
             username: user.attrs.username,
@@ -137,21 +134,16 @@ function getAccountInformation(req, res) {
             birthday: formatBirthday(user.attrs.birthday),
           }
 
-          console.log(formatBirthday(user.attrs.birthday));
           let timestamp = req.body.timestamp;
           FriendshipDB.checkFriendship(req.session.account, username, function(status, err) {
             if (err) {
                 res.send({error: err});
             } else {
-                console.log("STATUS IS: " + status);
                 if (status === "confirmed" || username === req.session.account) {
                     getWallContent(username, timestamp, function(feed, err) {
-                        console.log("Feed: " + feed);
-                        console.log("Err: " + err);
                         if (err) {
                             res.send({error: err});
                         } else {
-                            console.log("feed is: " + JSON.stringify(feed));
                             constructFeedFromIDs(feed, function(wallContent, err) {
                                 if (err) {
                                     res.send({error: err});
@@ -169,7 +161,6 @@ function getAccountInformation(req, res) {
                         }
                       });
                 } else {
-                    console.log("not friends!!");
                     db.fetchInterests(username, function(interests, err) {
                                         if (err) {
                                             res.send({error: err});
@@ -223,7 +214,6 @@ function constructFromTime(username, timestamp, callback) {
             callback(null, err);
         } else {
             // Aggregate values
-            console.log(posts);
             for (let j = 0; j < posts.length; j++) {
                 postsHeap.push(posts[j]);
             }
@@ -253,7 +243,6 @@ function constructFeedFromIDs(feedIDs, callback) {
         }
     }
 
-    console.log("postData is: " + postData);
     // Find the posts, comments and return them
     PostDB.getPosts(postData, function(feed, error) {
         callback(feed, error);

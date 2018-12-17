@@ -54,7 +54,6 @@ function deleteposts(pID, username, callback) {
 
 function addComment(pID, username, comment, callback) {
     schemas.PostComments.create({pID: pID, username: username, content: comment, likes: 0}, function(err, posts) {
-        console.log("pID is: " + pID);
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);
@@ -77,7 +76,7 @@ function deleteComment(pID, createdAt, callback) {
 function getCommentsForPost(pID, callback) {
     var commentList = [];
     schemas.PostComments.query(pID)
-    .descending().loadAll()
+    .ascending().loadAll()
     .exec(function(err, comments) {
         if (err) {
             callback(null, err);
@@ -143,7 +142,6 @@ function getPosts(postData, callback) {
                         //     if (err) {
                         //         completed(err);
                         //     } else {
-                        //         console.log("Got likes: " + likes);
                         //         postData[data.index].likes = likes;
                         //         completed(null);
                         //     }
@@ -207,8 +205,6 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
             .descending()
             .loadAll()
             .exec(function(err, posts) {
-                console.log("Err: " + err);
-                console.log("Posts: " + posts);
                 if (err) {
                     callback(null, err);
                 } else {
@@ -262,7 +258,7 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
 function fetchCommentsSinceTime(pID, timestamp, callback) {
     var commentList = [];
     schemas.PostComments.query(pID)
-    .where('createdAt').gt(timestamp).descending().loadAll()
+    .where('createdAt').gt(timestamp).ascending().loadAll()
     .exec(function(err, comments) {
         if (err) {
             callback(null, err);
