@@ -10,8 +10,7 @@
 <body>
     <div id="newsfeed-background">
         <div class="modal-content">
-
-          <input class="newsfeed-status-input" type="text" id="search-bar" placeholder="Search for a user by first name" onchange="search()">
+          <input class="newsfeed-status-input" type="text" id="search-bar" placeholder="Search for a user by username" onchange="search()">
           <p id="search-results"></p>
           <div class="newsfeed-title-bar"></div>
           <form action="/postStatusUpdate" class="newsfeed-status-update" method="POST">
@@ -21,6 +20,10 @@
           <div class="newsfeed-title-bar"></div>
 
           <div id="newsfeed-container">
+          <% if (feed.length == 0) { %>
+            <p class="news-emoji">&#x1f648;</p>
+            <p class="news-empty">You don't have any news yet! Change your status or update your profile.</p>
+          <% } %>
           <% for (var i=0; i < feed.length; i++) { %>
             <% if (feed[i].type === "friendPost") { %>
               <div class="newsfeed-card">
@@ -62,8 +65,8 @@
               <div class="newsfeed-card">
                 <div class="newsfeed-prof-pic"></div>
                 <div class="newsfeed-card-info">
-                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated <%= feed[i].content %>.</div>
-                  <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated their <%= feed[i].content %>.</div>
+                  <div class="newsfeed-status"></div>
                   <% for (var j = 0; j < feed[i].comments.length; j++) { %>
                     <div class="newsfeed-comment-card">
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
@@ -125,12 +128,13 @@
         </div>
     </div>
     <div class="navigation">
-          <div class="nav-icon"></div>
+          <div class="nav-icon vert-move"></div>
           <div class="nav-menu">
             <a class="nav-selection" href=<%="/user/" + user%>>My Profile</a><br>
             <a class="nav-selection" href="/newsfeed">Newsfeed</a><br>
             <a class="nav-selection" href="/chat">Chatroom</a><br>
             <a class="nav-selection" href="/friendvisualizer">Visualizer</a><br>
+            <a class="nav-selection" href="/logout">Logout</a><br>
           </div>
         </div>
   </body>
@@ -161,12 +165,16 @@
           } else if (data.feed[i].type === 'friendPost') {
             newPosts += addFriendPost(data.feed[i].username, data.feed[i].content, data.feed[i].receiver, data.feed[i].comments, data.feed[i].pID);
           } else if (data.feed[i].type === 'profileUpdate') {
-            newPosts += addProfileUpdate(data.feed[i].username, data.feed[i].content);
+            newPosts += addProfileUpdate(data.feed[i].username, data.feed[i].content, data.feed[i].pID);
           }
 
           $( "#newsfeed-container" ).prepend(newPosts);
         }
-        mostRecent = new Date().toISOString();
+
+        if (data.feed.length > 0) {
+          console.log(data.feed[0]);
+          mostRecent = data.feed[0].createdAt;
+        }
       });
     }
 
@@ -239,8 +247,24 @@
       return post;
     }
 
-    var addProfileUpdate = function() {
+    var addProfileUpdate = function(username, content, pID) {
+      var comments = '';
 
+      for (var i = 0; i < comments.length; i++) {
+        comments += '<div class="newsfeed-comment-card">' + '<div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href="/user/' + comments[i].username + '">' + comments[i].username + '</a></span>' + comments[i].content + '</div></div>'
+      };
+
+      comments += '<form action="/addComment" method="POST" class="newsfeed-add-comment">' +
+        '<input type="text" placeholder="Add comment..." name="content" class="newsfeed-comment-input"><input type="hidden" name="pID" value=' + pID + '/><button type="submit" class="newsfeed-comment">COMMENT</button></form>';
+
+      var post =
+        '<div class="newsfeed-card">' +
+          '<div class="newsfeed-prof-pic"></div>' +
+            '<div class="newsfeed-card-info">' +
+              '<div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=/user/' + username + '>' + username + '</a></span> updated their ' + content + '</div>' + comments +
+              '</div>' +
+            '</div>'
+      return post;
     }
 
     var addNewFriendship = function(content, comments, pID) {

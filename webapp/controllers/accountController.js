@@ -42,6 +42,9 @@ var createAccount = function(req, res) {
   if (!permissions) {
     permissions = 1;
   }
+
+  var interest = req.body.interest;
+
   if (ERROR_MSG != "") {
     res.render('main.ejs', {error: ERROR_MSG});
     return;
@@ -50,8 +53,20 @@ var createAccount = function(req, res) {
     if (err) {
       res.render('main.ejs', {error: err});
     } else if (data) {
-    	req.session.account = data.attrs.username;
-      res.redirect('/newsfeed');
+      if (interest.length > 0) {
+        db.addInterest(username, interest, function(data, err){
+          console.log("adding interestasdf")
+          if (err) {
+            console.log("ERROR");
+          } else {
+            req.session.account = data.attrs.username;
+            res.redirect('/newsfeed');
+          }
+        })
+      } else {
+        req.session.account = data.attrs.username;
+        res.redirect('/newsfeed');
+      }
     }
   });
 };
@@ -182,6 +197,7 @@ function updateInfo(req, res) {
   let newFirst = req.body.firstName;
   let lastName = req.body.lastName;
   let birthday = req.body.birthday;
+  let originalBirthday = req.body.originalBirthday.slice(0, -1);
   let affiliation = req.body.affiliation;
 
   userData = {
@@ -194,12 +210,15 @@ function updateInfo(req, res) {
   if (lastName != "") {
     userData['lastName'] = lastName;
   }
-  if (birthday != "") {
+  if (birthday != originalBirthday) {
     userData['birthday'] = birthday;
   }
   if (affiliation != "") {
     userData['affiliation'] = affiliation;
   }
+
+  console.log("original birthday: " + originalBirthday);
+  console.log("new birthday: " + birthday);
 
   console.log("userData is: " + JSON.stringify(userData));
 
@@ -211,7 +230,7 @@ function updateInfo(req, res) {
         if (err.length > 0) {
           res.send({updates: updates, error: err});
         } else {
-          res.send({updates: updates, error: err});
+          res.redirect('back');
         }
       });
     }

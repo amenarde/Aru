@@ -49,7 +49,7 @@ function newFriendPost(req, res) {
                         //         res.redirect('back');
                         //     }
                         // });
-                    }                    
+                    }
                 });
             } else {
                 res.send({error: null, post: "You can't post to non-friends walls. Please don't hack our program :("});
@@ -115,6 +115,10 @@ function editComment(req, res) {
     // Make sure user can edit the comment
 }
 
+function formatBirthday(birthday) {
+    return birthday.replace(/\//ig, "-");
+}
+
 // Tested - works
 function getAccountInformation(req, res) {
   let username = req.params.username;
@@ -131,8 +135,10 @@ function getAccountInformation(req, res) {
             firstName: user.attrs.firstName,
             lastName: user.attrs.lastName,
             affiliation: user.attrs.affiliation,
-            birthday: user.attrs.birthday,
+            birthday: formatBirthday(user.attrs.birthday),
           }
+
+          console.log(formatBirthday(user.attrs.birthday));
           let timestamp = req.body.timestamp;
           FriendshipDB.checkFriendship(req.session.account, username, function(status, err) {
             if (err) {
@@ -151,14 +157,27 @@ function getAccountInformation(req, res) {
                                 if (err) {
                                     res.send({error: err});
                                 } else {
-                                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: wallContent, status: "confirmed"});
+                                    db.fetchInterests(username, function(interests, err) {
+                                        if (err) {
+                                            res.send({error: err});
+                                        } else {
+                                            res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, interests: interests, wallContent: wallContent, status: "confirmed"});
+                                        }
+                                    })
+
                                 }
                             });
                         }
                       });
                 } else {
                     console.log("not friends!!");
-                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: status})
+                    db.fetchInterests(username, function(interests, err) {
+                                        if (err) {
+                                            res.send({error: err});
+                                        } else {
+                                            res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, interests: interests, wallContent: {}, status: status});
+                                        }
+                                    })
                 }
             }
           })

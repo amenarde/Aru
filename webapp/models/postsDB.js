@@ -23,8 +23,6 @@ function create(poster, content, type, receiver, callback) {
                         }
                     });
                 } else {
-                    console.log("GIND ME");
-                    console.log("WallDB) Created wall entry: Username: " + wall.attrs.username + " - pID:" + wall.attrs.pID);
                     console.log(dbName + ") created posts " + posts.get("pID"));
                     callback(posts, null);
                 }

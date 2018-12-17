@@ -79,7 +79,7 @@ input {
   display: block;
   position: relative;
   margin: auto;
-  margin-bottom: 35px;
+  margin-bottom: 25px;
   height: 30px;
   background-color: #E6E6E6;
   transition: all .2s ease-in-out;
@@ -168,6 +168,24 @@ input:hover {
   right: 0px;
 }
 
+.vert-move {
+    -webkit-animation: mover 1s ease-in-out infinite  alternate;
+    animation: mover 1s ease-in-out infinite  alternate;
+}
+.vert-move {
+    -webkit-animation: mover 1s ease-in-out infinite  alternate;
+    animation: mover 1s ease-in-out infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+
 .navigation:hover {
   left: -50px;
 }
@@ -175,7 +193,7 @@ input:hover {
 .nav-menu {
   position: absolute;
   right: 50px;
-  top: -59px;
+  top: -77px;
   text-align: left;
   font-size: 10px;
   color: #6D6D6D;

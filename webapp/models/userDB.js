@@ -257,10 +257,13 @@ function verifyLogin(username, password, callback) {
 function addInterest(username, interest, callback) {
   schemas.User2Interests.create({username: username, interest:interest}, {overwrite: false}, function(err, u2i) {
     if (err) {
+      console.log(err);
       callback(null, err);
     } else {
+      console.log("trying to create a user interest");
       schemas.Interests2User.create({username: username, interest: interest}, {overwrite: false}, function(err, i2u) {
         if (err) {
+          console.log("received error");
           schemas.User2Interests.destroy({username: username, interest: interest}, function(errDestroy) {
             if (errDestroy) {
               callback("Database in unstable state!\n" + errDestroy + "\n" + err);
@@ -269,6 +272,7 @@ function addInterest(username, interest, callback) {
             }
           });
         } else {
+          console.log("in this else statement");
           callback(u2i, null);
         }
       });
@@ -343,7 +347,8 @@ var database = {
   updateBirthday: updateBirthday,
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
-  addInsterest: addInterest,
+  addInterest: addInterest,
+  fetchInterests: fetchInterests,
   removeInterest: removeInterest,
   getUsersByPrefix: getUsersByPrefix,
 };

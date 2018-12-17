@@ -53,6 +53,7 @@
   text-align: center;
   font-size: 28px;
   margin-bottom: 24px;
+  letter-spacing: 0.1rem;
 }
 
 .profile-title-bar {
@@ -101,6 +102,7 @@
   min-width: 35px;
   float: left;
   transition: all .1s ease-in-out;
+  margin-top: 20px;
 }
 
 #wall-save-info-btn {
@@ -109,6 +111,7 @@
   float: left;
   margin-left: 5px;
   transition: all .1s ease-in-out;
+  margin-top: 20px;
 }
 
 #add-friend-btn {
@@ -167,6 +170,11 @@
   cursor: pointer;
 }
 
+a.wall-clickable {
+  color: #8F6363;
+  cursor: pointer;
+}
+
 .wall-clickable:hover {
   text-decoration: underline;
 }
@@ -196,6 +204,15 @@
   font-size: 12px;
   background-color: white;
   color: #6D6D6D;
+}
+
+.wall-interest {
+  text-transform: none;
+  margin-bottom: 3px;
+  margin-left: 7px;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 0rem;
 }
 
 .account-info-content:hover {
@@ -313,12 +330,6 @@
   color: #F1F1F1;
 }
 
-input[type="date"]:before {
-  content: attr(placeholder) !important;
-  margin-right: 0.5em;
-}
-
-input[type="date"]:focus:before,
-input[type="date"]:valid:before {
-  content: "";
+input[type="date"]{
+  padding-left: 3px;
 }

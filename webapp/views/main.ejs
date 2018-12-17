@@ -18,6 +18,8 @@
           <input type="date" name="birthday" id="signup-birthday" required>
           <label for="affiliation" id="signup-affiliation-label">Affiliation</label>
           <input type="text" name="affiliation" id="signup-affiliation" required>
+          <label for="interests">Add 1 interest (you can add more later):</label>
+          <input type="text" name="interest" id="interest" required>
           <label for="username">Username</label>
           <input type="text" name="username" id="signup-username" required>
           <label for="password">Password</label>
@@ -56,7 +58,7 @@
       $('#signup-form').addClass('signup-shown');
       $('#signup-form').removeClass('signup-hidden');
       $('#login-error-msg').addClass('signup-hidden');
-      $('#login').css("height","120%")
+      $('#login').css("height","130%")
     }
 
     $('#login-signup-btn').click(function() {

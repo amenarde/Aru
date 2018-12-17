@@ -41,6 +41,7 @@
 .newsfeed-title-bar {
   border-bottom: 1px solid #AAAAAA;
   margin-bottom: 30px;
+  opacity: 0.5;
 }
 
 .newsfeed-card {
@@ -150,13 +151,17 @@ img {
 }
 
 #newsfeed-status-input {
-  width: 100%;
+  width: 75%;
   padding-left: 2%;
+  margin-right: 2%;
   margin-bottom: 10px;
+  float: left;
+  left: 2%;
 }
 
 #newsfeed-status-btn {
-  width: 102%;
+  width: 18%;
+  display: block;
 }
 
 .friend-accept-btn {
@@ -230,4 +235,28 @@ img {
 
 .no-requests {
   margin-bottom: 75px;
+}
+
+.news-empty {
+  text-align: center;
+  position: relative;
+  margin-top: 5%;
+}
+
+.news-emoji {
+  text-align: center;
+  position: relative;
+  height: 30px;
+  width: auto;
+  font-size: 40px;
+  margin-top: 20%;
+}
+
+#search-bar {
+  padding-left: 13px;
+  width: 94%;
+}
+
+.newsfeed-title {
+  text-align: center;
 }
