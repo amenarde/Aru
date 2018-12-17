@@ -23,19 +23,33 @@ var uploadData = function() {
             } else {
                 // Check if were already friends
                 let user2AndWeight = parts[1].split(" ");
-                checkUserStatus(parts[0], user2AndWeight[0], function(isUser1, isUser2, areFriends, err) {
-                    if (!areFriends && isUser1 && isUser2) {
-                        schema.RecommendedFriends.create({user1: parts[0], user2: user2AndWeight[0], strength: user2AndWeight[1]}, function(err, newRec) {
-                            if (err) {
-                                console.log(err);
+                checkUserStatus(parts[0], user2AndWeight[0], function(isUser1, isUser2, err) {
+                    if (isUser1 && isUser2) {
+                        checkFriendshipStatus(parts[0], user2AndWeight[0], function(isUser1, isUser2, existsFriendship, err) {
+                            if (!existsFriendship) {
+                                schema.RecommendedFriends.create({user1: parts[0], user2: user2AndWeight[0], strength: user2AndWeight[1]}, function(err, newRec) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                });
+                                console.log("New friendship: " + line);
+                            } else {
+                                console.log("Friendship exists: " + line);
                             }
                         });
-                        console.log("New friendship " + line);
                     } else {
-                        console.log("Not a valid recommendation");
+                        console.log("Not users - " + line);
                     }
+                    // if (!areFriends && isUser1 && isUser2) {
+                        
+                    //     console.log("New friendship " + line);
+                    // } else {
+                    //     console.log("Not a valid recommendation");
+                    // }
                 });
-                
+                // if (parts[0] != user2AndWeight[0]) {
+                    
+                // }                
             }
         } else {
             console.log("Invalid line: " + line);
@@ -43,7 +57,7 @@ var uploadData = function() {
     });
 }
 
-var checkUserStatus = function(user1, user2, callback) {
+var checkFriendshipStatus = function(user1, user2, callback) {
     let isUser1 = false;
     let isUser2 = false;
     let alreadyFriends = false;
@@ -66,6 +80,28 @@ var checkUserStatus = function(user1, user2, callback) {
 
         if (last) {
             callback(isUser1, isUser2, alreadyFriends, null);
+            return false;
+        }
+    });
+}
+
+var checkUserStatus = function(user1, user2, callback) {
+    let isUser1 = false;
+    let isUser2 = false;
+    lineReader.eachLine('recommender/existingUsers.txt', function(line, last) {
+        if (line) {
+            if (line == user1) {
+                isUser1 = true;
+            } else if (line == user2) {
+                isUser2 = true;
+            }
+            if (isUser1 && isUser2) {
+                callback(isUser1, isUser2, null);
+            }
+        }
+
+        if (last) {
+            callback(isUser1, isUser2, null);
             return false;
         }
     });

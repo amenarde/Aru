@@ -1,11 +1,5 @@
-rzajac	relisher 1
 rzajac	tyue 1
-aringis	tyue 1
-tyue	aringis 1
-tyue	relisher 1
 tyue	rzajac 1
-relisher	rzajac 1
-relisher	tyue 1
 Penn	amenarde 0.5
 amenarde	Penn 0.5
 Penn	aringis 0.5
