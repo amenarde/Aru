@@ -25,7 +25,7 @@
           <input type="date" name="birthday" id="signup-birthday" required>
           <label for="affiliation" id="signup-affiliation-label">Affiliation</label>
           <input type="text" name="affiliation" id="signup-affiliation" required>
-          <label for="interests">Add 1 interest (you can add more later):</label>
+          <label for="interests">Add an interest:</label>
           <input type="text" name="interest" id="interest" required>
           <label for="username">Username</label>
           <input type="text" name="username" id="signup-username" required>
@@ -58,8 +58,8 @@
   </body>
   <script>
     var signup;
-    var missing_fields;
 
+    //some quick javascript for animating + activating signup modal
     var goToSignup = function() {
       $('#login-form').addClass('signup-hidden');
       $('#signup-form').addClass('signup-shown');

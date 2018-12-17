@@ -158,6 +158,7 @@
         </div>
   </body>
   <script>
+    //maintain most recent timestamps for dynamic feed updates
     var mostRecent = null;
     var mostRecentComment = null;
     var pIDs = [];
@@ -173,12 +174,16 @@
       }
     });
 
+    //helper function to check for updates every 2 seconds
     var refresh = function() {
       setTimeout(refresh, 2000);
       updateFeed();
     }
 
+    //helper function to get feed updates
     var updateFeed = function() {
+      //AJAX call to retrieve new posts since most recent post, prepend
+      //new posts onto newsfeed without refresh
       $.post('/getFeedSince', { timestamp: mostRecent }, function(data) {
         var newPosts = '';
         for (var i = 0; i < data.feed.length; i++) {
@@ -200,6 +205,8 @@
           mostRecent = data.feed[0].createdAt;
         }
 
+        //AJAX call to retrieve new comments since most recent comment, prepend
+        //new comments onto proper posts (identified by pID) without refresh
         $.post('/getCommentsSince', { pIDs: pIDs, timestamp : mostRecentComment}, function(comments) {
           console.log("comments: " + JSON.stringify(comments));
           for (var i = 0; i < comments.commentList.length; i++) {
@@ -218,6 +225,7 @@
       });
     }
 
+    //search bar functionality to get prefix results
     $(function(){ // this will be called when the DOM is ready
       $('#search-bar').keyup(function() {
         var prefix = document.getElementById("search-bar").value;
@@ -245,6 +253,7 @@
       });
     });
 
+    //helper function to generate friend post HTML
     var addFriendPost = function(username, content, receiver, comments, pID) {
       var comments = "";
       for (var i = 0; i < comments.length; i++) {
@@ -268,6 +277,7 @@
       return post;
     }
 
+    //helper function to generate status update HTML
     var addStatusUpdate = function(username, content, comments, pID) {
       var comments = "";
       for (var i = 0; i < comments.length; i++) {
@@ -291,6 +301,7 @@
       return post;
     }
 
+    //helper function to generate profile update HTML
     var addProfileUpdate = function(username, content, pID) {
       var comments = '';
 
@@ -313,6 +324,7 @@
       return post;
     }
 
+    //helper function to generate new friendship HTML
     var addNewFriendship = function(content, comments, pID) {
       var comments = "";
       for (var i = 0; i < comments.length; i++) {
