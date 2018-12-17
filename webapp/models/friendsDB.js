@@ -28,7 +28,9 @@ function acceptFriendRequest(user1, user2, callback) {
                                 }
                             );
                         } else {
-                            callback(friendship, null);
+                            schemas.RecommendedFriends.destroy({user1: user1, user2: user2}, function(err) {
+                                callback(friendship, null);
+                            });
                         }
                     }
                 );

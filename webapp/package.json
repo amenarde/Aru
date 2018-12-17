@@ -8,15 +8,16 @@
    "dependencies": {
       "async": "*",
       "aws-sdk": "*",
+      "bcrypt": "*",
       "ejs": "^2.6.1",
       "express": "3.3.8",
+      "express-session": "*",
+      "express-socket.io-session": "*",
       "heap": "^0.2.6",
       "joi": "^14.3.0",
+      "line-reader": "^0.4.0",
       "lru-cache": "*",
-      "vogels": "^2.2.0",
-      "bcrypt": "*",
       "socket.io": "*",
-      "express-session": "*",
-      "express-socket.io-session": "*"
+      "vogels": "^2.2.0"
    }
 }

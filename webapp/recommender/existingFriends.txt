@@ -1,0 +1,8 @@
+rzajac	relisher
+rzajac	tyue
+aringis	tyue
+tyue	aringis
+tyue	relisher
+tyue	rzajac
+relisher	rzajac
+relisher	tyue
