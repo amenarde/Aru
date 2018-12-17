@@ -266,6 +266,7 @@ function fetchCommentsSinceTime(pID, timestamp, callback) {
         if (err) {
             callback(null, err);
         } else {
+            console.log("new comments");
             var commentList = [];
             async.each(comments.Items, function(comment, completed) {
                 commentList.push(comment.attrs);

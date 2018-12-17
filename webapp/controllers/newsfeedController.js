@@ -2,6 +2,8 @@ var Heap = require('heap');
 var PostsDB = require('../models/postsDB.js');
 var FriendshipDB = require('../models/friendsDB.js');
 var accountController = require('../controllers/accountController.js');
+var async = require('async');
+
 
 var open = function(req, res) {
   if (req.session.account) {
@@ -100,17 +102,19 @@ var getFeedSince = function(req, res) {
 
 var getCommentsSince = function(req, res) {
     let username = req.session.account;
-    let pIDs = null; // TODO get pIDs from request somehow
-    let timestamp = null; // TODO get timestamp from request somehow
+    let pIDs = req.body.pIDs; // TODO get pIDs from request somehow
+    let timestamp = req.body.timestamp; // TODO get timestamp from request somehow
     if (!username) {
         res.render('main.ejs', {error: "You must be logged in to see that page."});
     } else {
         let commentList = [];
         async.each(pIDs, function(pID, completed) {
+          console.log("checking for comment: " + pID);
             PostsDB.fetchCommentsSinceTime(pID, timestamp, function(comments, err) {
                 if (err) {
                     completed(err);
                 } else {
+                    console.log("found a new comment!: " + comments);
                     commentList.push({pID: pID, comments: comments});
                     completed(null);
                 }

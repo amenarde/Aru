@@ -63,6 +63,7 @@ app.get('/friendvisualizer', function(req, res) {
 app.get('/newsfeed', newsfeedController.open);
 app.get('/getFeedFor', newsfeedController.getFeedFor);
 app.post('/getFeedSince', newsfeedController.getFeedSince);
+app.post('/getCommentsSince', newsfeedController.getCommentsSince);
 
 // Post Routes
 app.get('/chat', chatController.open);
