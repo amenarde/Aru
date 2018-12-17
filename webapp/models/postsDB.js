@@ -76,7 +76,7 @@ function deleteComment(pID, createdAt, callback) {
 function getCommentsForPost(pID, callback) {
     var commentList = [];
     schemas.PostComments.query(pID)
-    .descending().loadAll()
+    .ascending().loadAll()
     .exec(function(err, comments) {
         if (err) {
             callback(null, err);
@@ -142,7 +142,6 @@ function getPosts(postData, callback) {
                         //     if (err) {
                         //         completed(err);
                         //     } else {
-                        //         console.log("Got likes: " + likes);
                         //         postData[data.index].likes = likes;
                         //         completed(null);
                         //     }
@@ -259,7 +258,7 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
 function fetchCommentsSinceTime(pID, timestamp, callback) {
     var commentList = [];
     schemas.PostComments.query(pID)
-    .where('createdAt').gt(timestamp).descending().loadAll()
+    .where('createdAt').gt(timestamp).ascending().loadAll()
     .exec(function(err, comments) {
         if (err) {
             callback(null, err);

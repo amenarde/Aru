@@ -16,6 +16,7 @@ var open = function(req, res) {
           if (err) {
             res.render('main.ejs', {error: err});
           } else {
+
             accountController.getRecommendedFriends(req, res, function(recommended, err) {
               if (err) {
                 res.render('main.ejs', {error: err});
@@ -107,8 +108,8 @@ var getFeedSince = function(req, res) {
 
 var getCommentsSince = function(req, res) {
     let username = req.session.account;
-    let pIDs = req.body.pIDs; // TODO get pIDs from request somehow
-    let timestamp = req.body.timestamp; // TODO get timestamp from request somehow
+    let pIDs = req.body.pIDs;
+    let timestamp = req.body.timestamp;
     if (!username) {
         res.render('main.ejs', {error: "You must be logged in to see that page."});
     } else {
