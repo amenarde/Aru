@@ -21,6 +21,10 @@
           <div class="newsfeed-title-bar"></div>
 
           <div id="newsfeed-container">
+          <% if (feed.length == 0) { %>
+            <p class="news-emoji">&#x1f648;</p>
+            <p class="news-empty">You don't have any news yet! Change your status or update your profile.</p>
+          <% } %>
           <% for (var i=0; i < feed.length; i++) { %>
             <% if (feed[i].type === "friendPost") { %>
               <div class="newsfeed-card">
@@ -62,8 +66,8 @@
               <div class="newsfeed-card">
                 <div class="newsfeed-prof-pic"></div>
                 <div class="newsfeed-card-info">
-                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated <%= feed[i].content %>.</div>
-                  <div class="newsfeed-status"><%= feed[i].content %></div>
+                  <div class="newsfeed-user-name"> <span class="newsfeed-clickable"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].username %>><%= feed[i].username %></a></span> updated their <%= feed[i].content %>.</div>
+                  <div class="newsfeed-status"></div>
                   <% for (var j = 0; j < feed[i].comments.length; j++) { %>
                     <div class="newsfeed-comment-card">
                       <div class="newsfeed-comment-text"><span class="newsfeed-clickable newsfeed-comment-user"><a class="newsfeed-clickable" href=<%= "/user/" + feed[i].comments[j].username %>><%= feed[i].comments[j].username %></a></span><%= feed[i].comments[j].content %></div>
@@ -131,6 +135,7 @@
             <a class="nav-selection" href="/newsfeed">Newsfeed</a><br>
             <a class="nav-selection" href="/chat">Chatroom</a><br>
             <a class="nav-selection" href="/visualizer">Visualizer</a><br>
+            <a class="nav-selection" href="/logout">Logout</a><br>
           </div>
         </div>
   </body>

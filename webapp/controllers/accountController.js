@@ -226,7 +226,7 @@ function updateInfo(req, res) {
         if (err.length > 0) {
           res.send({updates: updates, error: err});
         } else {
-          res.send({updates: updates, error: err});
+          res.redirect('back');
         }
       });
     }

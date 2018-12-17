@@ -115,6 +115,10 @@ function editComment(req, res) {
     // Make sure user can edit the comment
 }
 
+function formatBirthday(birthday) {
+    return birthday.replace(/\//ig, "-");
+}
+
 // Tested - works
 function getAccountInformation(req, res) {
   let username = req.params.username;
@@ -131,8 +135,10 @@ function getAccountInformation(req, res) {
             firstName: user.attrs.firstName,
             lastName: user.attrs.lastName,
             affiliation: user.attrs.affiliation,
-            birthday: user.attrs.birthday,
+            birthday: formatBirthday(user.attrs.birthday),
           }
+
+          console.log(formatBirthday(user.attrs.birthday));
           let timestamp = req.body.timestamp;
           FriendshipDB.checkFriendship(req.session.account, username, function(status, err) {
             if (err) {

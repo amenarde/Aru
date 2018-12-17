@@ -41,6 +41,7 @@
 .newsfeed-title-bar {
   border-bottom: 1px solid #AAAAAA;
   margin-bottom: 30px;
+  opacity: 0.5;
 }
 
 .newsfeed-card {
@@ -230,4 +231,19 @@ img {
 
 .no-requests {
   margin-bottom: 75px;
+}
+
+.news-empty {
+  text-align: center;
+  position: relative;
+  margin-top: 5%;
+}
+
+.news-emoji {
+  text-align: center;
+  position: relative;
+  height: 30px;
+  width: auto;
+  font-size: 40px;
+  margin-top: 20%;
 }

@@ -136,7 +136,7 @@
             <p class="account-info-title">Last Name</p>
             <input name="lastName" type="text" placeholder= <%= userData.lastName %> id="lastname-input" class="account-info-content" disabled>
             <p class="account-info-title">Birthday</p>
-            <input name="birthday" type="date" placeholder= <%= userData.birthday %> id="birthday-input" class="account-info-content" disabled>
+            <input name="birthday" type="date" value= <%= userData.birthday %> id="birthday-input" class="account-info-content" disabled>
             <p class="account-info-title">Affiliation</p>
             <input name="affiliation" type="text" placeholder= <%= userData.affiliation %> id="affiliation-input" class="account-info-content" disabled>
             <p class="account-info-title">Interests</p>
@@ -157,6 +157,7 @@
             <a class="nav-selection" href="/newsfeed">Newsfeed</a><br>
             <a class="nav-selection" href="/chat">Chatroom</a><br>
             <a class="nav-selection" href="/visualizer">Visualizer</a><br>
+            <a class="nav-selection" href="/logout">Logout</a><br>
           </div>
         </div>
   </body>
