@@ -67,9 +67,6 @@ function fetchChat(req, res) {
 	});
 }
 
-function deleteChat(chatID) {
-	
-}
 
 function postToChat(req, res) {
 	if (!req.session.account) {
@@ -166,7 +163,7 @@ function ioPostMessage(username, chatID, message, callback) {
 	});
 }
 
-
+var activeUsers = [];
 
 // Chat sockets
 
@@ -192,6 +189,30 @@ function socketFunc(io) {
 			  }
 		  });
 		});
+
+		socket.on('available to chat', () => {
+			socket.emit('username', {username: socket.handshake.session.account});
+		});
+
+		socket.on('available to chat', (data) => {
+			activeUsers.push(socket.handshake.session.account);
+			socket.join('available2chat');
+
+			io.in('available2chat').emit('available', {
+				users: activeUsers
+			});
+		  });
+
+		  socket.on('disconnect', () => {
+			var index = activeUsers.indexOf(socket.handshake.session.account);
+ 			if (index > -1) {
+       			activeUsers.splice(index, 1);
+			 }
+
+			io.in('available2chat').emit('available', {
+				users: activeUsers
+			});
+		  });
 
 		socket.on('leave', (data) => {
 			var leavingUser = socket.handshake.session.account;
