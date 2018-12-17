@@ -24,6 +24,7 @@ function create(poster, content, type, receiver, callback) {
                         }
                     });
                 } else {
+                    console.log("GIND ME");
                     console.log(dbName + ") created posts " + posts.get("pID"));
                     callback(posts, null);
                 }

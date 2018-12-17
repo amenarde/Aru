@@ -211,7 +211,7 @@ function updateInfo(req, res) {
         if (err.length > 0) {
           res.send({updates: updates, error: err});
         } else {
-          res.redirect('back');
+          res.send({updates: updates, error: err});
         }
       });
     }
@@ -294,39 +294,38 @@ function aggregateProfileUpdate(userData, callback) {
   let statusUpdates = [];
   let errors = [];
 
-  for (var property in userData) {
-    if (userData.hasOwnProperty(property) && property != "username") {
-      async.each(Object.keys(userData), function(key, completed) {
-        profileUpdate(userData.username, property, userData[key], function(update, err) {
-          if (!err) {
-            statusUpdates.push(update);
-          } else {
-            errors.push(err);
-            completed(err);
-          }
-          completed(err);
-        });
-      }, function(err) {
-        callback(statusUpdates, errors);
+  async.each(Object.keys(userData), function(key, completed) {
+    if (key === "username" || key === "updatedAt") {
+      completed(null);
+    } else {
+      profileUpdate(userData.username, key, userData[key], function(update, err) {
+        if (!err) {
+          statusUpdates.push(update);
+        } else {
+          errors.push(err);
+        }
+        completed(err);
       });
-
     }
-  }
+  }, function(err) {
+    callback(statusUpdates, errors);
+  });
 }
 
 function profileUpdate(username, attribute, value, callback) {
   var property = attribute;
 
   if (attribute === "firstName") {
-    property = "first name"
+    property = "first name";
   } else if (attribute === "lastName") {
     property = "last name";
   }
   // Create a post about it
-  createPost(username, attribute + " to " + value, "profileUpdate", username, function(success, err) {
+  createPost(username, property + " to " + value, "profileUpdate", username, function(success, err) {
     callback(success, err);
   });
 }
+
 function newFriendship(username, user2, callback) {
     createPost(username, username + " became friends with " + user2, "newFriendship", user2, function(success, err) {
       if (err) {
