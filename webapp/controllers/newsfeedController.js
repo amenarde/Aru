@@ -19,7 +19,7 @@ var open = function(req, res) {
           }
         });
       }
-    })
+    });
   }
   else {
     res.render('main.ejs', {error: "You must be logged in to see that page."});
