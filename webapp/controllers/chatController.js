@@ -3,6 +3,7 @@ var chatDB = require('../models/chatDB.js');
 var userDB = require('../models/userDB.js');
 var async = require('async');
 
+// Chat page
 var open = function(req, res) {
 	if (!req.session.account) {
 		res.render('main.ejs', {error: "You must be logged in to see that page."});
@@ -12,6 +13,7 @@ var open = function(req, res) {
 	res.render('chat.ejs');
 }
 
+// Create chat, pass through to DB
 var createChat = function (req, res) {
 	if (!req.session.account) {
 		res.render('main.ejs', {error: "You must be logged in to see that page."});
@@ -33,6 +35,7 @@ var createChat = function (req, res) {
 	});
 };
 
+// Gets chat history, good for when first openning a chat window -- only allows people in the chat to access the chat content
 function fetchChat(req, res) {
 	if (!req.session.account) {
 		res.render('main.ejs', {error: "You must be logged in to see that page."});
@@ -67,7 +70,7 @@ function fetchChat(req, res) {
 	});
 }
 
-
+// Posts to a chat, makes sure the user is in the chat
 function postToChat(req, res) {
 	if (!req.session.account) {
 		res.render('main.ejs', {error: "You must be logged in to see that page."});
@@ -86,6 +89,7 @@ function postToChat(req, res) {
 	});
 }
 
+// Discovery to see all the active chats!
 function getChatUsersByUser(req, res) {
 	if (!req.session.account) {
 		res.render('main.ejs', {error: "You must be logged in to see that page."});
@@ -121,6 +125,7 @@ function getChatUsersByUser(req, res) {
 	});
 }
 
+// Allows users in a chat to add people who aren't in the chat to chat
 function addUser(req, res) {
 	var askingUser = req.session.account;
 	var userToAdd = req.body.username;
@@ -149,6 +154,7 @@ function leaveChat(req, res) {
 	// Check whether or not to delete chat if empty
 }
 
+// Allows sockets to post to DB
 function ioPostMessage(username, chatID, message, callback) {
 	chatDB.userInChat(username, chatID, function(data, err) {
 		if(data === true) {
