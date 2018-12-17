@@ -1,15 +1,23 @@
 var Heap = require('heap');
 var PostsDB = require('../models/postsDB.js');
 var FriendshipDB = require('../models/friendsDB.js');
+var accountController = require('../controllers/accountController.js');
 
 var open = function(req, res) {
   if (req.session.account) {
     getFeedFor(req, res, function(feed, err) {
       if (err) {
-        res.render('main.ejs', {error: "Sorry an error has occurred."});
+        res.render('main.ejs', {error: "Sorry an error has occurred while getting the feed."});
       } else {
-        console.log("feed is: " + JSON.stringify(feed[0]));
-        res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account});
+        accountController.getFriendRequests(req, res, function(err, friendRequests) {
+          console.log("err is: " + JSON.stringify(err));
+          if (err) {
+            res.render('main.ejs', {error: err});
+          } else {
+            console.log("incoming requests: " + friendRequests);
+            res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests});
+          }
+        });
       }
     })
   }
@@ -76,8 +84,14 @@ var getFeedSince = function(req, res) {
             } else {
                 let timestamp = req.body.timestamp;
                 friends.push(username);
-                constructFromRecent(friends, timestamp, function(feed, err) {
-                    res.send({feed: feed, error: err});
+                constructFromRecent(friends, timestamp, function(feedIDs, err) {
+                    if (err) {
+                      res.send({error: err});
+                    } else {
+                      constructFeedFromIDs(feedIDs, function(feed, err) {
+                            res.send({feed: feed, err: err});
+                        });
+                    }
                 });
             }
         });
@@ -100,7 +114,7 @@ var getCommentsSince = function(req, res) {
                     commentList.push({pID: pID, comments: comments});
                     completed(null);
                 }
-            });            
+            });
         }, function (err) {
             res.send({commentList: commentList, error: err});
         });

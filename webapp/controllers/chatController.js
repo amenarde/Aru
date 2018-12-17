@@ -58,7 +58,7 @@ function fetchChat(req, res) {
 							prettyChatName += " " + user;
 							completed();
 						}, function(err) {
-							res.send({chats: data, chatTitle: prettyChatName});
+							res.send({chats: data, chatTitle: prettyChatName, type: type});
 						});
 					})
 				});
@@ -67,9 +67,6 @@ function fetchChat(req, res) {
 	});
 }
 
-function deleteChat(chatID) {
-	
-}
 
 function postToChat(req, res) {
 	if (!req.session.account) {
@@ -166,7 +163,7 @@ function ioPostMessage(username, chatID, message, callback) {
 	});
 }
 
-
+var activeUsers = [];
 
 // Chat sockets
 
@@ -191,6 +188,78 @@ function socketFunc(io) {
 				  socket.join(chatID);
 			  }
 		  });
+		});
+
+		socket.on('available to chat', () => {
+			socket.emit('username', {username: socket.handshake.session.account});
+		});
+
+		socket.on('available to chat', (data) => {
+			activeUsers.push(socket.handshake.session.account);
+			socket.join('available2chat');
+
+			io.in('available2chat').emit('available', {
+				users: activeUsers
+			});
+		  });
+
+		  socket.on('disconnect', () => {
+			var index = activeUsers.indexOf(socket.handshake.session.account);
+ 			if (index > -1) {
+       			activeUsers.splice(index, 1);
+			 }
+
+			io.in('available2chat').emit('available', {
+				users: activeUsers
+			});
+		  });
+
+		socket.on('leave', (data) => {
+			var leavingUser = socket.handshake.session.account;
+			var chatID = data.chatID;
+
+			chatDB.userInChat(leavingUser, chatID, function(data, err) {
+				if (data === true) {
+					chatDB.removeUser(chatID, leavingUser, function(data, err) {
+						// send to all people besides user
+						socket.broadcast.to(chatID).emit('remove user', {
+							chatID: chatID,
+							leavingUser: leavingUser,
+						});
+
+						// tell sender to leave
+						socket.emit('leave', null);
+					});
+				}
+			});
+		});
+
+		socket.on('add user', (data) => {
+			var askingUser = socket.handshake.session.account;
+			var userToAdd = data.username;
+			var chatID = data.chatID;
+		
+			chatDB.userInChat(askingUser, chatID, function(data, err) {
+				if (data === true) {
+					chatDB.userInChat(userToAdd, chatID, function(data, err) {
+						if (data === false) {
+							chatDB.addUser(chatID, userToAdd, function(data, err) {
+								io.in(chatID).emit('add user', {
+									chatID: data,
+									askingUser: askingUser,
+									userToAdd: userToAdd
+								});
+							});
+						}
+						else {
+							res.send({error: "This user is already in this chat."});
+						}
+					});
+				}
+				else {
+					res.send({error: "You must be in this chat to add a user to it."});
+				}
+			});
 		});
 	  });
 }

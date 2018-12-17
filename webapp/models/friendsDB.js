@@ -38,24 +38,6 @@ function acceptFriendRequest(user1, user2, callback) {
         );
 }
 
-function checkFriends(user1, user2, callback) {
-    schemas.Friendships.get(user1, user2, function(err, friends) {
-        // Assuming returns null if not friends
-        console.log("Friend: " + friends);
-        console.log("Err: " + err);
-        if (err) {
-            console.log("FriendshipDB) Failed to check friends for " + user1 + " and " + user2 + ".");
-            callback(null, err);
-        } else {
-            if (friends && friends.get("status") === "confirmed") {
-                callback(true, null);
-            } else {
-                callback(false, null);
-            }
-        }
-    });
-}
-
 function checkFriendStatus(user1, user2, callback) {
     schemas.Friendships.get(user1, user2, function(err, friends) {
         // Assuming returns null if not friends
@@ -65,10 +47,14 @@ function checkFriendStatus(user1, user2, callback) {
             console.log("FriendshipDB) Failed to check status for " + user1 + " and " + user2 + ".");
             callback(null, err);
         } else {
-            if (friends) {
-                callback(friends.get("status"), null);
+            if (friends && friends.attrs.status === "confirmed") {
+                callback("confirmed", null);
+            } else if (friends && friends.attrs.status === "pending") {
+                callback("pending", null);
+            } else if (friends && friends.attrs.status === "incoming") {
+                callback("incoming", null);
             } else {
-                callback(false, null);
+                callback("notFriends", null);
             }
         }
     });
@@ -199,7 +185,6 @@ function deleteFriend(user1, user2, callback) {
 
 var database = {
     friendRequest: issueFriendRequest,
-    checkFriends: checkFriends,
     getPending: getPendingRequest,
     getIncomingRequest: getIncomingRequest,
     rejectRequest: rejectFriendRequest,
