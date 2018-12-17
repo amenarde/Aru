@@ -183,6 +183,25 @@ function deleteFriend(user1, user2, callback) {
     });
 }
 
+function getRecommendedFriends(username, callback) {
+    console.log("Querying for recommended friends of: " + username);
+    schemas.RecommendedFriends.query(user)
+    .loadAll()
+    .exec(function(err, recommended) {
+        if (err) {
+            callback(null, err);
+        } else {
+            var friendNames = [];
+            async.each(recommended.Items, function(friend, completed) {
+                friendNames.push({friend: friend.attrs.user2, strength: friend.attrs.strength});
+                completed(null);
+            }, function (err) {
+                callback(friendNames, null);
+            });
+        }
+    });
+}
+
 var database = {
     friendRequest: issueFriendRequest,
     getPending: getPendingRequest,
@@ -192,5 +211,6 @@ var database = {
     getFriends: getFriends,
     removeFriend: deleteFriend,
     checkFriendship: checkFriendStatus,
+    getRecommendedFriends: getRecommendedFriends,
 }
 module.exports = database;

@@ -3,6 +3,7 @@ var accountController = require('./controllers/accountController.js');
 var newsfeedController = require('./controllers/newsfeedController.js');
 var wallController = require('./controllers/wallController.js');
 var searchController = require('./controllers/searchController.js');
+var visualizationController = require('./controllers/visualizationController.js');
 var vogels = require('vogels');
 var session = require("express-session")({
     secret: "amenarde",
@@ -51,6 +52,13 @@ app.post('/search', searchController.search);
 // Wall routes
 app.get('/user/:username', wallController.openProfile);
 
+// Visualizer routes
+app.get('/friendvisualization', visualizationController.friendvisualization);
+app.get('/getFriends/:user', visualizationController.getfriends);
+app.get('/friendvisualizer', function(req, res) {
+	res.render('friendvisualizer.ejs');
+});
+
 // Newsfeed routes
 app.get('/newsfeed', newsfeedController.open);
 app.get('/getFeedFor', newsfeedController.getFeedFor);
@@ -67,6 +75,7 @@ app.get('/updateFirstName', accountController.updateFirstName);
 app.post('/issueFriendRequest', accountController.issueFriendRequest);
 app.post('/acceptFriendRequest', accountController.acceptFriendRequest);
 app.get('/getFriendRequests', accountController.getFriendRequests);
+app.get('/getRecommendedFriends', accountController.getRecommendedFriends);
 
 // Magical stuff to allow sessions in socket.io
 // https://stackoverflow.com/questions/25532692/how-to-share-sessions-with-socket-io-1-x-and-express-4-x

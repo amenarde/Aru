@@ -147,6 +147,8 @@ function getAccountInformation(req, res) {
                 console.log("STATUS IS: " + status);
                 if (status === "confirmed" || username === req.session.account) {
                     getWallContent(username, timestamp, function(feed, err) {
+                        console.log("Feed: " + feed);
+                        console.log("Err: " + err);
                         if (err) {
                             res.send({error: err});
                         } else {

@@ -357,6 +357,7 @@ function newFriendship(username, user2, callback) {
       }
     });
 }
+
 function createPost(poster, content, type, receiver, callback) {
   // Make sure user is online
   if (!poster) { callback(null, "Something went wrong. Please log in again."); return;}
@@ -364,6 +365,16 @@ function createPost(poster, content, type, receiver, callback) {
   if (!receiver) { callback(null, "No receiver provided!"); return;}
   if (!type) { callback(null, "No type provided!"); return;}
   PostDB.createposts(poster, content, type, receiver, callback);
+}
+
+function getRecommendedFriends(req, res) {
+  let username = req.session.account;
+  if (!username) {
+    res.render('main.ejs', {error: "You must be logged in to perform that action."});
+  }
+  FriendshipDB.getRecommendedFriends(username, function(recommended, err) {
+    res.send({error: err, recommended: recommended});
+  })
 }
 
 var routes = {
@@ -382,6 +393,7 @@ var routes = {
   updateFirstName: updateFirstName,
   updateLastName: updateLastName,
   removeFriend: removeFriend,
+  getRecommendedFriends: getRecommendedFriends,
 };
 
 module.exports = routes;
