@@ -13,14 +13,12 @@
 
           <input class="newsfeed-status-input" type="text" id="search-bar" placeholder="Search for a user by first name" onchange="search()">
           <p id="search-results"></p>
-
-          <p class="newsfeed-title">NEWSFEED</p>
-          <div class="newsfeed-title-bar">
-          </div>
+          <div class="newsfeed-title-bar"></div>
           <form action="/postStatusUpdate" class="newsfeed-status-update" method="POST">
             <input class="newsfeed-status-input" type="text" id="newsfeed-status-input" placeholder="What's on your mind?" name="statusUpdate">
             <input type="submit" value="SHARE" class="secondary-btn" id="newsfeed-status-btn">
           </form>
+          <div class="newsfeed-title-bar"></div>
 
           <div id="newsfeed-container">
           <% for (var i=0; i < feed.length; i++) { %>
@@ -130,13 +128,25 @@
           <p>FRIEND REQUESTS</p>
           <div class="newsfeed-friend-bar"></div>
           <% if (friendRequests.length === 0) { %>
-            <p>No requests.</p>
+            <p class="no-requests">No requests.</p>
           <% } %>
           <% for (var i = 0; i < friendRequests.length; i++) { %>
             <form class="newsfeed-friend-request" method="POST" action="/acceptFriendRequest">
               <input type="hidden" name="friender" value= <%= friendRequests[i] %>/>
               <p><%= friendRequests[i] %></p>
               <input type="submit" value="ACCEPT" class="secondary-btn friend-accept-btn">
+            </form>
+          <% } %>
+          <p>PEOPLE YOU MAY KNOW</p>
+          <div class="newsfeed-friend-bar"></div>
+          <% if (friendRequests.length === 0) { %>
+            <p>No one right now.</p>
+          <% } %>
+          <% for (var i = 0; i < friendRequests.length; i++) { %>
+            <form class="newsfeed-friend-request" method="POST" action="/acceptFriendRequest">
+              <input type="hidden" name="friender" value= <%= friendRequests[i] %>/>
+              <p><%= friendRequests[i] %></p>
+              <input type="submit" value="+ ADD FRIEND" class="secondary-btn friend-accept-btn">
             </form>
           <% } %>
         </div>
@@ -196,21 +206,21 @@
           return;
         }
 
-      $.post( "/search", {"prefix": prefix}, function(result) {
-            if(result.error) {
-                alert(result.error);
-            }
-            else{
-                if (result.length != 0) {
+        $.post( "/search", {"prefix": prefix}, function(result) {
+              if(result.error) {
+                  alert(result.error);
+              } else {
+                  if (result.length != 0) {
                     result.forEach(element => {
+                      console.log("a result: " + element.username);
                       var myhref = '/user/' + element.username;
                       div = document.createElement('div');
                       $(div).html("<p><a href=" + myhref + ">" + element.name + "</a></p>")
                         .appendTo($("#search-results")) //main div
                     });
-                }
-            }
-        });
+                  }
+              }
+          });
       });
     });
 

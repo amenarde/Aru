@@ -1,6 +1,7 @@
 var db = require('../models/userDB.js');
 var FriendshipDB = require("../models/friendsDB.js");
 var PostDB = require("../models/postsDB.js");
+var async = require('async');
 
 var getLogin = function(req, res) {
   res.render('main.ejs', {error: ""});
@@ -210,7 +211,13 @@ function updateInfo(req, res) {
     if (err) {
       res.send({error: err});
     } else {
-      res.redirect('back');
+      aggregateProfileUpdate(userData, function(success, err) {
+        if (err) {
+          res.send({error: err});
+        } else {
+          res.redirect('back');
+        }
+      });
     }
   })
 }
@@ -291,7 +298,7 @@ function aggregateProfileUpdate(userData, callback) {
   let statusUpdates = [];
   for (var property in userData) {
     if (userData.hasOwnProperty(property) && property != "username") {
-      async.each(posts.Items, function(post, completed) {
+      async.each(userData, function(post, completed) {
         profileUpdate(userData.username, property, userData[property], function(update, err) {
           if (!err) {
             statusUpdates.push(update);
@@ -302,7 +309,6 @@ function aggregateProfileUpdate(userData, callback) {
       }, function (err) {
         callback(statusUpdates, err);
       });
-
     }
 }
 }

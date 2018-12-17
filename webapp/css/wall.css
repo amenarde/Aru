@@ -33,7 +33,7 @@
   max-width: 600px;
   margin: auto;
   margin-bottom: 15%;
-  left: 5%;
+  left: -2%;
 }
 
 .profile-picture {
@@ -44,8 +44,7 @@
   width: 150px;
   border-radius: 50%;
   margin-bottom: 24px;
-  border: solid #C9C9C9 3px;
-  background-color: #F1F1F1;
+  background-color: #C9C9C9;
 }
 
 .profile-title {
