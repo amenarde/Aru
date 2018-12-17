@@ -8,7 +8,7 @@ var uploadData = function() {
     // Empty database
 
 
-    let filePath = "part-r-00000";
+    let filePath = "recommender/part-r-00000";
     var file = fs.createReadStream(filePath);
     file.on('error', function(err) { console.log("File error: " + err);});
     var lineReader = require('readline').createInterface({
