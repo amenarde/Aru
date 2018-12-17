@@ -39,7 +39,7 @@ var getData = function() {
     // Affiliations2User
     // Interests2Users
     // Users2Interests
-    let actions = ["friends", "A2U", "U2I", "I2U", "USERS"];
+    let actions = ["friends", "U2I", "I2U", "USERS"];
     let filePath = './recommender/input.txt';
     fs.unlinkSync(filePath);
     var file = fs.createWriteStream(filePath);
@@ -74,6 +74,8 @@ var getData = function() {
                         var friendsFile = fs.createWriteStream("recommender/existingUsers.txt");
                         values.Items.forEach(function(v) {
                             friendsFile.write(v.attrs.username.replace(/ /g,"_") + "\n");
+                            file.write(v.attrs.affiliation.replace(/ /g,"_") + " " + v.attrs.username.replace(/ /g,"_") + "\n");
+                            file.write(v.attrs.username.replace(/ /g,"_") + " " + v.attrs.affiliation.replace(/ /g,"_") + "\n");
                         });
                     } else {
                         console.log("No Friendship data!");

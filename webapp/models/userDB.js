@@ -93,6 +93,9 @@ function updateUser(userData, callback) {
     if (err) {
       console.log("USER_DB) Update first name - " + err)
     } else {
+      if (userData.affiliation) {
+        
+      }
       console.log('USER_DB) Updated user info');
     }
     callback(user, err);
