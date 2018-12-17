@@ -296,21 +296,23 @@ function updateAffiliation(req, res) {
 
 function aggregateProfileUpdate(userData, callback) {
   let statusUpdates = [];
+  let errors = [];
+  let count = Object.keys(userData).length;
   for (var property in userData) {
     if (userData.hasOwnProperty(property) && property != "username") {
-      async.each(userData, function(post, completed) {
-        profileUpdate(userData.username, property, userData[property], function(update, err) {
-          if (!err) {
-            statusUpdates.push(update);
-          }
-          completed(err);
-        });
-
-      }, function (err) {
-        callback(statusUpdates, err);
+      profileUpdate(userData.username, property, userData[property], function(update, err) {
+        if (!err) {
+          statusUpdates.push(update);
+        } else {
+          errors.push(err);
+        }
+        count--;
+        if (count == 0) {
+          callback(statusUpdates, errors);
+        }
       });
     }
-}
+  }
 }
 
 function profileUpdate(username, attribute, value, callback) {

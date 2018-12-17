@@ -10,15 +10,25 @@
 <script type="text/javascript">
 
     var currentChat = "";
+    var myusername = "";
     var socket = io.connect('http://localhost:8080/');
 
     // Find your chats and populate
     window.onload = function () {
+
+        socket.emit('who am i', null);
+
+        socket.emit('available to chat', null);
         $.post( "/getchats", null, function(results) {
             if(results.error) {
                 alert(results.error);
             }
             else{
+
+                if (results.length != 0) {
+                    document.getElementById('activeChatList').innerHTML = "";
+                }
+
                 results.forEach(function(result) {
 
                     var users = "";
@@ -69,10 +79,14 @@
 
         document.getElementById('activeChatList').style.display = "none";
         document.getElementById('createChat').style.display = "none";
+        document.getElementById('backtonewsfeed').style.display = "none";
+        document.getElementById('activeUserList').style.display = "none";
+        document.getElementById('active-chat-title').style.display = "none";
+        document.getElementById('active-user-title').style.display = "none";
         document.getElementById('chatWindow').style.display = "block";
         document.getElementById('chat').style.display = "block";
         document.getElementById('addUser').style.display = "block";
-        document.getElementById('removeUser').style.display = "block";
+        document.getElementById('backtochats').style.display = "block";
 
         var chatWindow = document.getElementById('chatWindow');
 
@@ -83,6 +97,13 @@
                 alert(result.error);
             }
             else{
+
+                if (result.type === 'dm') {
+                    document.getElementById('leave').style.display = "none";
+                }
+                else if (result.type === 'group') {
+                    document.getElementById('leave').style.display = "block";
+                }
 
                 chatTitle.innerHTML = result.chatTitle;
 
@@ -101,30 +122,12 @@
     var addUser = function() {
         var data = {"username": $('input[name="addusername"]').val(), "chatID": currentChat};
 
-        $.post( "/adduser", data, function(result) {
-            if(result.error) {
-                alert(result.error);
-            }
-            else{
-                if (result.chatID === currentChat) {
-                    div = document.createElement('div');
-                    $(div).addClass("newchat-cards")
-                        .html(data.username+" was added to this chat")
-                        .appendTo($("#chatWindow")) //main div
-                }
-                else {
-                    var chatWindow = document.getElementById('chatWindow');
-                    chatWindow.innerHTML = '';
-                    currentChat = result.chatID;
-                    socket.emit('join room', currentChat);
-                    buildChat();
-                }
-            }
-        });
+        socket.emit('add user', data);
     }
 
     var leaveChat = function() {
-
+        var data = {"chatID": currentChat};
+        socket.emit('leave', data);
     }
 
     var chat = function() {
@@ -141,22 +144,104 @@
             .appendTo($("#chatWindow")) //main div
     }
 
+    socket.on('username', (data) => { 
+        myusername = data.username;
+    });
+
+    socket.on('available', (data) => {
+
+        document.getElementById('activeUserList').innerHTML = "";
+
+        if (data.users.length == 1) {
+            document.getElementById('activeUserList').innerHTML = "It appears that there are no users online.";
+        }
+
+        data.users.forEach(function(username) {
+
+            if (username != myusername) {
+                div = document.createElement('div');
+            $(div).addClass("newchat-cards")
+            .html(username)
+            .appendTo($("#activeUserList")) //main div
+            .click(function (event) {
+                $.post( "/createchat", {username: event.target.id}, function(result) {
+                if(result.error) {
+                    alert(result.error);
+                }
+                else{
+                    currentChat = result.chatid;
+                    socket.emit('join room', currentChat);
+                    buildChat();
+                }
+        });
+            })
+            .attr("id",username);
+            }
+
+        });
+    });
+
+    socket.on('remove user', (data) => {
+        div = document.createElement('div');
+        $(div).addClass("newchat-cards")
+            .html(data.leavingUser + " left this chat")
+            .appendTo($("#chatWindow")) //main div
+
+        $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
+            if(result.error) {
+                alert(result.error);
+            }
+            else{
+                chatTitle.innerHTML = result.chatTitle;
+            }});
+    });
+
+    socket.on('leave', (data) => {
+        window.location.href = "/chat";
+    });
+
       // Whenever the server emits 'new message', update the chat body
     socket.on('new message', (data) => {
         addChatMessage(data);
+    });
+
+          // Whenever the server emits 'new message', update the chat body
+    socket.on('add user', (data) => {
+        document.getElementById('leave').style.display = "block";
+        if (data.chatID === currentChat) {
+                    div = document.createElement('div');
+                    $(div).addClass("newchat-cards")
+                        .html(data.askingUser+" added " + data.userToAdd + " to this chat")
+                        .appendTo($("#chatWindow")) //main div
+
+                    $.post( "/fetchchat", {'chatID': currentChat}, function(result) {
+                        if(result.error) {
+                            alert(result.error);
+                        }
+                        else{
+                            chatTitle.innerHTML = result.chatTitle;
+                        }});
+                }
+                else {
+                    var chatWindow = document.getElementById('chatWindow');
+                    chatWindow.innerHTML = '';
+                    currentChat = data.chatID;
+                    socket.emit('join room', currentChat);
+                    buildChat();
+                }
     });
 	
 
 </script>
 
 <body>
-    <p id="activeChatList">Active Chats<br></p>
+    <p id="active-chat-title">Active Chats</p>
+    <p id="activeChatList">It appears that you have no active chats.<br></p>
+    <p id="active-user-title">Active Users</p>
+    <p id="activeUserList">It appears that there are no users online.<br></p>
 
     <p id="chatTitle"></p>
-
-    <p id="chatWindow">
-
-    </p>
+    <p id="chatWindow"></p>
 
     <form method="post" action="javascript:createChat();" id="createChat">
         Who would you like to chat? <input type="text" name="username" placeholder="username" required="required">
@@ -173,8 +258,13 @@
         <input type="submit" value="Add user">
     </form>
 
-    <form style="display:none" id="removeUser" action="javascript:removeUser();">
-            Who would you like to remove from the chat? <input type="text" name="removeusername" placeholder="username" required="required">
-            <input type="submit" value="Remove user">
+    <form style="display:none" id="leave" action="javascript:leaveChat();">
+            <input type="submit" value="Leave Chat">
     </form>
+
+    <form style="display:none" id="leave" action="javascript:leaveChat();">
+            <input type="submit" value="Leave Chat">
+    </form>
+    <a href="/newsfeed" id = "backtonewsfeed">Go to newsfeed</a>
+    <a href="/chat" id = "backtochats" style="display:none">Back to chats</a>
 </body>
