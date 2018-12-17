@@ -68,9 +68,6 @@ app.post('/issueFriendRequest', accountController.issueFriendRequest);
 app.post('/acceptFriendRequest', accountController.acceptFriendRequest);
 app.get('/getFriendRequests', accountController.getFriendRequests);
 
-
-
-
 // Magical stuff to allow sessions in socket.io
 // https://stackoverflow.com/questions/25532692/how-to-share-sessions-with-socket-io-1-x-and-express-4-x
 // var sessionMiddleware = session({

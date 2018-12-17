@@ -146,7 +146,7 @@ function decodeBirthday(birthdayNum) {
   var birthdayString = String(birthdayNum);
   // TODO Validate birthday?
   var birthday = birthdayString.slice(0, 4) + "/" + birthdayString.slice(4,6) + "/" + birthdayString.slice(6,8);
-  return birthday;
+  return new Date(birthday);
 }
 
 function updateBirthday(username, birthday, callback) {
@@ -295,6 +295,18 @@ function removeInterest(username, interest, callback) {
         }
       });
     }
+  });
+}
+
+function fetchInterests(username, callback) {
+  schemas.User2Interests.query(username)
+  .loadAll()
+  .exec(function(err, interests) {
+      if (err) {
+          callback(null, err);
+      } else {
+          callback(interests, null);
+      }
   });
 }
 
