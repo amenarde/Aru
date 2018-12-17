@@ -105,7 +105,7 @@ function acceptFriendRequest(req, res) {
   let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender.slice(0, -1);
-  // user2 is the person who initia
+  // user2 is the person who initiates the request
   // Check if friends
   FriendshipDB.checkFriendship(user, user2, function(status, err) {
     if (err) {
@@ -189,6 +189,7 @@ function getFriends(req, res) {
   });
 }
 
+//function for batch update of user info
 function updateInfo(req, res) {
   let newFirst = req.body.firstName;
   let lastName = req.body.lastName;
@@ -282,7 +283,6 @@ function updateBirthday(req, res) {
   });
 }
 
-// Double check this code
 function updateAffiliation(req, res) {
   let username = req.session.account;
 
@@ -303,7 +303,6 @@ function updateAffiliation(req, res) {
 function aggregateProfileUpdate(userData, callback) {
   let statusUpdates = [];
   let errors = [];
-  console.log("userData is: " + JSON.stringify(userData));
 
   async.each(Object.keys(userData), function(key, completed) {
     if (key === "username" || key === "updatedAt") {
@@ -331,9 +330,8 @@ function profileUpdate(username, attribute, value, callback) {
     property = "first name";
   } else if (attribute === "lastName") {
     property = "last name";
-  } else if (attribute === "birthday") {
-    console.log("BIRTHDAY is: " + value);
   }
+
   // Create a post about it
   createPost(username, property + " to " + value, "profileUpdate", username, function(success, err) {
     callback(success, err);

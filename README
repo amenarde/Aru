@@ -1,4 +1,46 @@
-Facebook Project - NETS 212
-- Antonio Menarde
-- Patrick Taggart
-- Tiffany Yue
+Full name:  Antonio Menarde, James Taggart, Tiffany Yue
+SEAS login: amenarde, tyue, ptaggs
+
+Which features did you implement? 
+  Entire Assignment, Facebooks
+
+Did you complete any extra-credit tasks? If so, which ones?
+  - Linkedin-style friend requests
+  - It's really beautiful
+  - Privacy: Can only see posts of people you are friends with
+  - Can dynamically update your user info after creation
+  - All chats are intelligent and persistent
+  - Newsfeed posts allow you to easily click through to a user relevant in that post
+
+Did you personally write _all_ the code you are submitting
+(other than code from the course web page)?
+  [X] Yes
+  [ ] No
+
+Did you copy any code from the Internet, or from classmates?
+  [ ] Yes
+  [X] No
+
+Did you collaborate with anyone on this assignment?
+  [ ] Yes
+  [X] No (Not outside group of 3)
+
+Instructions to Run
+===
+1. Add DB info to config.json
+2. npm install from webapp/
+3. node buildtables.js to build the DB tables
+4. node app.js to run app
+5. Want to run in cloud? Must change socket address is chat.ejs from localhost to public IP of your hosted instance.
+
+Running hadoop
+===
+1. Get data from databases
+	a. Run command 'node getFriendData.js' from webapp/
+2. Run hadoop
+	a. Move the input.txt file to folder from which hadoop will run
+	b. Run the hadoop jar with the command: composite <inputDir> <outputDir> <interimDir1> <interimDir2> <diffDir> <numReducers>
+	c. Retrieve part-r-00000 from the hadoop output file and move it to recommender folder
+3. Upload data
+	a. Run command 'node uploadFriendData.js' from webapp/
+ 
