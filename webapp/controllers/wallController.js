@@ -171,7 +171,13 @@ function getAccountInformation(req, res) {
                       });
                 } else {
                     console.log("not friends!!");
-                    res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, wallContent: {}, status: status})
+                    db.fetchInterests(username, function(interests, err) {
+                                        if (err) {
+                                            res.send({error: err});
+                                        } else {
+                                            res.render('wall.ejs', {error: err, user: req.session.account, userData : userData, interests: interests, wallContent: {}, status: status});
+                                        }
+                                    })
                 }
             }
           })
