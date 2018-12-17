@@ -36,7 +36,7 @@ var getData = function() {
     // Interests2Users
     // Users2Interests
     let actions = ["friends", "A2U", "U2I", "I2U"];
-    let filePath = './input.txt';
+    let filePath = './recommender/input.txt';
     fs.unlinkSync(filePath);
     var file = fs.createWriteStream(filePath);
     file.on('error', function(err) { /* error handling */ });
@@ -47,10 +47,10 @@ var getData = function() {
                     if (err) {
                         console.log("Could not pull friendships!\n" + err);
                     } else if (values) {
-                        // console.log("Friendship values: ");
-                        // console.log(values);
+                        var friendsFile = fs.createWriteStream("recommender/existingFriends.txt");
                         values.Items.forEach(function(v) {
                             file.write(v.attrs.user1.replace(/ /g,"_") + "\t" + v.attrs.user2.replace(/ /g,"_") + " 1\n");
+                            friendsFile.write(v.attrs.user1.replace(/ /g,"_") + "\t" + v.attrs.user2.replace(/ /g,"_") + "\n");
                         });
                     } else {
                         console.log("No Friendship data!");
@@ -63,8 +63,6 @@ var getData = function() {
                     if (err) {
                         console.log("Could not pull affiliations!\n" + err);
                     } else if (values) {
-                        console.log("Affiliation values: ");
-                        console.log(values);
                         values.Items.forEach(function(v) {
                             file.write(v.attrs.affiliation.replace(/ /g,"_") + "\t" + v.attrs.username.replace(/ /g,"_") + " 0.5\n");
                             file.write(v.attrs.username.replace(/ /g,"_") + "\t" + v.attrs.affiliation.replace(/ /g,"_") + " 0.5\n");
@@ -80,8 +78,6 @@ var getData = function() {
                     if (err) {
                         console.log("Could not pull users 2 interests!\n" + err);
                     } else if (values) {
-                        // console.log("values: ");
-                        // console.log(values);
                         values.Items.forEach(function(v) {
                             file.write(v.attrs.username.replace(/ /g,"_") + "\t" + v.attrs.interest.replace(/ /g,"_") + " 0.2\n");
                         });
@@ -96,7 +92,6 @@ var getData = function() {
                     if (err) {
                         console.log("Could not pull interests 2 users!\n" + err);
                     } else if (values) {
-                        
                         values.Items.forEach(function(v) {
                             file.write(v.attrs.interest.replace(/ /g,"_") + "\t" + v.attrs.username.replace(/ /g,"_") + " 0.2\n");
                         });

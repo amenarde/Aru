@@ -1,0 +1,4 @@
+rzajac	tyue
+aringis	tyue
+tyue	aringis
+tyue	rzajac

@@ -1,0 +1,22 @@
+Penn amenarde 0.5
+amenarde Penn 0.5
+Penn aringis 0.5
+aringis Penn 0.5
+Penn ptaggs 0.5
+ptaggs Penn 0.5
+Penn rzajac 0.5
+rzajac Penn 0.5
+Bell tyue 0.5
+tyue Bell 0.5
+rzajac Birthday Fun 0.2
+aringis Horses 0.2
+amenarde yoga 0.2
+tyue dance 0.2
+rzajac tyue 1
+aringis tyue 1
+tyue aringis 1
+tyue rzajac 1
+Birthday Fun rzajac 0.2
+dance tyue 0.2
+Horses aringis 0.2
+yoga amenarde 0.2
