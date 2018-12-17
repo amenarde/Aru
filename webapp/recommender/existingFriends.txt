@@ -1,8 +1,12 @@
+arelisher	ptaggs
 rzajac	relisher
 rzajac	tyue
-aringis	tyue
-tyue	aringis
-tyue	relisher
+amenarde	ptaggs
+amenarde	tyue
+ptaggs	amenarde
+ptaggs	arelisher
+ptaggs	tyue
+tyue	amenarde
+tyue	ptaggs
 tyue	rzajac
 relisher	rzajac
-relisher	tyue

@@ -1,11 +1,3 @@
-rzajac	relisher 1
-rzajac	tyue 1
-aringis	tyue 1
-tyue	aringis 1
-tyue	relisher 1
-tyue	rzajac 1
-relisher	rzajac 1
-relisher	tyue 1
 Penn	amenarde 0.5
 amenarde	Penn 0.5
 Penn	aringis 0.5
@@ -28,3 +20,15 @@ aringis	Horses 0.2
 amenarde	yoga 0.2
 tyue	dance 0.2
 relisher	Birthday_Fun 0.2
+arelisher	ptaggs 1
+rzajac	relisher 1
+rzajac	tyue 1
+amenarde	ptaggs 1
+amenarde	tyue 1
+ptaggs	amenarde 1
+ptaggs	arelisher 1
+ptaggs	tyue 1
+tyue	amenarde 1
+tyue	ptaggs 1
+tyue	rzajac 1
+relisher	rzajac 1
