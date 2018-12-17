@@ -260,14 +260,13 @@ function fetchSinceTimeFromUser(username, timestamp, X, callback) {
 }
 
 function fetchCommentsSinceTime(pID, timestamp, callback) {
-    schemas.PostComments.query(pID).usingIndex('timeIndex')
-    .where('createdAt').gt(timestamp).loadAll()
+    var commentList = [];
+    schemas.PostComments.query(pID)
+    .where('createdAt').gt(timestamp).descending.loadAll()
     .exec(function(err, comments) {
         if (err) {
             callback(null, err);
         } else {
-            console.log("new comments");
-            var commentList = [];
             async.each(comments.Items, function(comment, completed) {
                 commentList.push(comment.attrs);
                 completed(null);
