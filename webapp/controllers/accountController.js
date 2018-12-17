@@ -88,7 +88,6 @@ var logout = function(req, res) {
 };
 
 function acceptFriendRequest(req, res) {
-
   let user = req.session.account;
   if (!user) {res.render('main.ejs', {error: "You must be logged in to perform that action."});}
   let user2 = req.body.friender.slice(0, -1);
@@ -98,9 +97,6 @@ function acceptFriendRequest(req, res) {
     if (err) {
       res.send({error: err});
     } else {
-      console.log("Status: " + status);
-      console.log("user is: " + user);
-      console.log("friender is: " + user2);
       if (status === "confirmed") {
         res.send({error: "Already friends!"});
       } else if (status === "incoming") {
@@ -211,9 +207,9 @@ function updateInfo(req, res) {
     if (err) {
       res.send({error: err});
     } else {
-      aggregateProfileUpdate(userData, function(success, err) {
-        if (err) {
-          res.send({error: err});
+      aggregateProfileUpdate(userData, function(updates, err) {
+        if (err.length > 0) {
+          res.send({updates: updates, error: err});
         } else {
           res.redirect('back');
         }
@@ -297,20 +293,23 @@ function updateAffiliation(req, res) {
 function aggregateProfileUpdate(userData, callback) {
   let statusUpdates = [];
   let errors = [];
-  let count = Object.keys(userData).length;
+
   for (var property in userData) {
-    if (userData.hasOwnProperty(property) && property != "username" && property != "updatedAt") {
-      profileUpdate(userData.username, property, userData[property], function(update, err) {
-        if (!err) {
-          statusUpdates.push(update);
-        } else {
-          errors.push(err);
-        }
-        count--;
-        if (count == 0) {
-          callback(statusUpdates, errors);
-        }
+    if (userData.hasOwnProperty(property) && property != "username") {
+      async.each(Object.keys(userData), function(key, completed) {
+        profileUpdate(userData.username, property, userData[key], function(update, err) {
+          if (!err) {
+            statusUpdates.push(update);
+          } else {
+            errors.push(err);
+            completed(err);
+          }
+          completed(err);
+        });
+      }, function(err) {
+        callback(statusUpdates, errors);
       });
+
     }
   }
 }

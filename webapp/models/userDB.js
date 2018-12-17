@@ -36,22 +36,9 @@ function deleteAffiliation(affiliation, username, callback) {
 
 function addUser(username, password, firstName, lastName, birthday, affiliation, permissions, callback) {
   // Convert the birthday to a value
-  var dates = birthday.split("/");
-  if (dates.length === 1) {
-    dates = birthday.split("-");
-    if (dates.length === 1) {
-      dates = birthday.split(":");
-    }
-  }
-  // TODO Validate birthday?
+  let birthdayNum = encodeBirthday(birthday);
 
-  // Does not standardize european dates...
-  var birthdayString = "";
-  for (let i in dates) {
-    birthdayString += dates[i];
-  }
-
-  console.log("birthday: " + birthdayString + " becomes " + Number(birthdayString));
+  console.log("birthday: " + birthday + " becomes " + Number(birthdayNum));
 
   // Add use to the database - start with its affiliation in case
   // Add affiliation to the database
@@ -60,14 +47,13 @@ function addUser(username, password, firstName, lastName, birthday, affiliation,
       callback(null, err);
     } else {
       // Add user to the database
-
       bcrypt.hash(password, 5, function(err, hash) {
         schemas.Users.create({
           username: username,
           firstName: firstName,
           lastName: lastName,
           password: hash,
-          birthday: Number(birthdayString),
+          birthday: birthdayNum,
           affiliation: affiliation,
           permissions: permissions}, {overwrite: false},
           function(err, user) {
@@ -100,6 +86,9 @@ function exists(username, callback) {
 
 function updateUser(userData, callback) {
   // Username must be an attribute of userData
+  if (userData.birthday) {
+    userData.birthday = encodeBirthday(userData.birthday);
+  }
   schemas.Users.update(userData, function (err, user) {
     if (err) {
       console.log("USER_DB) Update first name - " + err)
@@ -134,8 +123,35 @@ function updateLastName(username, name, callback) {
   });
 }
 
+function encodeBirthday(birthday) {
+  var dates = birthday.split("/");
+  if (dates.length === 1) {
+    dates = birthday.split("-");
+    if (dates.length === 1) {
+      dates = birthday.split(":");
+    }
+  }
+  // TODO Validate birthday?
+
+  // Does not standardize european dates...
+  var birthdayString = "";
+  for (let i in dates) {
+    birthdayString += dates[i];
+  }
+  return Number(birthdayString);
+}
+
+function decodeBirthday(birthdayNum) {
+  // Is in yyyymmdd
+  var birthdayString = String(birthdayNum);
+  // TODO Validate birthday?
+  var birthday = birthdayString.slice(0, 4) + "/" + birthdayString.slice(4,6) + "/" + birthdayString.slice(6,8);
+  return new Date(birthday);
+}
+
 function updateBirthday(username, birthday, callback) {
-  schemas.Users.update({username: username, birthday: birthday}, function (err, user) {
+  let birthdayNum = encodeBirthday(birthday);
+  schemas.Users.update({username: username, birthday: birthdayNum}, function (err, user) {
     if (err) {
       console.log("USER_DB) Update username - " + err)
     } else {
@@ -208,6 +224,7 @@ function fetch(username, callback) {
   }
   schemas.Users.get(username, function(err, user) {
     // Need to update birthday
+    user.attrs.birthday = decodeBirthday(user.attrs.birthday);
     callback(user, err);
   });
 }
@@ -278,6 +295,18 @@ function removeInterest(username, interest, callback) {
         }
       });
     }
+  });
+}
+
+function fetchInterests(username, callback) {
+  schemas.User2Interests.query(username)
+  .loadAll()
+  .exec(function(err, interests) {
+      if (err) {
+          callback(null, err);
+      } else {
+          callback(interests, null);
+      }
   });
 }
 
