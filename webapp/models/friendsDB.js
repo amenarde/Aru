@@ -198,7 +198,6 @@ function getRecommendedFriends(username, callback) {
                 friendNames.push({friend: friend.attrs.user2, strength: friend.attrs.strength});
                 completed(null);
             }, function (err) {
-                console.log("friendnames: " + friendNames);
                 callback(friendNames, null);
             });
         }

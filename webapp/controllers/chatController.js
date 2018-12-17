@@ -17,7 +17,7 @@ var createChat = function (req, res) {
 		res.render('main.ejs', {error: "You must be logged in to see that page."});
 		return;
 	}
-	
+
 	users = [];
 
 	users.push(req.body.username);
@@ -108,7 +108,7 @@ function getChatUsersByUser(req, res) {
 					completed2(null);
 				});
 			}, function(err) {
-				
+
 				chatDB.getChatType(chat.chat, function(type, err) {
 					chats.push({chat: chat.chat, users: names, type: type});
 					completed(null);
@@ -166,7 +166,6 @@ function ioPostMessage(username, chatID, message, callback) {
 var activeUsers = [];
 
 // Chat sockets
-
 function socketFunc(io) {
 	io.on('connection', (socket) => {
 		// when the client emits 'post message', this listens and executes
@@ -181,7 +180,7 @@ function socketFunc(io) {
 			  }
 		  });
 		});
-	  
+
 		socket.on('join room', (chatID) => {
 		  chatDB.userInChat(socket.handshake.session.account, chatID, function(data, err) {
 			  if(data === true) {
@@ -238,7 +237,7 @@ function socketFunc(io) {
 			var askingUser = socket.handshake.session.account;
 			var userToAdd = data.username;
 			var chatID = data.chatID;
-		
+
 			chatDB.userInChat(askingUser, chatID, function(data, err) {
 				if (data === true) {
 					chatDB.userInChat(userToAdd, chatID, function(data, err) {
@@ -274,5 +273,5 @@ var routes = {
 	addUser: addUser,
 	leaveChat: leaveChat
   };
-  
+
   module.exports = routes;

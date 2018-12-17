@@ -16,15 +16,10 @@ var open = function(req, res) {
           if (err) {
             res.render('main.ejs', {error: err});
           } else {
-            console.log("incoming requests: " + friendRequests);
             accountController.getRecommendedFriends(req, res, function(recommended, err) {
-              console.log("returned from recommended");
               if (err) {
-                console.log("ERROR!");
                 res.render('main.ejs', {error: err});
               } else {
-                console.log("RECOMMENDED!!!!");
-                console.log("friend recommendations: " + JSON.stringify(recommended));
                 res.render('newsfeed.ejs', {error: null, feed: feed, user: req.session.account, friendRequests: friendRequests, recommended: recommended});
               }
             })
@@ -119,12 +114,10 @@ var getCommentsSince = function(req, res) {
     } else {
         let commentList = [];
         async.each(pIDs, function(pID, completed) {
-          console.log("checking for comment: " + pID);
             PostsDB.fetchCommentsSinceTime(pID, timestamp, function(comments, err) {
                 if (err) {
                     completed(err);
                 } else {
-                    console.log("found a new comment!: " + comments);
                     commentList.push({pID: pID, comments: comments});
                     completed(null);
                 }

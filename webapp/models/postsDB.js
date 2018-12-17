@@ -54,7 +54,6 @@ function deleteposts(pID, username, callback) {
 
 function addComment(pID, username, comment, callback) {
     schemas.PostComments.create({pID: pID, username: username, content: comment, likes: 0}, function(err, posts) {
-        console.log("pID is: " + pID);
         if (err) {
             console.log(dbName + ") " + err);
             callback(null, err);
@@ -207,8 +206,6 @@ function fetchFromTimeFromUser(username, timestamp, X, callback) {
             .descending()
             .loadAll()
             .exec(function(err, posts) {
-                console.log("Err: " + err);
-                console.log("Posts: " + posts);
                 if (err) {
                     callback(null, err);
                 } else {
