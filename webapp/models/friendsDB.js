@@ -1,11 +1,8 @@
 var schemas = require("./schemas.js");
 var async = require('async');
 
-// User 1 request accepted, user 2 get new friend
+// Update statuses of user 1 and user 2
 function acceptFriendRequest(user1, user2, callback) {
-    // Should there be checks for if already friends?
-    // Check to make sure aren't friends
-    // Accept request
     schemas.Friendships.update({user1: user2, user2: user1, status: "confirmed"},
         function(errUpdate, _) {
             if (errUpdate) {
@@ -28,6 +25,7 @@ function acceptFriendRequest(user1, user2, callback) {
                                 }
                             );
                         } else {
+                            // Remove the recommendation from the database
                             schemas.RecommendedFriends.destroy({user1: user1, user2: user2}, function(err) {
                                 callback(friendship, null);
                             });
@@ -43,8 +41,6 @@ function acceptFriendRequest(user1, user2, callback) {
 function checkFriendStatus(user1, user2, callback) {
     schemas.Friendships.get(user1, user2, function(err, friends) {
         // Assuming returns null if not friends
-        console.log("Friend: " + friends);
-        console.log("Err: " + err);
         if (err) {
             console.log("FriendshipDB) Failed to check status for " + user1 + " and " + user2 + ".");
             callback(null, err);
@@ -66,18 +62,15 @@ function issueFriendRequest(user1, user2, callback) {
     schemas.Friendships.create({user1: user1, user2: user2, status: "pending"},
         {overwrite: false},
         function(err, friendship) {
-            console.log("Trying friendship between " + user1 + " and " + user2);
             if (err) {
                 console.log("FriendshipDB) Failed to add friendship - " + err);
                 callback(null, err);
             } else {
-                console.log(friendship)
                 schemas.Friendships.create({user1: user2, user2: user1, status: "incoming"},
                 {overwrite: false},
                 function(err, friendship2) {
-                    console.log("Trying friendship between " + user2 + " and " + user1);
-                    console.log(friendship2)
                     if (err) {
+                        // if failed, try to repeal the friendship just made
                         schemas.Friendships.destroy(user1, user2, function(err2) {
                             if (err2) {
                                 console.log("FriendshipDB) Failed to delete failed friendship request");
@@ -87,6 +80,7 @@ function issueFriendRequest(user1, user2, callback) {
                             }
                         })
                     } else {
+                        // Remove recommendation from the database if it exists
                         schemas.RecommendedFriends.destroy({user1: user1, user2: user2}, function(err) {
                             callback(friendship, null);
                         });
@@ -98,7 +92,7 @@ function issueFriendRequest(user1, user2, callback) {
 }
 
 function getFriends(user, callback) {
-    console.log("Querying for friends of: " + user);
+    // Get all friends who have confirmed status
     schemas.Friendships.query(user).usingIndex('StatusIndex')
     .where('status').equals('confirmed').loadAll()
     .exec(function(err, friends) {
@@ -154,11 +148,11 @@ function getIncomingRequest(user, callback) {
 
 function rejectFriendRequest(user, user2, callback) {
     schemas.Friendships.destroy(user, user2, function(err) {
-        console.log("Rejecting friendship between " + user + " and " + user2);
         if (err) {
             console.log("FriendshipDB) " + err);
             callback(err);
         } else {
+            // Have to remove requests from both databases
             schemas.Friendships.destroy(user2, user, function(err2) {
                 if (err2) {
                     console.log("Failed to destory entry for " + user2 + " on reject\n" + err2);
@@ -188,7 +182,6 @@ function deleteFriend(user1, user2, callback) {
 }
 
 function getRecommendedFriends(username, callback) {
-    console.log("Querying for recommended friends of: " + username);
     schemas.RecommendedFriends.query(username)
     .loadAll()
     .exec(function(err, recommended) {
