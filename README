@@ -1,8 +1,8 @@
 Full name:  Antonio Menarde, James Taggart, Tiffany Yue
 SEAS login: amenarde, tyue, ptaggs
 
-Which features did you implement? 
-  Entire Assignment, Facebooks
+Which features did you implement?
+  Entire Assignment, Facebook
 
 Did you complete any extra-credit tasks? If so, which ones?
   - Linkedin-style friend requests
@@ -43,4 +43,4 @@ Running hadoop
 	c. Retrieve part-r-00000 from the hadoop output file and move it to recommender folder
 3. Upload data
 	a. Run command 'node uploadFriendData.js' from webapp/
- 
+
